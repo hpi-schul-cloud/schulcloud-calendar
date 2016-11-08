@@ -16,16 +16,29 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
+ * actions for all requests:
+ * - print request to console log
+ */
+
+const requestHandler = (request, response) => {
+  console.log(request.url);
+}
+
+/**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = http.createServer(app, requestHandler);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, (err) => {
+  if (err) {
+    return console.error('Server was not able to start. Is the port already used by another service?');
+  }
+});
 server.on('error', onError);
 server.on('listening', onListening);
 
