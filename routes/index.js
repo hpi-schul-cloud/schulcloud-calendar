@@ -1,12 +1,20 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
 
-// TODO: use client for db queries until logic is moved from router to some other location...
-//var client = require('../models/database');
+// TODO: move logic from router to some other location...
+var client = require('../models/database')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+  const query = client.query('SELECT * FROM schools;')
+  const title = query.text
+  res.render('index', { title, query: JSON.stringify(query) })
+})
 
-module.exports = router;
+function query(requestString) {
+   return new Promise(function(resolve, reject) {
+       client.query(requestString).then(resolve())
+   })
+}
+
+module.exports = router
