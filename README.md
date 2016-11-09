@@ -7,4 +7,5 @@
 4. for testing purposes, some routes with db queries can be added to index.js (use client.query()) or feel free to use the node server in any other way...
 
 ### Example data
-... can be inserted using `psql -U node -d schulcloud_calendar -a -f example_data.sql`
+* create tables with `psql -U node -d schulcloud_calendar -a -f schema.sql`
+* insert example data using `psql -U node -d schulcloud_calendar -a -f example_data.sql`
