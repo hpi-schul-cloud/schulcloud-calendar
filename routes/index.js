@@ -33,9 +33,12 @@ router.get('/calendar/test', function (req, res) {
                 var last_modified_date = new Date(result.rows[row_count].last_modified_timestamp);
                 ical += 'BEGIN:VEVENT\n';
                 ical += 'UID:' + result.rows[row_count].id + '@schulcloud.org\n';
-                ical += 'LOCATION:' + result.rows[row_count].location + '\n';
+                if (result.rows[row_count].location) {
+                    ical += 'LOCATION:' + result.rows[row_count].location + '\n';
+                }
                 ical += 'SUMMARY:' + result.rows[row_count].summary + '\n';
-                ical += 'DESCRIPTION:' + result.rows[row_count].description + '\n';
+                if (result.rows[row_count].description) {
+                    ical += 'DESCRIPTION:' + result.rows[row_count]c
                 ical += 'DTSTART:' + start_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
                 ical += 'DTEND:' + end_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
                 ical += 'DTSTAMP:' + created_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
