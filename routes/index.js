@@ -38,13 +38,14 @@ router.get('/calendar/test', function (req, res) {
                 }
                 ical += 'SUMMARY:' + result.rows[row_count].summary + '\n';
                 if (result.rows[row_count].description) {
-                    ical += 'DESCRIPTION:' + result.rows[row_count]
+                    ical += 'DESCRIPTION:' + result.rows[row_count].description + '\n';
                 }
                 ical += 'DTSTART:' + start_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
                 ical += 'DTEND:' + end_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
                 ical += 'DTSTAMP:' + created_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
                 ical += 'LAST-MODIFIED:' + last_modified_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
                 ical += 'END:VEVENT\n';
+            }
             ical += 'END:VCALENDAR\n';
 
                 var Readable = require('stream').Readable;
@@ -58,7 +59,7 @@ router.get('/calendar/test', function (req, res) {
                 });
                 s.pipe(res);
             }
-        }});
+        });
 });
 
 module.exports = router
