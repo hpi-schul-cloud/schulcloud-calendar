@@ -38,27 +38,28 @@ router.get('/calendar/test', function (req, res) {
                 }
                 ical += 'SUMMARY:' + result.rows[row_count].summary + '\n';
                 if (result.rows[row_count].description) {
-                    ical += 'DESCRIPTION:' + result.rows[row_count]c
-                ical += 'DTSTART:' + start_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
-                ical += 'DTEND:' + end_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
-                ical += 'DTSTAMP:' + created_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
-                ical += 'LAST-MODIFIED:' + last_modified_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
-                ical += 'END:VEVENT\n';
-            }
-            ical += 'END:VCALENDAR\n';
+                    ical += 'DESCRIPTION:' + result.rows[row_count]
+                    c
+                    ical += 'DTSTART:' + start_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+                    ical += 'DTEND:' + end_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+                    ical += 'DTSTAMP:' + created_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+                    ical += 'LAST-MODIFIED:' + last_modified_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+                    ical += 'END:VEVENT\n';
+                }
+                ical += 'END:VCALENDAR\n';
 
-            var Readable = require('stream').Readable;
-            var s = new Readable();
-            s.push(ical);
-            s.push(null);
-            res.writeHead(200, {
-                'Content-Disposition': 'attachment; filename=calendar.ics',
-                'Content-Type': 'text/calendar',  //application/octet-stream?
-                'Content-Length': ical.length
-            });
-            s.pipe(res);
-        }
-    });
+                var Readable = require('stream').Readable;
+                var s = new Readable();
+                s.push(ical);
+                s.push(null);
+                res.writeHead(200, {
+                    'Content-Disposition': 'attachment; filename=calendar.ics',
+                    'Content-Type': 'text/calendar',  //application/octet-stream?
+                    'Content-Length': ical.length
+                });
+                s.pipe(res);
+            }
+        }});
 });
 
 module.exports = router
