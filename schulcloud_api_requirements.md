@@ -6,24 +6,42 @@
 As the calendar service we need to get all scopes belonging to a user (represented by UUIDs) to find all his appointments.
 
 _Request_: Usertoken
-_Response_: Verification and UUIDs of related scopes including a tag for the respective scope and possibly further tags. The scope tag could be of type Integer or String or whatever you want, this only should be documented.
 
-#### Map from names (or something comparable) to scope UUID
-As the creator of appointments I need the UUID for a scope in my school (e.g. class 8b of school A) to make the apoointment identifiable later.
+_Response_: UUIDs with tags (after basic verification). The format of the JSON-response could be:
 
-_Request_: Designator of school and scope
-_Response_: UUID of scope
+```
+[
+  {
+    id: '234gh',
+    name: 'Max Mustermann',
+    scope: 5,
+    canWrite: true,
+    ...
+  }, {
+    id: '123ef',
+    name: 'HPI',
+    scope: 1,
+    canWrite: false,
+    ...
+  },
+  ...
+]
+```
+
+The format of scope (Integer, String, ...) is not important for us but should be fix and documented.
 
 #### Map from usertoken to related user UUID
 (For the notification service.)
 
 _Request_: Usertoken
+
 _Response_: Verification and UUID of related user
 
 #### Map from UUID to related user UUID(s)
 (For the notification service in order to notify all users belonging to an event.)
 
 _Request_: UUID
+
 _Response_: If the UUID is a user UUID only the UUID itself, else all user UUIDs belonging to the regarding scope.
 
 ### UUIDs
