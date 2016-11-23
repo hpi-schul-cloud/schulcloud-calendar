@@ -1,5 +1,9 @@
 # schulcloud-calendar
 
+[Specification of the calendar API](https://github.com/NHoff95/schulcloud-calendar/blob/master/calendar_api_requirements.md)
+
+[Requirements for the schulcloud API](https://github.com/NHoff95/schulcloud-calendar/blob/master/schulcloud_api_requirements.md)
+
 ## Setup
 ### Installation
 1. Install & start PostgreSQL
@@ -10,7 +14,3 @@
 ### Example data
 1. Create tables with `psql -U node -d schulcloud_calendar -a -f schema.sql`
 2. Insert example data using `psql -U node -d schulcloud_calendar -a -f example_data.sql`
-
-[Requirements for the calendar API](https://github.com/NHoff95/schulcloud-calendar/blob/master/calendar_api_requirements.md)
-
-[Requirements for the Schul-cloud API](https://github.com/NHoff95/schulcloud-calendar/blob/master/schulcloud_api_requirements.md)
