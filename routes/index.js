@@ -5,15 +5,15 @@ var router = express.Router()
 var client = require('../models/database')
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  const query = 'SELECT * FROM events;'
-  client.query(query, function(error, result) {
-    if (error) {
-      res.render('index', { query: 'Error', queryResult: JSON.stringify(error) })
-    } else {
-      res.render('index', {query, queryResult: JSON.stringify(result)})
-    }
-  })
+router.get('/', function (req, res, next) {
+    const query = 'SELECT * FROM events;'
+    client.query(query, function (error, result) {
+        if (error) {
+            res.render('index', {query: 'Error', queryResult: JSON.stringify(error)})
+        } else {
+            res.render('index', {query, queryResult: JSON.stringify(result)})
+        }
+    })
 });
 
 router.get('/calendar/test', function (req, res) {
@@ -38,28 +38,36 @@ router.get('/calendar/test', function (req, res) {
                 }
                 ical += 'SUMMARY:' + result.rows[row_count].summary + '\n';
                 if (result.rows[row_count].description) {
-                    ical += 'DESCRIPTION:' + result.rows[row_count]
-                    c
-                    ical += 'DTSTART:' + start_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
-                    ical += 'DTEND:' + end_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
-                    ical += 'DTSTAMP:' + created_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
-                    ical += 'LAST-MODIFIED:' + last_modified_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
-                    ical += 'END:VEVENT\n';
+                    ical += 'DESCRIPTION:' + result.rows[row_count].description + '\n';
                 }
-                ical += 'END:VCALENDAR\n';
-
-                var Readable = require('stream').Readable;
-                var s = new Readable();
-                s.push(ical);
-                s.push(null);
-                res.writeHead(200, {
-                    'Content-Disposition': 'attachment; filename=calendar.ics',
-                    'Content-Type': 'text/calendar',  //application/octet-stream?
-                    'Content-Length': ical.length
-                });
-                s.pipe(res);
+                ical += 'DTSTART:' + start_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+                ical += 'DTEND:' + end_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+                ical += 'DTSTAMP:' + created_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+                ical += 'LAST-MODIFIED:' + last_modified_date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+                ical += 'END:VEVENT\n';
             }
-        }});
+            ical += 'END:VCALENDAR\n';
+
+            var Readable = require('stream').Readable;
+            var s = new Readable();
+            s.push(ical);
+            s.push(null);
+            res.writeHead(200, {
+                'Content-Disposition': 'attachment; filename=calendar.ics',
+                'Content-Type': 'text/calendar',  //application/octet-stream?
+                'Content-Length': ical.length
+            });
+            s.pipe(res);
+        }
+    });
 });
 
-module.exports = router
+router.get('/system_info/haproxy', function (req, res) {
+    res.send({"timestamp": new Date().getTime()});
+});
+
+router.get('/ping', function (req, res) {
+    res.send({"message": "pong", "timestamp": new Date().getTime()});
+});
+
+module.exports = router;
