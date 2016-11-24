@@ -5,15 +5,15 @@ var router = express.Router()
 var client = require('../models/database')
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  const query = 'SELECT * FROM events;'
-  client.query(query, function(error, result) {
-    if (error) {
-      res.render('index', { query: 'Error', queryResult: JSON.stringify(error) })
-    } else {
-      res.render('index', {query, queryResult: JSON.stringify(result)})
-    }
-  })
+router.get('/', function (req, res, next) {
+    const query = 'SELECT * FROM events;'
+    client.query(query, function (error, result) {
+        if (error) {
+            res.render('index', {query: 'Error', queryResult: JSON.stringify(error)})
+        } else {
+            res.render('index', {query, queryResult: JSON.stringify(result)})
+        }
+    })
 });
 
 router.get('/calendar/test', function (req, res) {
@@ -48,18 +48,26 @@ router.get('/calendar/test', function (req, res) {
             }
             ical += 'END:VCALENDAR\n';
 
-                var Readable = require('stream').Readable;
-                var s = new Readable();
-                s.push(ical);
-                s.push(null);
-                res.writeHead(200, {
-                    'Content-Disposition': 'attachment; filename=calendar.ics',
-                    'Content-Type': 'text/calendar',  //application/octet-stream?
-                    'Content-Length': ical.length
-                });
-                s.pipe(res);
-            }
-        });
+            var Readable = require('stream').Readable;
+            var s = new Readable();
+            s.push(ical);
+            s.push(null);
+            res.writeHead(200, {
+                'Content-Disposition': 'attachment; filename=calendar.ics',
+                'Content-Type': 'text/calendar',  //application/octet-stream?
+                'Content-Length': ical.length
+            });
+            s.pipe(res);
+        }
+    });
 });
 
-module.exports = router
+router.get('/system_info/haproxy', function (req, res) {
+    res.send({"timestamp": new Date().getTime()});
+});
+
+router.get('/ping', function (req, res) {
+    res.send({"message": "pong", "timestamp": new Date().getTime()});
+});
+
+module.exports = router;
