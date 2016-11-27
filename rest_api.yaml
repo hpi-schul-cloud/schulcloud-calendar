@@ -14,7 +14,7 @@ paths:
     post:
       summary: Create a new Event for a list of UUIDs
       responses:
-        200:
+        201:
           description: ExternalEventResponse
           schema:
             $ref: '#/definitions/ExternalEventResponse'
