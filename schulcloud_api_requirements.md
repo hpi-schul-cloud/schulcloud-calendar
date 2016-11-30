@@ -15,12 +15,14 @@ _Response_: UUIDs with tags (after basic verification). The format of the JSON-r
     id: '234gh',
     name: 'Max Mustermann',
     scope: 5,
+    canRead: true,
     canWrite: true,
     ...
   }, {
     id: '123ef',
     name: 'HPI',
     scope: 1,
+    canRead: true,
     canWrite: false,
     ...
   },
@@ -38,7 +40,7 @@ _Request_: Usertoken
 _Response_: Verification and UUID of related user
 
 #### Map from UUID to related user UUID(s)
-(For the notification service in order to notify all users belonging to an event.)
+As the calendar service we need to get all users belonging to a UUID in order to bulk create events (e.g. when accessed through our REST API by a submission system) individually for each user. In addition, the notification service requires this endpoint to notify all users belonging to an event.
 
 _Request_: UUID
 
@@ -57,7 +59,7 @@ Scopes are defined for
 * users
 
 <p align="center">
-  <img src="https://github.com/NHoff95/schulcloud-calendar/blob/master/scopes.png" alt="scopes"/>
+  <img src="https://github.com/schulcloud/schulcloud-calendar/blob/master/scopes.png" alt="scopes"/>
   <b>Figure 1</b> Possible scopes in the Schul-Cloud with their relations
 </p>
 
@@ -76,6 +78,6 @@ Imagine, Paul logs into his Schul-Cloud account and requests his calendar. Our s
 With these our service can look up the regarding entries in the appointment database. The associated table consists of events which are stored in the iCalendar format with an UUID of the corresponding scope (see figure 2). Thus we can get all appointments which belong to Paul's school, grade, and so on. In the end, we can provide Paul an iCalendar download.
 
 <p align="center">
-  <img src="https://github.com/NHoff95/schulcloud-calendar/blob/master/appointment-table.png" alt="appointment table"/>
+  <img src="https://github.com/schulcloud/schulcloud-calendar/blob/master/appointment-table.png" alt="appointment table"/>
   <b>Figure 2</b> Example appointment table
 </p>
