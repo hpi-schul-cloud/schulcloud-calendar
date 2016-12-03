@@ -32,6 +32,11 @@ _Response_: UUIDs with tags (after basic verification). The format of the JSON-r
 
 The format of scope (Integer, String, ...) is not important for us but should be fix and documented.
 
+_Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
+
+`token ∈ {student[1|2]\_[1|2], teacher[1|2]\_[1|2]}`
+
+
 #### Map from usertoken to related user UUID
 (For the notification service.)
 
@@ -39,12 +44,22 @@ _Request_: Usertoken
 
 _Response_: Verification and UUID of related user
 
+_Example_: https://schulcloud-api-mock.herokuapp.com/api/user/:token
+
+`token ∈ {student[1|2]\_[1|2], teacher[1|2]\_[1|2]}`
+
+
 #### Map from UUID to related user UUID(s)
 As the calendar service we need to get all users belonging to a UUID in order to bulk create events (e.g. when accessed through our REST API by a submission system) individually for each user. In addition, the notification service requires this endpoint to notify all users belonging to an event.
 
 _Request_: UUID
 
 _Response_: If the UUID is a user UUID only the UUID itself, else all user UUIDs belonging to the regarding scope.
+
+_Example_: https://schulcloud-api-mock.herokuapp.com/api/all_users/:uuid
+
+`uuid ∈ {_id value form one of the queries above_}`
+
 
 ### UUIDs
 UUIDs should be globally unique for each instance in the whole Schul-Cloud. An instance is for example a school, a class or a user (see [Scopes](#Scopes)).
