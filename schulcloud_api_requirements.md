@@ -58,7 +58,7 @@ _Response_: If the UUID is a user UUID only the UUID itself, else all user UUIDs
 
 _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_users/:uuid
 
-`uuid ∈ {_id value form one of the queries above_}`
+`uuid ∈ {id value form one of the queries above}`
 
 
 ### UUIDs
