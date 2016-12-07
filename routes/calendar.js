@@ -4,12 +4,12 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
+const allEvents = require('../queries/allEvents');
 const queryToIcs = require('../parsers/queryToIcs');
-const eventQueries = require('../queries/eventQueries');
 const Readable = require('stream').Readable;
 
 router.get('/test', function (req, res) {
-    Promise.resolve(eventQueries.getAll())
+    Promise.resolve(allEvents())
         .then(function(result) {
             const ics = queryToIcs(result);
             var icsFile = new Readable();

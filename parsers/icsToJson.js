@@ -1,34 +1,31 @@
 const validateIcs = require('./validateIcs');
 const validateJson = require('./validateJson');
 
-// TODO use or delete this
-const acceptedICalVersions = [
-    "2.0"
-];
-
 function icsToJson(ics) {
-    var lines = ics.split("\n");
+    const lines = ics.split("\n");
 
     if (!validateIcs(lines)) {
-        console.error('[eventTranslationService] icsToJson: Invalid ICS file');
+        console.error('[icsToJson] Invalid ICS file');
+        return;
     }
 
     var events = [];
     var event = {};
     lines.forEach(function(line) {
+        console.log(line);
         switch (line) {
             case 'BEGIN:VCALENDAR':
-            case 'END:VEVENT':
+            case 'END:VCALENDAR':
                 break;
             case 'BEGIN:VEVENT':
                 event = {};
                 break;
             case 'END:VEVENT':
                 if (validateJson(event)) {
-                    events.add(event);
+                    events.push(event);
                     break;
                 } else {
-                    console.error('[eventTranslationService] icsToJson: Created invalid JSON, are all required fields present?')
+                    console.error('[icsToJson] Created invalid JSON, are all required fields present?')
                     break;
                 }
             default:
@@ -44,7 +41,8 @@ function lineToJson(line, event) {
     const splitPosition = line.indexOf(':');
 
     if (splitPosition === -1) {
-        console.error('[eventTranslationService] icsToJson: Invalid line in ICS');
+        console.error('[icsToJson] Invalid line in ICS');
+        return;
     }
 
     const fieldName = line.substr(0, splitPosition);
@@ -56,7 +54,7 @@ function lineToJson(line, event) {
             if (splittedUid.length === 2) {
                 event['id'] = splittedUid[0];
             } else {
-                console.error("[eventTranslationService] icsToJson: Invalid UID")
+                console.error("[icsToJson] Invalid UID")
             }
             break;
         case "LOCATION":
@@ -71,7 +69,7 @@ function lineToJson(line, event) {
         case "LAST-MODIFIED":
             break;
         default:
-            console.error('[eventTranslationService] icsToJson: Got unknown ICS field. Implement ' + fieldName);
+            console.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
             break;
     }
 }

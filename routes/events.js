@@ -5,9 +5,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 const icsToJson = require('../parsers/icsToJson');
-const eventQueries = require('../queries/eventQueries');
-
-// TODO TEST REFACTORING!!
+const insertEvent = require('../queries/insertEvent');
 
 router.post('/', function (req, res) {
     const ids = req.body.ids;
@@ -37,9 +35,9 @@ router.post('/', function (req, res) {
 
     referenceIds.forEach(function(referenceId) {
         params[5] = referenceId;            //$6: reference_id
-        Promise.resolve(eventQueries.insert(params))
-            .then(console.log('Successfully created Event entry in DB!'))
-            .catch(console.error('Error during processing SQL INSERT query!'))
+        Promise.resolve(insertEvent(params))
+            .then(console.log('Successfully created Event entry in DB'))
+            .catch(console.error('Error during processing SQL INSERT query'))
     });
 
     res.writeHead(201);

@@ -4,16 +4,17 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-const eventQueries = require('../queries/eventQueries');
+const allEvents = require('../queries/allEvents');
+const queryToJson = require('../parsers/queryToJson');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    Promise.resolve(eventQueries.getAll())
+    Promise.resolve(allEvents())
         .then(function(result) {
-            res.render('index', { result: JSON.stringify(result) });
+            res.render('index', {result: JSON.stringify(queryToJson(result))});
         })
         .catch(function(error) {
-            console.log("Query error");
+            console.log(JSON.strigify(error));
         })
 });
 
