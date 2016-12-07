@@ -2,124 +2,125 @@
  * @author Niklas Hoffmann
  */
 
-var acceptecICalVersions = [
+// TODO TEST!!
+
+const validateIcs = require('./translation-utils/validateIcs');
+const validateJson = require('./translation-utils/validateJson');
+
+const acceptecICalVersions = [
     "2.0"
 ];
 
-module.exports = {
-    icsToJson: function (ics) {
+function icsToJson(ics) {
+    var lines = ics.split("\n");
 
-        var lines = ics.split("\n");
-        if (validateIcs(lines)) {
-            var result = [];
-            var json = {};
-            var eventProcessingStartet = false;
-            for (var i = 0; i < lines.length; i++) {
-                switch (lines[i]) {
-                    case "BEGIN:VEVENT":
-                        eventProcessingStartet = true;
-                        break;
-                    case "END:VCALENDAR":
-                        eventProcessingStartet = false;
-                        if (validateJson(json)) {
-                            result.add(json);
-                        } else {
-                            console.error("Created invalid JSON, are all required fields present?")
-                        }
-                        json = {};
-                        break;
-                    default:
-                        //TODO: refactor splitting at first ':'
-                        var splittedLine = lines[i].split(":");
-                        if (splittedLine.length > 2) {
-                            var key = splittedLine[0];
-                            var value = "";
-                            for (var i = 1; i < splittedLine.length; i++) {
-                                value += splittedLine[i];
-                            }
-                            switch (key) {
-                                case "UID":
-                                    var splittedUid = value.split("@");
-                                    if (splittedUid.length == 2) {
-                                        json["id"] = splittedUid[0];
-                                    } else {
-                                        console.error("Received invalid UID.")
-                                    }
-                                    break;
-                                case "LOCATION":
-                                    json["location"] = value;
-                                    break;
-                                case "SUMMARY":
-                                    json["summary"] = value;
-                                    break;
-                                case "DESCRIPTION":
-                                    json["description"] = value;
-                                    break;
-                                case "DTSTART":
-                                    break;
-                                case "DTEND":
-                                    break;
-                                case "DTSTAMP":
-                                    break;
-                                case "LAST-MODIFIED":
-                                    break;
-                                default:
-                                    console.error("Got unknown ICS field Implement \'" + key + "\'!");
-                                    break;
-                            }
-                        } else {
-                            console.error("Invalid line");
-                        }
+    if (!validateIcs(lines)) {
+        console.error('[eventTranslationService] icsToJson: Invalid ICS file');
+    }
 
+    var events = [];
+    var event = {};
+    lines.forEach(function(line) {
+        switch (line) {
+            case 'BEGIN:VCALENDAR':
+            case 'END:VEVENT':
+                break;
+            case 'BEGIN:VEVENT':
+                event = {};
+                break;
+            case 'END:VEVENT':
+                if (validateJson(event)) {
+                    events.add(event);
+                    break;
+                } else {
+                    console.error('[eventTranslationService] icsToJson: Created invalid JSON, are all required fields present?')
+                    break;
                 }
-
-            }
-        } else {
-            console.error("Got an invalid ICS file!");
+            default:
+                lineToJson(line, event);
+                break;
         }
-        return result;
-    },
-    jsonToIcs: function (jsonArray) {
-        var ics = "";
+    });
 
-        return ics;
+    return events;
+
+    function lineToJson(line, event) {
+        const splitPosition = line.indexOf(':');
+
+        if (splitPosition === -1) {
+            console.error('[eventTranslationService] icsToJson: Invalid line in ICS');
+        }
+
+        const fieldName = line.substr(0, splitPosition);
+        const fieldValue = line.substr(splitPosition + 1, line.length);
+
+        switch (fieldName) {
+            case "UID":
+                const splittedUid = fieldValue.split('@');
+                if (splittedUid.length === 2) {
+                    event['id'] = splittedUid[0];
+                } else {
+                    console.error("[eventTranslationService] icsToJson: Invalid UID")
+                }
+                break;
+            case "LOCATION":
+            case "SUMMARY":
+            case "DESCRIPTION":
+                const field = fieldName.toLowerCase();
+                event[field] = fieldValue;
+                break;
+            case "DTSTART":
+            case "DTEND":
+            case "DTSTAMP":
+            case "LAST-MODIFIED":
+                break;
+            default:
+                console.error('[eventTranslationService] icsToJson: Got unknown ICS field. Implement ' + fieldName);
+                break;
+        }
     }
+}
+
+function jsonToIcs(json) {
+    // TODO implement
+    var ics = "";
+    return ics;
+}
+
+function queryToIcs(queryResult) {
+    var ics = 'BEGIN:VCALENDAR\n';
+    ics += 'VERSION:2.0\n';
+    ics += 'PRODID:http://schulcloud.org/calendar/test/\n';
+    const events = queryResult.rows;
+    events.map(function (event) {
+        const startDate = new Date(event.start_timestamp);
+        const endDate = new Date(event.end_timestamp);
+        const createdAt = new Date(event.created_timestamp);
+        var lastModified = new Date(event.last_modified_timestamp);
+        ics += 'BEGIN:VEVENT\n';
+        ics += 'UID:' + event.id + '@schulcloud.org\n';
+        if (event.location) {
+            ics += 'LOCATION:' + event.location + '\n';
+        }
+        ics += 'SUMMARY:' + event.summary + '\n';
+        if (event.description) {
+            ics += 'DESCRIPTION:' + event.description + '\n';
+        }
+        ics += 'DTSTART:' + iCalendarDateFormat(startDate);
+        ics += 'DTEND:' + iCalendarDateFormat(endDate);
+        ics += 'DTSTAMP:' + iCalendarDateFormat(createdAt);
+        ics += 'LAST-MODIFIED:' + iCalendarDateFormat(lastModified);
+        ics += 'END:VEVENT\n';
+    });
+    return ics += 'END:VCALENDAR\n';
+
+    function iCalendarDateFormat(date) {
+        return date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
+    }
+}
+
+module.exports = {
+    icsToJson: icsToJson,
+    jsonToIcs: jsonToIcs,
+    queryToIcs: queryToIcs
 };
-
-function validateIcs(lines) {
-
-    if (lines[0] != "BEGIN:VCALENDAR") {
-        console.error("The begin of the given ics file does not match the expectation!");
-        return false;
-    }
-
-    if (lines[lines.length-1] != "END:VCALENDAR") {
-        console.error("The end of the given ics file does not match the expectation!");
-        return false;
-    }
-
-    if (lines[1].indexOf("VERSION") != -1) {
-        var versionSplit = lines[1].split(":");
-        if (versionSplit.length != 2 || acceptecICalVersions.indexOf(versionSplit[1]) == -1) {
-            console.error("The iCalendar version does not match any approved version!");
-            return false;
-        }
-    } else {
-        console.error("Invalid version format in ics file!");
-        return false;
-    }
-
-    if (lines[2].indexOf("PRODID") == -1) {
-        console.error("Missing PRODID in ics!");
-        return false;
-    }
-
-    //TODO: check if ICS contains at least one event
-
-    return true;
-}
-
-function validateJson(json) {
-    //TODO
-    return true;
-}
