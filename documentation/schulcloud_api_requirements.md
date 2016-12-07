@@ -74,7 +74,7 @@ Scopes are defined for
 * users
 
 <p align="center">
-  <img src="https://github.com/schulcloud/schulcloud-calendar/blob/master/scopes.png" alt="scopes"/>
+  <img src="https://github.com/schulcloud/schulcloud-calendar/blob/master/documentation/scopes.png" alt="scopes"/>
   <b>Figure 1</b> Possible scopes in the Schul-Cloud with their relations
 </p>
 
@@ -93,6 +93,6 @@ Imagine, Paul logs into his Schul-Cloud account and requests his calendar. Our s
 With these our service can look up the regarding entries in the appointment database. The associated table consists of events which are stored in the iCalendar format with an UUID of the corresponding scope (see figure 2). Thus we can get all appointments which belong to Paul's school, grade, and so on. In the end, we can provide Paul an iCalendar download.
 
 <p align="center">
-  <img src="https://github.com/schulcloud/schulcloud-calendar/blob/master/appointment-table.png" alt="appointment table"/>
+  <img src="https://github.com/schulcloud/schulcloud-calendar/blob/master/documentation/appointment-table.png" alt="appointment table"/>
   <b>Figure 2</b> Example appointment table
 </p>
