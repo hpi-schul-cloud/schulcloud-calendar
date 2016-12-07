@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-const eventTranslationService = require('../services/eventTranslationService');
+const icsToJson = require('../parsers/icsToJson');
 const eventQueries = require('../queries/eventQueries');
 
 // TODO TEST REFACTORING!!
@@ -13,7 +13,7 @@ router.post('/', function (req, res) {
     const ids = req.body.ids;
     const seperate = req.body.seperate;
     const ics = req.body.ics;
-    const json = eventTranslationService.icsToJson(ics);
+    const json = icsToJson(ics);
     var params = [];
     var referenceIds;
 

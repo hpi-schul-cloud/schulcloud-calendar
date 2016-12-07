@@ -4,14 +4,14 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-const eventTranslationService = require('../services/eventTranslationService');
+const queryToIcs = require('../parsers/queryToIcs');
 const eventQueries = require('../queries/eventQueries');
 const Readable = require('stream').Readable;
 
 router.get('/test', function (req, res) {
     Promise.resolve(eventQueries.getAll())
         .then(function(result) {
-            const ics = eventTranslationService.queryToIcs(result);
+            const ics = queryToIcs(result);
             var icsFile = new Readable();
             icsFile.push(ics);
             icsFile.push(null);
