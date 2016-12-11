@@ -14,7 +14,9 @@ router.get('/', function (req, res, next) {
             res.render('index', {result: JSON.stringify(queryToJson(result))});
         })
         .catch(function(error) {
-            console.log(JSON.strigify(error));
+            console.error(JSON.stringify(error));
+            if (!res.headersSent)
+                res.status(500).send("Internal Server Error");
         })
 });
 

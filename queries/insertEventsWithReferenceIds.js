@@ -1,0 +1,27 @@
+const client = require('../models/database');
+const insertEvent = require('./insertEvent');
+
+function insertEventsWithReferenceIds(params, referenceIds) {
+    return new Promise(function(resolve, reject) {
+
+        var processedQueries = 0;
+        referenceIds.forEach(function(referenceId) {
+            params[5] = referenceId;            //$6: reference_id
+            Promise.resolve(insertEvent(params))
+                .then(function(result) {
+                    console.log('Successfully created Event entry in DB');
+                    processedQueries++;
+                    if (processedQueries == referenceIds.length) {
+                        resolve();
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error during processing SQL INSERT query');
+                    console.error(error);
+                    reject(error);
+                });
+        });
+    });
+}
+
+module.exports = insertEventsWithReferenceIds;

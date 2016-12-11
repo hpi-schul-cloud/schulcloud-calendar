@@ -9,7 +9,7 @@ CREATE TABLE events (
   description             TEXT                                         DEFAULT NULL,
   start_timestamp         TIMESTAMP WITH TIME ZONE            NOT NULL,
   end_timestamp           TIMESTAMP WITH TIME ZONE            NOT NULL,
-  reference_id            UUID UNIQUE                         NOT NULL,
+  reference_id            UUID                                NOT NULL,
   created_timestamp       TIMESTAMP WITH TIME ZONE                     DEFAULT NOW(),
   last_modified_timestamp TIMESTAMP WITH TIME ZONE                     DEFAULT now()
 );

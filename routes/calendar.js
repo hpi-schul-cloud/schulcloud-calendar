@@ -23,7 +23,7 @@ router.get('/test', function (req, res) {
             icsFile.pipe(res);
         })
         .catch(function(error) {
-            console.log("Query error");
+            console.error("Query error");
         })
 });
 
