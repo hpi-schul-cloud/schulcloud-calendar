@@ -51,25 +51,29 @@ function handleJson(json, seperate, ids, req, res) {
 
     if (seperate === true) {
         Promise.resolve(getRequest(config.SCHULCLOUD_ALL_USERS_FOR_UUID + ids[0]))
-            .then(function(data) {
-                const result = data.result.data;
+            .then(function(response) {
+                const responseJson = JSON.parse(response);
+                const result = responseJson.data;
                 referenceIds = [];
                 if (Array.isArray(result)) {
                     for (var i in result) {
                         referenceIds.push(result[i]['id'])
                     }
+                    Promise.resolve(insertEventsWithReferenceIds(params, referenceIds))
+                        .then(function() {
+                            if (!res.headersSent)
+                                res.status(201).send("Success");
+                        })
+                        .catch(function(error) {
+                            console.error("Error during creating Events in DB!");
+                            console.error(error);
+                            if (!res.headersSent)
+                                res.status(500).send("Internal Server Error");
+                        });
+                } else {
+                    console.error("Got invalid server response (expected an array of ids)");
                 }
-                Promise.resolve(insertEventsWithReferenceIds(params, referenceIds))
-                    .then(function() {
-                        if (!res.headersSent)
-                            res.status(201).send("Success");
-                    })
-                    .catch(function(error) {
-                        console.error("Error during creating Events in DB!");
-                        console.error(error);
-                        if (!res.headersSent)
-                            res.status(500).send("Internal Server Error");
-                    });
+
             })
             .catch(function(status) {
                 console.error("Error during API request, status " + status);

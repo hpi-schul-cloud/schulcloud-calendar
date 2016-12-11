@@ -6,8 +6,9 @@ function insertEventsWithReferenceIds(params, referenceIds) {
 
         var processedQueries = 0;
         referenceIds.forEach(function(referenceId) {
-            params[5] = referenceId;            //$6: reference_id
-            Promise.resolve(insertEvent(params))
+            const paramsClone = params.slice(0);
+            paramsClone[5] = referenceId;            //$6: reference_id
+            Promise.resolve(insertEvent(paramsClone))
                 .then(function(result) {
                     console.log('Successfully created Event entry in DB');
                     processedQueries++;
