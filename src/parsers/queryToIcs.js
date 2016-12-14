@@ -4,6 +4,11 @@ function queryToIcs(queryResult) {
     ics += 'PRODID:http://schulcloud.org/calendar/test/\n';
     const events = queryResult.rows;
 
+    if(events.length === 0) {
+        // TODO: Handle empty calendar
+        return null;
+    }
+
     events.map(function(event) {
         const startDate = new Date(event.start_timestamp);
         const endDate = new Date(event.end_timestamp);

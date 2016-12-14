@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./src/bin/www",
+    "debug": "node debug ./src/bin/www",
     "test": "mocha --recursive --reporter nyan"
   },
   "dependencies": {
