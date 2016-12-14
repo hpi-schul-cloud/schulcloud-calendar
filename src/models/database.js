@@ -2,7 +2,7 @@ const pg = require('pg');
 const express = require("express");
 const app = express();
 
-let db;
+var db;
 if (app.get('env') === 'production') {
     const db_username = process.env.DB_USERNAME;
     const db_password = process.env.DB_PASSWORD;

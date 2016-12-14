@@ -6,7 +6,7 @@ function queryToIcs(queryResult) {
 
     if(events.length === 0) {
         // TODO: Handle empty calendar
-        return null;
+        return '';
     }
 
     events.map(function(event) {
