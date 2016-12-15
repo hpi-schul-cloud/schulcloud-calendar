@@ -1,9 +1,14 @@
-function queryToIcs(queryResult) {
+function queryToIcs(queryResult, scope) {
     var ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
     ics += 'PRODID:http://schulcloud.org/calendar/test/\n';
-    const events = queryResult.rows;
 
+    const name = scope && scope.attributes.name;
+    if (name) {
+        ics += 'X-WR-CALNAME:' + name + '\n'
+    }
+
+    const events = queryResult.rows;
     if(events.length === 0) {
         // TODO: Handle empty calendar
         return '';

@@ -25,21 +25,26 @@ router.get('/test', function(req, res) {
 });
 
 function getEventsForScopes(res, scopes) {
-    const referenceIds = JSON.parse(scopes).data.map(function(entry) {
+    scopes = JSON.parse(scopes).data;
+    const referenceIds = scopes.map(function(entry) {
         return entry.id;
     });
     Promise.all(referenceIds.map(allEventsForReferenceId))
-        .then(writeEventsIntoIcs.bind(null, res))
+        .then(writeEventsIntoIcs.bind(null, res, scopes))
         .catch(function(error) {
             console.error('[GET /calendar/test:getEventsForScopes] ERROR: ' + error);
         })
 }
 
-function writeEventsIntoIcs(res, events) {
+function writeEventsIntoIcs(res, scopes, queryResults) {
     var icsFile = new Readable();
     var contentLength = 0;
-    events.forEach(function(event) {
-        const ics = queryToIcs(event);
+    queryResults.forEach(function(queryResult) {
+        const event = queryResult.rows[0] || {};
+        const scope = scopes.find(function(scope) {
+            return scope.id === event.reference_id;
+        });
+        const ics = queryToIcs(queryResult, scope);
         icsFile.push(ics);
         contentLength += ics.length;
     });
