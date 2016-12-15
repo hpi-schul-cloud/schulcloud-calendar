@@ -8,14 +8,13 @@ const allEventsForReferenceId = require('../queries/allEventsForReferenceId');
 const queryToIcs = require('../parsers/queryToIcs');
 const Readable = require('stream').Readable;
 
-const getRequest = require('../http_requests/getRequest');
-const config = require('../http_requests/config');
+const getAllScopesForToken = require('../http_requests').getAllScopesForToken;
 
 // GET /calendar/test
 router.get('/test', function(req, res) {
     // TODO: get token from authentication header
     const token = 'student1_1';
-    Promise.resolve(getRequest(config.SCHULCLOUD_ALL_SCOPES_FOR_TOKEN + token))
+    Promise.resolve(getAllScopesForToken(token))
         .then(getEventsForScopes.bind(null, res))
         .catch(function() {
             console.error('[GET /calendar/test] ERROR: ' + error);

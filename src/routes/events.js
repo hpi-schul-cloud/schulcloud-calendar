@@ -7,8 +7,8 @@ router.use(bodyParser.urlencoded({ extended: false }));
 const icsToJson = require('../parsers/icsToJson');
 const insertEventsWithReferenceIds = require('../queries/insertEventsWithReferenceIds');
 const deleteEvent = require('../queries/deleteEvent');
-const getRequest = require('../http_requests/getRequest');
-const config = require('../http_requests/config');
+
+const getAllUsersForUUID = require('../http_requests').getAllUsersForUUID;
 
 router.post('/', function (req, res) {
     const ids = req.body.ids;
@@ -50,7 +50,7 @@ function handleJson(json, seperate, ids, req, res) {
     params[6] = new Date();                 //$7: created_timestamp
 
     if (seperate === true) {
-        Promise.resolve(getRequest(config.SCHULCLOUD_ALL_USERS_FOR_UUID + ids[0]))
+        Promise.resolve(getAllUsersForUUID(ids[0]))
             .then(function(response) {
                 const responseJson = JSON.parse(response);
                 const result = responseJson.data;
