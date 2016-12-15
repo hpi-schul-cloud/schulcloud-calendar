@@ -9,15 +9,15 @@ const queryToJson = require('../parsers/queryToJson');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    Promise.resolve(allEvents())
-        .then(function(result) {
+    Promise.resolve(allEvents()).then(
+        function(result) {
             res.render('index', {result: JSON.stringify(queryToJson(result))});
-        })
-        .catch(function(error) {
+        },
+        function(error) {
             console.error(JSON.stringify(error));
             if (!res.headersSent)
                 res.status(500).send("Internal Server Error");
-        })
+        });
 });
 
 router.get('/system-info/haproxy', function (req, res) {

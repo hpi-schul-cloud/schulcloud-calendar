@@ -14,10 +14,11 @@ const getAllScopesForToken = require('../http_requests').getAllScopesForToken;
 router.get('/test', function(req, res) {
     // TODO: get token from authentication header
     const token = 'student1_1';
-    Promise.resolve(getAllScopesForToken(token))
-        .then(getEventsForScopes.bind(null, res))
-        .catch(function() {
-            console.error('[GET /calendar/test] ERROR: ' + error);
+    Promise.resolve(getAllScopesForToken(token)).then(
+        getEventsForScopes.bind(null, res),
+        function(error) {
+            console.error('Error during GET request (all scopes for token).');
+            console.error(error);
             if (!res.headersSent) {
                 res.status(500).send("Internal Server Error");
             }
@@ -29,11 +30,12 @@ function getEventsForScopes(res, scopes) {
     const referenceIds = scopes.map(function(entry) {
         return entry.id;
     });
-    Promise.all(referenceIds.map(allEventsForReferenceId))
-        .then(writeEventsIntoIcs.bind(null, res, scopes))
-        .catch(function(error) {
-            console.error('[GET /calendar/test:getEventsForScopes] ERROR: ' + error);
-        })
+    Promise.all(referenceIds.map(allEventsForReferenceId)).then(
+        writeEventsIntoIcs.bind(null, res, scopes),
+        function(error) {
+            console.error('Error during GET request (all events for reference id).');
+            console.error(error);
+        });
 }
 
 function writeEventsIntoIcs(res, scopes, queryResults) {

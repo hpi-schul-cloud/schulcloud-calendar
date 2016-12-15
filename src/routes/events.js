@@ -50,8 +50,8 @@ function handleJson(json, seperate, ids, req, res) {
     params[6] = new Date();                 //$7: created_timestamp
 
     if (seperate === true) {
-        Promise.resolve(getAllUsersForUUID(ids[0]))
-            .then(function(response) {
+        Promise.resolve(getAllUsersForUUID(ids[0])).then(
+            function(response) {
                 const responseJson = JSON.parse(response);
                 const result = responseJson.data;
                 referenceIds = [];
@@ -59,14 +59,12 @@ function handleJson(json, seperate, ids, req, res) {
                     for (var i in result) {
                         referenceIds.push(result[i]['id'])
                     }
-                    Promise.resolve(insertEventsWithReferenceIds(params, referenceIds))
-                        .then(function() {
+                    Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
+                        function(result) {
                             if (!res.headersSent)
                                 res.status(201).send("Success");
-                        })
-                        .catch(function(error) {
-                            console.error("Error during creating Events in DB!");
-                            console.error(error);
+                        },
+                        function(error) {
                             if (!res.headersSent)
                                 res.status(500).send("Internal Server Error");
                         });
@@ -74,20 +72,20 @@ function handleJson(json, seperate, ids, req, res) {
                     console.error("Got invalid server response (expected an array of ids)");
                 }
 
-            })
-            .catch(function(status) {
-                console.error("Error during API request, status " + status);
+            },
+            function(error) {
+                console.error("Error during API request, status " + error);
                 if (!res.headersSent)
                     res.status(500).send("Internal Server Error");
             });
     } else {
         referenceIds = [ids[0]];
-        Promise.resolve(insertEventsWithReferenceIds(params, referenceIds))
-            .then(function() {
+        Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
+            function() {
                 if (!res.headersSent)
                     res.status(201).send("Success");
-            })
-            .catch(function(error) {
+            },
+            function(error) {
                 console.error("Error during creating Events in DB!");
                 console.error(error)
                 if (!res.headersSent)
@@ -106,14 +104,12 @@ router.put('/:id', function (req, res) {
 
 router.delete('/:id', function (req, res) {
     var id = req.params.id;
-    Promise.resolve(deleteEvent([id]))
-        .then(function () {
+    Promise.resolve(deleteEvent([id])).then(
+        function () {
             if (!res.headersSent)
                 res.status(201).send("Success");
-        })
-        .catch(function (error) {
-            console.error("Error during deleting an Event in DB!");
-            console.error(error)
+        },
+        function (error) {
             if (!res.headersSent)
                 res.status(500).send("Internal Server Error");
         })
