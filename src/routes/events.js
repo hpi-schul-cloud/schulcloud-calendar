@@ -7,21 +7,22 @@ router.use(bodyParser.urlencoded({ extended: false }));
 const icsToJson = require('../parsers/icsToJson');
 const insertEventsWithReferenceIds = require('../queries/insertEventsWithReferenceIds');
 const deleteEvent = require('../queries/deleteEvent');
-
 const getAllUsersForUUID = require('../http_requests').getAllUsersForUUID;
+const handleSuccess = require('./utils/handleSuccess')
+const handleError = require('./utils/handleError')
 
 router.post('/', function (req, res) {
     const ids = req.body.ids;
     if (!Array.isArray(ids) || ids.length === 0) {
         console.error("Got invalid \'ids\' array!");
-        res.status(500).send("Internal Server Error");
+        handleError(res);
         return;
     }
     const seperate = req.body.seperate;
     const ics = req.body.ics;
     const json = icsToJson(ics);
     if (!json) {
-        res.status(500).send("Internal Server Error");
+        handleError(res);
         return;
     }
 
@@ -60,37 +61,20 @@ function handleJson(json, seperate, ids, req, res) {
                         referenceIds.push(result[i]['id'])
                     }
                     Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
-                        function(result) {
-                            if (!res.headersSent)
-                                res.status(201).send("Success");
-                        },
-                        function(error) {
-                            if (!res.headersSent)
-                                res.status(500).send("Internal Server Error");
-                        });
+                        handleSuccess.bind(null, res),
+                        handleError.bind(null, res)
+                    );
                 } else {
                     console.error("Got invalid server response (expected an array of ids)");
                 }
 
-            },
-            function(error) {
-                console.error("Error during API request, status " + error);
-                if (!res.headersSent)
-                    res.status(500).send("Internal Server Error");
-            });
+            }, handleError.bind(null, res));
     } else {
         referenceIds = [ids[0]];
         Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
-            function() {
-                if (!res.headersSent)
-                    res.status(201).send("Success");
-            },
-            function(error) {
-                console.error("Error during creating Events in DB!");
-                console.error(error)
-                if (!res.headersSent)
-                    res.status(500).send("Internal Server Error");
-            });
+            handleSuccess.bind(null, res),
+            handleError.bind(null, res)
+        );
     }
 }
 
@@ -105,14 +89,9 @@ router.put('/:id', function (req, res) {
 router.delete('/:id', function (req, res) {
     var id = req.params.id;
     Promise.resolve(deleteEvent([id])).then(
-        function () {
-            if (!res.headersSent)
-                res.status(201).send("Success");
-        },
-        function (error) {
-            if (!res.headersSent)
-                res.status(500).send("Internal Server Error");
-        })
+        handleSuccess.bind(null, res),
+        handleError.bind(null, res)
+    );
 });
 
 module.exports = router;

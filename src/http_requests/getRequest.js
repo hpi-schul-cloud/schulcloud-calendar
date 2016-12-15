@@ -10,6 +10,7 @@ function getRequest(url) {
             if (httpStatus == 200) {
                 resolve(request.responseText);
             } else {
+                console.error('Error status ' + httpStatus + 'for GET ' + url);
                 reject(httpStatus);
             }
         };

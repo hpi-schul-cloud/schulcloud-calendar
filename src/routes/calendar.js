@@ -7,6 +7,7 @@ router.use(bodyParser.urlencoded({extended: false}));
 const allEventsForReferenceId = require('../queries/allEventsForReferenceId');
 const queryToIcs = require('../parsers/queryToIcs');
 const Readable = require('stream').Readable;
+const handleError = require('./utils/handleError')
 
 const getAllScopesForToken = require('../http_requests').getAllScopesForToken;
 
@@ -16,13 +17,8 @@ router.get('/test', function(req, res) {
     const token = 'student1_1';
     Promise.resolve(getAllScopesForToken(token)).then(
         getEventsForScopes.bind(null, res),
-        function(error) {
-            console.error('Error during GET request (all scopes for token).');
-            console.error(error);
-            if (!res.headersSent) {
-                res.status(500).send("Internal Server Error");
-            }
-        });
+        handleError.bind(null, res)
+    );
 });
 
 function getEventsForScopes(res, scopes) {
@@ -31,11 +27,7 @@ function getEventsForScopes(res, scopes) {
         return entry.id;
     });
     Promise.all(referenceIds.map(allEventsForReferenceId)).then(
-        writeEventsIntoIcs.bind(null, res, scopes),
-        function(error) {
-            console.error('Error during GET request (all events for reference id).');
-            console.error(error);
-        });
+        writeEventsIntoIcs.bind(null, res, scopes));
 }
 
 function writeEventsIntoIcs(res, scopes, queryResults) {

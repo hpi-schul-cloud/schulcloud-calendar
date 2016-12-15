@@ -6,6 +6,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 const allEvents = require('../queries/allEvents');
 const queryToJson = require('../parsers/queryToJson');
+const handleError = require('./utils/handleError')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -13,11 +14,8 @@ router.get('/', function (req, res, next) {
         function(result) {
             res.render('index', {result: JSON.stringify(queryToJson(result))});
         },
-        function(error) {
-            console.error(JSON.stringify(error));
-            if (!res.headersSent)
-                res.status(500).send("Internal Server Error");
-        });
+        handleError.bind(null, res)
+    );
 });
 
 router.get('/system-info/haproxy', function (req, res) {

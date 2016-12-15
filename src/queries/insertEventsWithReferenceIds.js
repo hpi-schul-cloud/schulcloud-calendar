@@ -17,8 +17,6 @@ function insertEventsWithReferenceIds(params, referenceIds) {
                     }
                 },
                 function (error) {
-                    console.error('Error during SQL INSERT query');
-                    console.error(error);
                     reject(error);
                 });
         });
