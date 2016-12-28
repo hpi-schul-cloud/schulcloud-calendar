@@ -14,7 +14,7 @@ const handleError = require('./utils/handleError')
 router.post('/', function (req, res) {
     const ids = req.body.ids;
     if (!Array.isArray(ids) || ids.length === 0) {
-        console.error("Got invalid \'ids\' array!");
+        console.error("Got invalid 'ids' array!");
         handleError(res);
         return;
     }
@@ -34,6 +34,22 @@ router.post('/', function (req, res) {
         handleJson(json, seperate, ids, req, res);
     }
 
+});
+
+router.put('/:id', function (req, res) {
+    // TODO implement
+    var ids = req.body.ids;
+    var seperate = req.body.seperate;
+    var ics = req.body.ics;
+    var id = req.params.id;
+});
+
+router.delete('/:id', function (req, res) {
+    var id = req.params.id;
+    Promise.resolve(deleteEvent([id])).then(
+        handleSuccess.bind(null, res),
+        handleError.bind(null, res)
+    );
 });
 
 function handleJson(json, seperate, ids, req, res) {
@@ -63,22 +79,6 @@ function handleJson(json, seperate, ids, req, res) {
         );
     }
 }
-
-router.put('/:id', function (req, res) {
-    // TODO implement
-    var ids = req.body.ids;
-    var seperate = req.body.seperate;
-    var ics = req.body.ics;
-    var id = req.params.id;
-});
-
-router.delete('/:id', function (req, res) {
-    var id = req.params.id;
-    Promise.resolve(deleteEvent([id])).then(
-        handleSuccess.bind(null, res),
-        handleError.bind(null, res)
-    );
-});
 
 function insertSeperateEvents(res, response) {
     const responseJson = JSON.parse(response);
