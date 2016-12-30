@@ -24,4 +24,11 @@ if (app.get('env') === 'production') {
 const client = new pg.Client(db);
 client.connect();
 
+client.query("SET intervalstyle = 'iso_8601';");
+var types = require('pg').types
+var INTERVAL_OID = 1186;
+types.setTypeParser(INTERVAL_OID, function(val) {
+    return val.toString();
+});
+
 module.exports = client;
