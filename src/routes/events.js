@@ -39,7 +39,7 @@ router.post('/', function (req, res) {
 function handleJson(json, seperate, ids, req, res) {
     /*
      * json contains id, summary, location, description, start_timestamp,
-     * end_timestamp, reference_id, created_timestamp, last_modified_timestamp
+     * end_timestamp, reference_id, created_timestamp, last_modified_timestamp, repeat, repeat_interval
      */
     var params = [];
     var referenceIds;
@@ -49,6 +49,8 @@ function handleJson(json, seperate, ids, req, res) {
     params[3] = json["start_timestamp"];    //$4: start_timestamp
     params[4] = json["end_timestamp"];      //$5: end_timestamp
     params[6] = new Date();                 //$7: created_timestamp
+    params[7] = json["repeat"];             //$8: repeat
+    params[8] = json["repeat_interval"];    //$9: repeat_interval
 
     if (seperate === true) {
         Promise.resolve(getAllUsersForUUID(ids[0])).then(

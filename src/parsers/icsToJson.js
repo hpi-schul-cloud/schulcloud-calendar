@@ -78,6 +78,26 @@ function lineToJson(line, event) {
         case "LAST-MODIFIED":
             event["modified_timestamp"] = regularDateFormat(fieldValue);
             break;
+        case "RRULE":
+            const repeatAttributes = fieldValue.split(';');
+            console.log(repeatAttributes);
+            for (var i = 0; i < repeatAttributes.length; i++) {
+                const raName = (repeatAttributes[i].split('='))[0];
+                console.log(raName);
+                const raValue = (repeatAttributes[i].split('='))[1];
+                console.log(raValue);
+                switch (raName) {
+                    case "FREQ":
+                        event["repeat"] = raValue;
+                        break;
+                    case "INTERVAL":
+                        event["repeat_interval"] = raValue;
+                        break;
+                    default:
+                        console.error("Invalid repeat attribute: " + raName + ": " + raValue);
+                }
+            }
+            break;
         default:
             console.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
             break;
