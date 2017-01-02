@@ -15,6 +15,8 @@ if (app.get('env') === 'production') {
     }
 
     db = `postgres://${db_username}:${db_password}@${db_host}:${db_port}/${db_database}`;
+} else if (app.get('env') === 'test') {
+    db = 'postgres://node:node@localhost:5432/schulcloud_calendar_test';
 } else {
     db = 'postgres://node:node@localhost:5432/schulcloud_calendar';
 }

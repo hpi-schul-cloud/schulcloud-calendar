@@ -14,7 +14,7 @@ const handleError = require('./utils/handleError')
 router.post('/', function (req, res) {
     const ids = req.body.ids;
     if (!Array.isArray(ids) || ids.length === 0) {
-        console.error("Got invalid \'ids\' array!");
+        console.error("Got invalid 'ids' array!");
         handleError(res);
         return;
     }
@@ -27,13 +27,29 @@ router.post('/', function (req, res) {
     }
 
     if (Array.isArray(json)) {
-        for (var i in json) {
-            handleJson(json[i], seperate, ids, req, res);
-        }
+        json.forEach(function(event) {
+            handleJson(event, seperate, ids, req, res);
+        });
     } else {
         handleJson(json, seperate, ids, req, res);
     }
 
+});
+
+router.put('/:id', function (req, res) {
+    // TODO implement
+    var ids = req.body.ids;
+    var seperate = req.body.seperate;
+    var ics = req.body.ics;
+    var id = req.params.id;
+});
+
+router.delete('/:id', function (req, res) {
+    var id = req.params.id;
+    Promise.resolve(deleteEvent([id])).then(
+        handleSuccess.bind(null, res),
+        handleError.bind(null, res)
+    );
 });
 
 function handleJson(json, seperate, ids, req, res) {
@@ -54,23 +70,9 @@ function handleJson(json, seperate, ids, req, res) {
 
     if (seperate === true) {
         Promise.resolve(getAllUsersForUUID(ids[0])).then(
-            function(response) {
-                const responseJson = JSON.parse(response);
-                const result = responseJson.data;
-                referenceIds = [];
-                if (Array.isArray(result)) {
-                    for (var i in result) {
-                        referenceIds.push(result[i]['id'])
-                    }
-                    Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
-                        handleSuccess.bind(null, res),
-                        handleError.bind(null, res)
-                    );
-                } else {
-                    console.error("Got invalid server response (expected an array of ids)");
-                }
-
-            }, handleError.bind(null, res));
+            insertSeperateEvents.bind(null, res),
+            handleError.bind(null, res)
+        );
     } else {
         referenceIds = [ids[0]];
         Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
@@ -80,20 +82,23 @@ function handleJson(json, seperate, ids, req, res) {
     }
 }
 
-router.put('/:id', function (req, res) {
-    // TODO implement
-    var ids = req.body.ids;
-    var seperate = req.body.seperate;
-    var ics = req.body.ics;
-    var id = req.params.id;
-});
+function insertSeperateEvents(res, response) {
+    const responseJson = JSON.parse(response);
+    const result = responseJson.data;
 
-router.delete('/:id', function (req, res) {
-    var id = req.params.id;
-    Promise.resolve(deleteEvent([id])).then(
+    if(!Array.isArray(result)) {
+        console.error("Got invalid server response (expected an array of ids)");
+        return;
+    }
+
+    referenceIds = result.map(function(entry) {
+        return entry.id;
+    })
+
+    Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
         handleSuccess.bind(null, res),
         handleError.bind(null, res)
     );
-});
+}
 
 module.exports = router;
