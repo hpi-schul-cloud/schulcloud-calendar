@@ -80,12 +80,9 @@ function lineToJson(line, event) {
             break;
         case "RRULE":
             const repeatAttributes = fieldValue.split(';');
-            console.log(repeatAttributes);
             for (var i = 0; i < repeatAttributes.length; i++) {
                 const raName = (repeatAttributes[i].split('='))[0];
-                console.log(raName);
                 const raValue = (repeatAttributes[i].split('='))[1];
-                console.log(raValue);
                 switch (raName) {
                     case "FREQ":
                         event["repeat"] = raValue;
