@@ -3,15 +3,16 @@ const insertEvent = require('./insertEvent');
 
 function insertEventsWithReferenceIds(params, referenceIds) {
     return new Promise(function(resolve, reject) {
-        var processedQueries = 0;
-        Promise.all(referenceIds.map(function(referenceId) {
+        var promisesForReferenceIds = [];
+        for (var i = 0; i < referenceIds.length; i++) {
             const paramsClone = params.slice(0);
-            paramsClone[5] = referenceId;
-            insertEvent(paramsClone)
-        })).then(
-            function() {
+            paramsClone[5] = referenceIds[i];
+            promisesForReferenceIds.push(insertEvent(paramsClone));
+        }
+
+        Promise.all(promisesForReferenceIds).then(function (results) {
                 console.log('Successfully inserted events.');
-                resolve();
+                resolve(results);
             },
             function(error) {
                 reject(error);

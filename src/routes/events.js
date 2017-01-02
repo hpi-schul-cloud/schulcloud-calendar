@@ -8,8 +8,9 @@ const icsToJson = require('../parsers/icsToJson');
 const insertEventsWithReferenceIds = require('../queries/insertEventsWithReferenceIds');
 const deleteEvent = require('../queries/deleteEvent');
 const getAllUsersForUUID = require('../http_requests').getAllUsersForUUID;
-const handleSuccess = require('./utils/handleSuccess')
-const handleError = require('./utils/handleError')
+const handleSuccess = require('./utils/handleSuccess');
+const handleError = require('./utils/handleError');
+const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent');
 
 router.post('/', function (req, res) {
     const ids = req.body.ids;
@@ -75,10 +76,27 @@ function handleJson(json, seperate, ids, req, res) {
         );
     } else {
         referenceIds = [ids[0]];
-        Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
-            handleSuccess.bind(null, res),
-            handleError.bind(null, res)
-        );
+        Promise.resolve(insertEventsWithReferenceIds(params, referenceIds))
+            .then(function (results) {
+                // TODO: check if result is uuid
+                if (Array.isArray(results)) {
+                    // check if exception dates for possible repeat exist
+                    // TODO: if so, check if repeat is set because of consistency reasons...
+                    if (Array.isArray(json["exdate"])) {
+                        const exdates = json["exdate"];
+                        for (var i = 0; i < exdates.length; i++) {
+                            for (var j = 0; j < results.length; j++) {
+                                var params = [];
+                                params[0] = results[j];
+                                params[1] = exdates[i];
+                                addRepeatExceptionToEvent(params);
+                            }
+                        }
+                    }
+                }
+
+                handleSuccess(res);
+        }, handleError.bind(null, res));
     }
 }
 
