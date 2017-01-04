@@ -73,7 +73,7 @@ definitions:
         type: array
         items:
           type: string
-      seperate:
+      separateUsers:
         type: boolean
       ics:
         type: string

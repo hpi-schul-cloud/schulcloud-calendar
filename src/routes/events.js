@@ -18,7 +18,7 @@ router.post('/', function (req, res) {
         handleError(res);
         return;
     }
-    const seperate = req.body.seperate;
+    const separateUsers = req.body.separateUsers;
     const ics = req.body.ics;
     const json = icsToJson(ics);
     if (!json) {
@@ -28,10 +28,10 @@ router.post('/', function (req, res) {
 
     if (Array.isArray(json)) {
         json.forEach(function(event) {
-            handleJson(event, seperate, ids, req, res);
+            handleJson(event, separateUsers, ids, req, res);
         });
     } else {
-        handleJson(json, seperate, ids, req, res);
+        handleJson(json, separateUsers, ids, req, res);
     }
 
 });
@@ -39,7 +39,7 @@ router.post('/', function (req, res) {
 router.put('/:id', function (req, res) {
     // TODO implement
     var ids = req.body.ids;
-    var seperate = req.body.seperate;
+    var separateUsers = req.body.separateUsers;
     var ics = req.body.ics;
     var id = req.params.id;
 });
@@ -52,7 +52,7 @@ router.delete('/:id', function (req, res) {
     );
 });
 
-function handleJson(json, seperate, ids, req, res) {
+function handleJson(json, separateUsers, ids, req, res) {
     /*
      * json contains id, summary, location, description, start_timestamp,
      * end_timestamp, reference_id, created_timestamp, last_modified_timestamp
@@ -66,9 +66,9 @@ function handleJson(json, seperate, ids, req, res) {
     params[4] = json["end_timestamp"];      //$5: end_timestamp
     params[6] = new Date();                 //$7: created_timestamp
 
-    if (seperate === true) {
+    if (separateUsers === true) {
         Promise.resolve(getAllUsersForUUID(ids[0])).then(
-            insertSeperateEvents.bind(null, res),
+            insertSeparateEvents.bind(null, res),
             handleError.bind(null, res)
         );
     } else {
@@ -80,7 +80,7 @@ function handleJson(json, seperate, ids, req, res) {
     }
 }
 
-function insertSeperateEvents(res, response) {
+function insertSeparateEvents(res, response) {
     const responseJson = JSON.parse(response);
     const result = responseJson.data;
 
