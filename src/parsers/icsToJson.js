@@ -1,5 +1,5 @@
-const validateIcs = require('./validateIcs');
-const validateJson = require('./validateJson');
+const validateIcs = require('./validate/validateIcs');
+const validateJson = require('./validate/validateJson');
 
 function icsToJson(ics) {
     const lines = ics.split("\n");

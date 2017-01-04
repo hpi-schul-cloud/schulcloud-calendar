@@ -1,5 +1,5 @@
 const client = require('../models/database');
-const errorMessage = require('./errorMessage');
+const errorMessage = require('./utils/errorMessage');
 
 function deleteEvent(params) {
     return new Promise(function(resolve, reject) {
