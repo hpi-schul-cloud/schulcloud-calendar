@@ -1,9 +1,20 @@
 const expect = require('chai').expect;
 const request = require('supertest');
 const app = require('../../src/app');
-const calendar = require('../../src/routes/calendar');
+const dbClient = require('../../src/models/database');
+const fillDatabase = require('../utils/fillDatabase');
+const DatabaseCleaner = require('database-cleaner');
+const databaseCleaner = new DatabaseCleaner('postgresql');
 
 describe('routes/calendar', function() {
+
+    beforeEach(function(done) {
+        fillDatabase(dbClient, done);
+    });
+
+    afterEach(function(done) {
+        databaseCleaner.clean(dbClient, done);
+    });
 
     describe('GET calendar/test', function() {
 

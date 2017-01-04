@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "database-cleaner": "^1.2.0",
     "mocha": "^3.2.0",
     "supertest": "^2.0.1"
   }
