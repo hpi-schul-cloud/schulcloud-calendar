@@ -68,7 +68,7 @@ definitions:
   ExternalEventRequest:
     type: object
     properties:
-      ids:
+      scopeIds:
         description: ids of entities
         type: array
         items:
@@ -80,7 +80,7 @@ definitions:
   ExternalEventDeleteRequest:
     type: object
     properties:
-      ids:
+      scopeIds:
         description: ids of entities
         type: array
         items:

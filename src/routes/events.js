@@ -12,9 +12,9 @@ const handleSuccess = require('./utils/handleSuccess')
 const handleError = require('./utils/handleError')
 
 router.post('/', function (req, res) {
-    const ids = req.body.ids;
-    if (!Array.isArray(ids) || ids.length === 0) {
-        console.error("Got invalid 'ids' array!");
+    const scopeIds = req.body.scopeIds;
+    if (!Array.isArray(scopeIds) || scopeIds.length === 0) {
+        console.error("Got invalid 'scopeIds' array!");
         handleError(res);
         return;
     }
@@ -28,23 +28,24 @@ router.post('/', function (req, res) {
 
     if (Array.isArray(json)) {
         json.forEach(function(event) {
-            handleJson(event, separateUsers, ids, req, res);
+            handleJson(event, separateUsers, scopeIds, req, res);
         });
     } else {
-        handleJson(json, separateUsers, ids, req, res);
+        handleJson(json, separateUsers, scopeIds, req, res);
     }
 
 });
 
 router.put('/:id', function (req, res) {
     // TODO implement
-    var ids = req.body.ids;
+    var scopeIds = req.body.scopeIds;
     var separateUsers = req.body.separateUsers;
     var ics = req.body.ics;
     var id = req.params.id;
 });
 
 router.delete('/:id', function (req, res) {
+    // TODO implement with scopeIds
     var id = req.params.id;
     Promise.resolve(deleteEvent([id])).then(
         handleSuccess.bind(null, res),
@@ -52,7 +53,7 @@ router.delete('/:id', function (req, res) {
     );
 });
 
-function handleJson(json, separateUsers, ids, req, res) {
+function handleJson(json, separateUsers, scopeIds, req, res) {
     /*
      * json contains id, summary, location, description, start_timestamp,
      * end_timestamp, reference_id, created_timestamp, last_modified_timestamp
@@ -67,12 +68,12 @@ function handleJson(json, separateUsers, ids, req, res) {
     params[6] = new Date();                 //$7: created_timestamp
 
     if (separateUsers === true) {
-        Promise.resolve(getAllUsersForUUID(ids[0])).then(
+        Promise.resolve(getAllUsersForUUID(scopeIds[0])).then(
             insertSeparateEvents.bind(null, res),
             handleError.bind(null, res)
         );
     } else {
-        referenceIds = [ids[0]];
+        referenceIds = [scopeIds[0]];
         Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
             handleSuccess.bind(null, res),
             handleError.bind(null, res)
@@ -85,7 +86,7 @@ function insertSeparateEvents(res, response) {
     const result = responseJson.data;
 
     if(!Array.isArray(result)) {
-        console.error("Got invalid server response (expected an array of ids)");
+        console.error("Got invalid server response (expected an array of scopeIds)");
         return;
     }
 
