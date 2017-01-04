@@ -1,11 +1,12 @@
 const validateIcs = require('./validate/validateIcs');
 const validateJson = require('./validate/validateJson');
+const consoleError = require('../utils/consoleError');
 
 function icsToJson(ics) {
     const lines = ics.split("\n");
 
     if (!validateIcs(lines)) {
-        console.error('[icsToJson] Invalid ICS file');
+        consoleError('[icsToJson] Invalid ICS file');
         return;
     }
 
@@ -24,7 +25,7 @@ function icsToJson(ics) {
                 if (validateJson(event)) {
                     events.push(event);
                 } else {
-                    console.error('[icsToJson] Created invalid JSON, are all required fields present?')
+                    consoleError('[icsToJson] Created invalid JSON, are all required fields present?')
                 }
                 break;
             default:
@@ -40,7 +41,7 @@ function lineToJson(line, event) {
     const splitPosition = line.indexOf(':');
 
     if (splitPosition === -1) {
-        console.error('[icsToJson] Invalid line in ICS');
+        consoleError('[icsToJson] Invalid line in ICS');
         return;
     }
 
@@ -53,7 +54,7 @@ function lineToJson(line, event) {
             if (splittedUid.length === 2) {
                 event['id'] = splittedUid[0];
             } else {
-                console.error("[icsToJson] Invalid UID")
+                consoleError("[icsToJson] Invalid UID")
             }
             break;
         case "LOCATION":
@@ -73,13 +74,13 @@ function lineToJson(line, event) {
             event["end_timestamp"] = regularDateFormat(fieldValue);
             break;
         case "DTSTAMP":
-            event["created_timestamo"] = regularDateFormat(fieldValue);
+            event["created_timestamp"] = regularDateFormat(fieldValue);
             break;
         case "LAST-MODIFIED":
             event["modified_timestamp"] = regularDateFormat(fieldValue);
             break;
         default:
-            console.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
+            consoleError('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
             break;
     }
 }

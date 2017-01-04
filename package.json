@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./src/bin/www",
     "debug": "node debug ./src/bin/www",
-    "test": "cross-env NODE_ENV=test mocha --recursive --reporter nyan"
+    "test": "cross-env NODE_ENV=test mocha --recursive --reporter nyan",
+    "coverage": "cross-env NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha test/*/*.js"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "database-cleaner": "^1.2.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "supertest": "^2.0.1"
   }

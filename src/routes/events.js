@@ -10,11 +10,12 @@ const deleteEvent = require('../queries/deleteEvent');
 const getAllUsersForUUID = require('../http_requests').getAllUsersForUUID;
 const handleSuccess = require('./utils/handleSuccess')
 const handleError = require('./utils/handleError')
+const consoleError = require('../utils/consoleError');
 
 router.post('/', function (req, res) {
     const scopeIds = req.body.scopeIds;
     if (!Array.isArray(scopeIds) || scopeIds.length === 0) {
-        console.error("Got invalid 'scopeIds' array!");
+        consoleError("Got invalid 'scopeIds' array!");
         handleError(res);
         return;
     }
@@ -86,7 +87,7 @@ function insertSeparateEvents(res, response) {
     const result = responseJson.data;
 
     if(!Array.isArray(result)) {
-        console.error("Got invalid server response (expected an array of scopeIds)");
+        consoleError("Got invalid server response (expected an array of scopeIds)");
         return;
     }
 

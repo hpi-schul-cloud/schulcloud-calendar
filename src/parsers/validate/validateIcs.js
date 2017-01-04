@@ -1,10 +1,12 @@
+const consoleError = require('../../utils/consoleError');
+
 const acceptedICalVersions = [
     "2.0"
 ];
 
 function validateIcs(lines) {
     if (lines[0] != "BEGIN:VCALENDAR") {
-        console.error("[validateIcs] The begin of the given ics file does not match the expectation!");
+        consoleError("[validateIcs] The begin of the given ics file does not match the expectation!");
         return false;
     }
 
@@ -14,7 +16,7 @@ function validateIcs(lines) {
         : lines[lines.length - 1]
 
     if (lastLine !== "END:VCALENDAR") {
-        console.error("[validateIcs] The end of the given ics file does not match the expectation!");
+        consoleError("[validateIcs] The end of the given ics file does not match the expectation!");
         return false;
     }
 
@@ -22,17 +24,17 @@ function validateIcs(lines) {
         var versionSplit = lines[1].split(":");
 
         if (versionSplit.length !== 2 || acceptedICalVersions.indexOf(versionSplit[1]) === -1) {
-            console.error("[validateIcs] The iCalendar version does not match any approved version!");
+            consoleError("[validateIcs] The iCalendar version does not match any approved version!");
             return false;
         }
 
     } else {
-        console.error("[validateIcs] Invalid version format in ics file!");
+        consoleError("[validateIcs] Invalid version format in ics file!");
         return false;
     }
 
     if (lines[2].indexOf("PRODID") === -1) {
-        console.error("[validateIcs] Missing PRODID in ics!");
+        consoleError("[validateIcs] Missing PRODID in ics!");
         return false;
     }
 
