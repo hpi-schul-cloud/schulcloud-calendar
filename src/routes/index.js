@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-const allEvents = require('../queries/allEvents');
 const queryToJson = require('../parsers/queryToJson');
 const handleError = require('./utils/handleError')
 

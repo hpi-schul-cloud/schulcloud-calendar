@@ -5,7 +5,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 const icsToJson = require('../parsers/icsToJson');
-const insertEventsWithReferenceIds = require('../queries/insertEventsWithReferenceIds');
+const insertEvents = require('../queries/insertEvents');
 const deleteEvent = require('../queries/deleteEvent');
 const getAllUsersForUUID = require('../http_requests').getAllUsersForUUID;
 const handleSuccess = require('./utils/handleSuccess')
@@ -74,7 +74,7 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
         );
     } else {
         referenceIds = [scopeIds[0]];
-        Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
+        Promise.resolve(insertEvents(params, referenceIds)).then(
             handleSuccess.bind(null, res),
             handleError.bind(null, res)
         );
@@ -94,7 +94,7 @@ function insertSeparateEvents(res, response) {
         return entry.id;
     })
 
-    Promise.resolve(insertEventsWithReferenceIds(params, referenceIds)).then(
+    Promise.resolve(insertEvents(params, referenceIds)).then(
         handleSuccess.bind(null, res),
         handleError.bind(null, res)
     );

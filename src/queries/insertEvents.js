@@ -1,7 +1,7 @@
 const client = require('../models/database');
-const insertEvent = require('./insertEvent');
+const insertEvent = require('./_insertEvent');
 
-function insertEventsWithReferenceIds(params, referenceIds) {
+function insertEvents(params, referenceIds) {
     return new Promise(function(resolve, reject) {
         var processedQueries = 0;
         Promise.all(referenceIds.map(function(referenceId) {
@@ -20,4 +20,4 @@ function insertEventsWithReferenceIds(params, referenceIds) {
     });
 }
 
-module.exports = insertEventsWithReferenceIds;
+module.exports = insertEvents;

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
-const allEventsForReferenceId = require('../queries/allEventsForReferenceId');
+const allEvents = require('../queries/allEvents');
 const queryToIcs = require('../parsers/queryToIcs');
 const Readable = require('stream').Readable;
 const handleError = require('./utils/handleError')
@@ -26,7 +26,7 @@ function getEventsForScopes(res, scopes) {
     const referenceIds = scopes.map(function(entry) {
         return entry.id;
     });
-    Promise.all(referenceIds.map(allEventsForReferenceId)).then(
+    Promise.all(referenceIds.map(allEvents)).then(
         writeEventsIntoIcs.bind(null, res, scopes));
 }
 
