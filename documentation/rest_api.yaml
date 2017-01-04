@@ -28,9 +28,9 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/ExternalEventRequest'
-  /events/{id}:
+  /events/{eventId}:
     parameters:
-      - name: id
+      - name: eventId
         in: path
         required: true
         type: string
@@ -88,7 +88,7 @@ definitions:
   ExternalEventResponse:
     type: object
     properties:
-      id:
+      eventId:
         type: number
   Error:
     type: object
