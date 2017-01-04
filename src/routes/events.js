@@ -36,18 +36,18 @@ router.post('/', function (req, res) {
 
 });
 
-router.put('/:id', function (req, res) {
+router.put('/:eventId', function (req, res) {
     // TODO implement
     var scopeIds = req.body.scopeIds;
     var separateUsers = req.body.separateUsers;
     var ics = req.body.ics;
-    var id = req.params.id;
+    var eventId = req.params.eventId;
 });
 
-router.delete('/:id', function (req, res) {
+router.delete('/:eventId', function (req, res) {
     // TODO implement with scopeIds
-    var id = req.params.id;
-    Promise.resolve(deleteEvent([id])).then(
+    var eventId = req.params.eventId;
+    Promise.resolve(deleteEvent([eventId])).then(
         handleSuccess.bind(null, res),
         handleError.bind(null, res)
     );
