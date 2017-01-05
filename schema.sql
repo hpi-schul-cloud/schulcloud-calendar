@@ -1,7 +1,17 @@
 -- Enable UUID generation
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+DROP TABLE IF EXISTS repetition_exception_dates;
+DROP TABLE IF EXISTS alarms;
 DROP TABLE IF EXISTS events;
+
+CREATE TYPE repeat_type AS ENUM (
+  'DAILY',
+  'WEEKLY',
+  'MONTHLY',
+  'YEARLY'
+);
+
 CREATE TABLE events (
   id                      UUID UNIQUE PRIMARY KEY             NOT NULL DEFAULT uuid_generate_v4(),
   summary                 TEXT                                         DEFAULT NULL,
@@ -11,18 +21,19 @@ CREATE TABLE events (
   end_timestamp           TIMESTAMP WITH TIME ZONE            NOT NULL,
   reference_id            UUID                                NOT NULL,
   created_timestamp       TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT NOW(),
-  last_modified_timestamp TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now()
+  last_modified_timestamp TIMESTAMP WITH TIME ZONE            NOT NULL DEFAULT now(),
+  repeat                  repeat_type                                  DEFAULT NULL,
+  repeat_interval         INT                                          DEFAULT NULL,
+  event_id                UUID                                NOT NULL DEFAULT uuid_generate_v4()
   -- weitere Felder
 );
 
-DROP TABLE IF EXISTS alarms;
 CREATE TABLE alarms (
   id       UUID UNIQUE PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
   event_id UUID                    NOT NULL REFERENCES events (id)
   -- weitere Felder
 );
 
-DROP TABLE IF EXISTS repetition_exception_dates;
 CREATE TABLE repetition_exception_dates (
   id       UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   event_id UUID                     NOT NULL REFERENCES events (id),

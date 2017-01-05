@@ -79,9 +79,62 @@ function lineToJson(line, event) {
         case "LAST-MODIFIED":
             event["modified_timestamp"] = regularDateFormat(fieldValue);
             break;
-        default:
-            consoleError('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
+        case "RRULE":
+            const repeatAttributes = fieldValue.split(';');
+            for (var i = 0; i < repeatAttributes.length; i++) {
+                const raName = (repeatAttributes[i].split('='))[0];
+                const raValue = (repeatAttributes[i].split('='))[1];
+                switch (raName) {
+                    case "FREQ":
+                        event["repeat"] = raValue;
+                        break;
+                    case "INTERVAL":
+                        event["repeat_interval"] = raValue;
+                        break;
+                    default:
+                        console.error("Invalid repeat attribute: " + raName + ": " + raValue);
+                }
+            }
             break;
+        case "EXDATE":
+            if (!Array.isArray(event["exdate"]))
+                event["exdate"] = [];
+            event["exdate"] = regularDateFormat(fieldValue);
+            break;
+        default:
+            // temporary for timezone support...
+            const splitPosition2 = fieldName.indexOf(';');
+            if (splitPosition2 === -1) {
+                return;
+            }
+            const realFieldName = fieldName.substr(0, splitPosition2);
+            const timezone = fieldName.substr(splitPosition2 + 1, fieldName.length);
+
+            // TODO: handle timezone
+
+            switch (realFieldName) {
+                case "DTSTART":
+                    event["start_timestamp"] = regularDateFormat(fieldValue);
+                    break;
+                case "DTEND":
+                    event["end_timestamp"] = regularDateFormat(fieldValue);
+                    break;
+                case "DTSTAMP":
+                    event["created_timestamo"] = regularDateFormat(fieldValue);
+                    break;
+                case "LAST-MODIFIED":
+                    event["modified_timestamp"] = regularDateFormat(fieldValue);
+                    break;
+                case "EXDATE":
+                    if (!Array.isArray(event["exdate"])) {
+                        event["exdate"] = [];
+                    }
+                    event["exdate"].push(regularDateFormat(fieldValue));
+                    break;
+                default:
+                    consoleError('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
+                    break;
+            }
     }
 }
 

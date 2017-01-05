@@ -28,6 +28,9 @@ function queryToIcs(queryResult, scope) {
         if (event.description) {
             ics += 'DESCRIPTION:' + event.description + '\n';
         }
+        if (event.repeat) {
+            ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + '\n';
+        }
         ics += 'DTSTART:' + iCalendarDateFormat(startDate);
         ics += 'DTEND:' + iCalendarDateFormat(endDate);
         ics += 'DTSTAMP:' + iCalendarDateFormat(createdAt);

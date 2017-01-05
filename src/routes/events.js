@@ -11,6 +11,7 @@ const getAllUsersForUUID = require('../http_requests').getAllUsersForUUID;
 const handleSuccess = require('./utils/handleSuccess')
 const handleError = require('./utils/handleError')
 const consoleError = require('../utils/consoleError');
+const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent');
 
 router.post('/', function (req, res) {
     const scopeIds = req.body.scopeIds;
@@ -57,7 +58,7 @@ router.delete('/:eventId', function (req, res) {
 function handleJson(json, separateUsers, scopeIds, req, res) {
     /*
      * json contains id, summary, location, description, start_timestamp,
-     * end_timestamp, reference_id, created_timestamp, last_modified_timestamp
+     * end_timestamp, reference_id, created_timestamp, last_modified_timestamp, repeat, repeat_interval
      */
     var params = [];
     var referenceIds;
@@ -67,6 +68,8 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
     params[3] = json["start_timestamp"];    //$4: start_timestamp
     params[4] = json["end_timestamp"];      //$5: end_timestamp
     params[6] = new Date();                 //$7: created_timestamp
+    params[7] = json["repeat"];             //$8: repeat
+    params[8] = json["repeat_interval"];    //$9: repeat_interval
 
     if (separateUsers === true) {
         Promise.resolve(getAllUsersForUUID(scopeIds[0])).then(
@@ -75,10 +78,27 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
         );
     } else {
         referenceIds = [scopeIds[0]];
-        Promise.resolve(insertEvents(params, referenceIds)).then(
-            handleSuccess.bind(null, res),
-            handleError.bind(null, res)
-        );
+        Promise.resolve(insertEvents(params, referenceIds))
+            .then(function (results) {
+                // TODO: check if result is uuid
+                if (Array.isArray(results)) {
+                    // check if exception dates for possible repeat exist
+                    // TODO: if so, check if repeat is set because of consistency reasons...
+                    if (Array.isArray(json["exdate"])) {
+                        const exdates = json["exdate"];
+                        for (var i = 0; i < exdates.length; i++) {
+                            for (var j = 0; j < results.length; j++) {
+                                var params = [];
+                                params[0] = results[j];
+                                params[1] = exdates[i];
+                                addRepeatExceptionToEvent(params);
+                            }
+                        }
+                    }
+                }
+
+                handleSuccess(res);
+        }, handleError.bind(null, res));
     }
 }
 
