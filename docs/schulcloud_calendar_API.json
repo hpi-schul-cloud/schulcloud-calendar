@@ -3,7 +3,7 @@
     "info": {
         "title": "Calendar API",
         "description": "",
-        "version": "0.0.1"
+        "version": "0.0.2"
     },
     "host": "schulcloud.org",
     "schemes": [
@@ -15,13 +15,30 @@
     ],
     "paths": {
         "/events": {
+            "get": {
+                "summary": "Get the events for a list of UUIDs",
+                "responses": {
+                    "200": {
+                        "description": "GetEventResponse",
+                        "schema": {
+                            "$ref": "#/definitions/GetEventResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
             "post": {
                 "summary": "Create a new Event for a list of UUIDs",
                 "responses": {
                     "201": {
-                        "description": "ExternalEventResponse",
+                        "description": "CreateEventResponse",
                         "schema": {
-                            "$ref": "#/definitions/ExternalEventResponse"
+                            "$ref": "#/definitions/CreateEventResponse"
                         }
                     },
                     "default": {
@@ -37,7 +54,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ExternalEventRequest"
+                            "$ref": "#/definitions/CreateModifyEventRequest"
                         }
                     }
                 ]
@@ -49,9 +66,26 @@
                     "name": "eventId",
                     "in": "path",
                     "required": true,
-                    "type": "string"
+                    "type": "number"
                 }
             ],
+            "get": {
+                "summary": "Get the event for a given eventId",
+                "responses": {
+                    "200": {
+                        "description": "GetEventResponse",
+                        "schema": {
+                            "$ref": "#/definitions/GetEventResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
             "put": {
                 "summary": "Modify an Event for a list of UUIDs, which has been created by the same service earlier",
                 "responses": {
@@ -71,7 +105,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ExternalEventRequest"
+                            "$ref": "#/definitions/CreateModifyEventRequest"
                         }
                     }
                 ]
@@ -95,7 +129,97 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ExternalEventDeleteRequest"
+                            "$ref": "#/definitions/DeleteEventRequest"
+                        }
+                    }
+                ]
+            }
+        },
+        "/events/?scope={scopeId}": {
+            "parameters": [
+                {
+                    "name": "scopeId",
+                    "in": "path",
+                    "required": true,
+                    "type": "number"
+                }
+            ],
+            "get": {
+                "summary": "Get all events for a given scopeId",
+                "responses": {
+                    "200": {
+                        "description": "GetEventResponse",
+                        "schema": {
+                            "$ref": "#/definitions/GetEventResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/events/ics": {
+            "post": {
+                "summary": "Create a new Event for a list of UUIDs where the ics is given",
+                "responses": {
+                    "201": {
+                        "description": "CreateEventResponse",
+                        "schema": {
+                            "$ref": "#/definitions/CreateEventResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateModifyIcsEventRequest"
+                        }
+                    }
+                ]
+            }
+        },
+        "/events/ics/{eventId}": {
+            "parameters": [
+                {
+                    "name": "eventId",
+                    "in": "path",
+                    "required": true,
+                    "type": "number"
+                }
+            ],
+            "put": {
+                "summary": "Modify an Event for a list of UUIDs, which has been created by the same service earlier. Thereby the ics is transcribed.",
+                "responses": {
+                    "204": {
+                        "description": "Successful"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateModifyIcsEventRequest"
                         }
                     }
                 ]
@@ -103,7 +227,28 @@
         }
     },
     "definitions": {
-        "ExternalEventRequest": {
+        "CreateModifyEventRequest": {
+            "type": "object",
+            "properties": {
+                "scopeIds": {
+                    "description": "ids of entities",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "separateUsers": {
+                    "type": "boolean"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/EventJSON"
+                    }
+                }
+            }
+        },
+        "CreateModifyIcsEventRequest": {
             "type": "object",
             "properties": {
                 "scopeIds": {
@@ -121,7 +266,7 @@
                 }
             }
         },
-        "ExternalEventDeleteRequest": {
+        "DeleteEventRequest": {
             "type": "object",
             "properties": {
                 "scopeIds": {
@@ -133,11 +278,22 @@
                 }
             }
         },
-        "ExternalEventResponse": {
+        "CreateEventResponse": {
             "type": "object",
             "properties": {
                 "eventId": {
                     "type": "number"
+                }
+            }
+        },
+        "GetEventResponse": {
+            "type": "object",
+            "properties": {
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/EventJSON"
+                    }
                 }
             }
         },
@@ -152,6 +308,128 @@
                     "type": "string"
                 },
                 "fields": {
+                    "type": "string"
+                }
+            }
+        },
+        "EventJSON": {
+            "type": "object",
+            "properties": {
+                "UID": {
+                    "type": "string",
+                    "example": "CAFD94F5-6341-46B3-91FC-C96B80F4E357@schulcloud.org"
+                },
+                "SUMMARY": {
+                    "type": "string"
+                },
+                "LOCATION": {
+                    "type": "string"
+                },
+                "DESCRIPTION": {
+                    "type": "string"
+                },
+                "DTSTART": {
+                    "type": "string",
+                    "example": "20170101T214458Z"
+                },
+                "DTEND": {
+                    "type": "string",
+                    "example": "20170102T214458Z"
+                },
+                "DTSTAMP": {
+                    "type": "string",
+                    "example": "20170101T204458Z"
+                },
+                "LAST-MODIFIED": {
+                    "type": "string",
+                    "example": "20170101T204458Z"
+                },
+                "TRANSP": {
+                    "type": "string"
+                },
+                "RRULE": {
+                    "$ref": "#/definitions/RRuleJSON"
+                },
+                "SEQUENCE": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "RECURRENCE-ID": {
+                    "type": "string",
+                    "example": "20170101T204458Z"
+                },
+                "EXDATES": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ExDatesJSON"
+                    }
+                },
+                "ALARMS": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AlarmsJSON"
+                    }
+                }
+            }
+        },
+        "RRuleJSON": {
+            "type": "object",
+            "properties": {
+                "FREQ": {
+                    "type": "string",
+                    "enum": [
+                        "DAILY",
+                        "WEEKLY",
+                        "MONTHLY",
+                        "YEARLY"
+                    ]
+                },
+                "INTERVAL": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            }
+        },
+        "ExDatesJSON": {
+            "type": "object",
+            "properties": {
+                "timestamp": {
+                    "type": "string",
+                    "example": "20170105T204458Z"
+                }
+            }
+        },
+        "AlarmsJSON": {
+            "type": "object",
+            "properties": {
+                "TRIGGER": {
+                    "type": "string"
+                },
+                "REPEAT": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "DURATION": {
+                    "type": "string"
+                },
+                "ACTION": {
+                    "type": "string",
+                    "enum": [
+                        "DISPLAY",
+                        "AUDIO",
+                        "EMAIL"
+                    ]
+                },
+                "ATTACH": {
+                    "type": "string"
+                },
+                "DESCRIPTION": {
+                    "type": "string"
+                },
+                "ATTENDEE": {
+                    "type": "string"
+                },
+                "SUMMARY": {
                     "type": "string"
                 }
             }
