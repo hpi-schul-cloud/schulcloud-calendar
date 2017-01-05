@@ -10,8 +10,13 @@ function icsToJson(ics) {
         return;
     }
 
-    var events = [];
-    var event = {};
+    let events = [];
+    let event = {};
+
+    let alarm = {};
+    let parseAlarm = false;
+
+    // TODO: Unfold lines first (see RFC 5545, section 3.1)
     lines.forEach(function(line) {
         switch (line) {
             case 'BEGIN:VCALENDAR':
@@ -22,14 +27,29 @@ function icsToJson(ics) {
                 event = {};
                 break;
             case 'END:VEVENT':
-                if (validateJson(event)) {
+                if (validateJson(event) && !parseAlarm) {
                     events.push(event);
                 } else {
                     consoleError('[icsToJson] Created invalid JSON, are all required fields present?')
                 }
                 break;
+            case 'BEGIN:VALARM':
+                alarm = {};
+                parseAlarm = true;
+                break;
+            case 'END:VALARM':
+                parseAlarm = false;
+                if (event["alarms"] === undefined) {
+                    event["alarms"] = [];
+                }
+                event["alarms"].push(alarm);
+                break;
             default:
-                lineToJson(line, event);
+                if (parseAlarm) {
+                    lineToAlarmJson(line, alarm);
+                } else {
+                    lineToJson(line, event);
+                }
                 break;
         }
     });
@@ -54,6 +74,7 @@ function lineToJson(line, event) {
             if (splittedUid.length === 2) {
                 event['id'] = splittedUid[0];
             } else {
+                // TODO: an UID is not required to contain an @.
                 consoleError("[icsToJson] Invalid UID")
             }
             break;
@@ -135,6 +156,67 @@ function lineToJson(line, event) {
                     consoleError('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
                     break;
             }
+    }
+}
+
+function lineToAlarmJson(line, alarm) {
+    const splitPositionColon = line.indexOf(':');
+    const splitPositionSemiColon = line.indexOf(';');
+
+    let splitPosition = -1;
+    let includeSplitPosition = 1;
+    if (splitPositionColon !== -1 && splitPositionSemiColon !== -1) {
+        if (splitPositionColon <= splitPositionSemiColon) {
+            splitPosition = splitPositionColon;
+            includeSplitPosition = 1;
+        } else if (splitPositionSemiColon < splitPositionColon) {
+            splitPosition = splitPositionSemiColon;
+            includeSplitPosition = 0;
+        }
+    } else if (splitPositionColon === -1 && splitPositionSemiColon !== -1) {
+        splitPosition = splitPositionSemiColon;
+        includeSplitPosition = 0;
+    } else if (splitPositionSemiColon === -1 && splitPositionSemiColon) {
+        splitPosition = splitPositionColon;
+        includeSplitPosition = 1;
+    }
+
+    if (splitPosition === -1) {
+        console.error('[icsToJson] Invalid line in ICS (parsing alarm): ' + line);
+        return;
+    }
+
+    const fieldName = line.substr(0, splitPosition);
+    const fieldValue = line.substr(splitPosition + includeSplitPosition, line.length);
+
+    switch (fieldName) {
+        case "TRIGGER":
+            alarm["trigger"] = fieldValue;
+            break;
+        case "REPEAT":
+            alarm["repeat"] = parseInt(fieldValue);
+            break;
+        case "DURATION":
+            alarm["duration"] = fieldValue;
+            break;
+        case "ACTION":
+            alarm["action"] = fieldValue;
+            break;
+        case "ATTACH":
+            alarm["attach"] = fieldValue;
+            break;
+        case "DESCRIPTION":
+            alarm["description"] = fieldValue;
+            break;
+        case "ATTENDEE":
+            alarm["attendee"] = fieldValue;
+            break;
+        case "SUMMARY":
+            alarm["summary"] = fieldValue;
+            break;
+        default:
+            console.error('[icsToJson] Got unknown ICS field for alarm. Implement ' + fieldName);
+            break;
     }
 }
 
