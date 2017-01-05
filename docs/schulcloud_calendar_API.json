@@ -1,0 +1,160 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Calendar API",
+        "description": "",
+        "version": "0.0.1"
+    },
+    "host": "schulcloud.org",
+    "schemes": [
+        "https"
+    ],
+    "basePath": "/v1",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/events": {
+            "post": {
+                "summary": "Create a new Event for a list of UUIDs",
+                "responses": {
+                    "201": {
+                        "description": "ExternalEventResponse",
+                        "schema": {
+                            "$ref": "#/definitions/ExternalEventResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ExternalEventRequest"
+                        }
+                    }
+                ]
+            }
+        },
+        "/events/{eventId}": {
+            "parameters": [
+                {
+                    "name": "eventId",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "summary": "Modify an Event for a list of UUIDs, which has been created by the same service earlier",
+                "responses": {
+                    "204": {
+                        "description": "Successful"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ExternalEventRequest"
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "Delete an Event for a list of UUIDs",
+                "responses": {
+                    "204": {
+                        "description": "Successful"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ExternalEventDeleteRequest"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "ExternalEventRequest": {
+            "type": "object",
+            "properties": {
+                "scopeIds": {
+                    "description": "ids of entities",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "separateUsers": {
+                    "type": "boolean"
+                },
+                "ics": {
+                    "type": "string"
+                }
+            }
+        },
+        "ExternalEventDeleteRequest": {
+            "type": "object",
+            "properties": {
+                "scopeIds": {
+                    "description": "ids of entities",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "ExternalEventResponse": {
+            "type": "object",
+            "properties": {
+                "eventId": {
+                    "type": "number"
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
