@@ -60,7 +60,6 @@ function getAlarmsIcsForEvent(eventId) {
 
                     ics += 'END:VALARM\n';
                 });
-                console.log(ics);
                 resolve(ics);
             },
             reject.bind(null)

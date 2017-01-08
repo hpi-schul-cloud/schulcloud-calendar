@@ -27,11 +27,9 @@ function getRepeatExceptionsIcsForEvent(eventId) {
                     }
 
                     var ics = '';
-
                     exceptions.map(function (exception) {
                         ics += 'EXDATE:' + iCalendarDateFormat(exception.date) + '\n';
                     });
-                    console.log(ics);
                     resolve(ics);
                 } else {
                     resolve('');
