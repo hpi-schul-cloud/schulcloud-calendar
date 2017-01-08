@@ -3,7 +3,7 @@ const errorMessage = require('./utils/errorMessage');
 
 function deleteEvent(params) {
     return new Promise(function(resolve, reject) {
-        const query = 'DELETE FROM events WHERE reference_id = $1';
+        const query = 'DELETE FROM events WHERE reference_id = $1 CASCADE';
         client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
