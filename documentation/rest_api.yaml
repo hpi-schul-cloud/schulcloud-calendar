@@ -1,15 +1,54 @@
 swagger: '2.0'
 info:
   title: Calendar API
-  description: ""
-  version: "0.0.2"
-host: schulcloud.org
+  description: "API specification of the Schul-Cloud Calendar Service. Contribute today on https://github.com/schulcloud/schulcloud-calendar"
+  version: "0.0.3"
+  contact:
+    email: schulcloud-dev@lists.myhpi.de
+host: 'schulcloud.org:3000'
 schemes:
   - https
-basePath: /v1
+basePath: /
+consumes:
+  - application/json
 produces:
   - application/json
+  - text/calendar
+tags:
+  - name: calendar
+    description: Get an ICS feed
+  - name: events
+    description: Work with one or multiple events as JSON
+  - name: events/ics
+    description: Work with one or multiple events as ICS string
+  - name: filter
+    description: Get an ICS feed based on a pre-defined search token
+
 paths:
+  /calendar/{userToken}/{scopeId}:
+    parameters:
+      - name: userToken
+        in: path
+        required: true
+        type: string
+      - name: scopeId
+        in: path
+        required: true
+        type: string
+    get:
+      summary: Get an ICS feed for the specified user token and scope ID
+      responses:
+        200:
+          description: ICS calendar feed
+          schema:
+            type: file
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - calendar
+
   /events:
     get:
       summary: Get the events for a list of UUIDs
@@ -22,6 +61,10 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+      tags: 
+        - events
+      security:
+        - userToken: []
     post:
       summary: Create a new Event for a list of UUIDs
       responses:
@@ -39,6 +82,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/CreateModifyEventRequest'
+      tags:
+        - events
+      security:
+        - userToken: []
 
   /events/{eventId}:
     parameters:
@@ -57,6 +104,10 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+      tags:
+        - events
+      security:
+        - userToken: []
     put:
       summary: Modify an Event for a list of UUIDs, which has been created by the same service earlier
       responses:
@@ -72,6 +123,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/CreateModifyEventRequest'
+      tags:
+        - events
+      security:
+        - userToken: []
     delete:
       summary: Delete an Event for a list of UUIDs
       responses:
@@ -87,6 +142,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/DeleteEventRequest'
+      tags:
+        - events
+      security:
+        - userToken: []
 
   /events/?scope={scopeId}:
     parameters:
@@ -105,6 +164,10 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+      tags:
+        - events
+      security:
+        - userToken: []
 
   /events/ics:
     post:
@@ -124,13 +187,17 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/CreateModifyIcsEventRequest'
+      tags:
+        - events/ics
+      security:
+        - userToken: []
 
   /events/ics/{eventId}:
     parameters:
-        - name: eventId
-          in: path
-          required: true
-          type: number
+      - name: eventId
+        in: path
+        required: true
+        type: number
     put:
       summary: Modify an Event for a list of UUIDs, which has been created by the same service earlier. Thereby the ics is transcribed.
       responses:
@@ -146,6 +213,28 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/CreateModifyIcsEventRequest'
+      tags:
+        - events/ics
+      security:
+        - userToken: []
+        
+  /filter/{searchToken}:
+    parameters:
+      - name: searchToken
+        in: path
+        required: true
+        type: string
+    get:
+      summary: Get an extract of one calendar based on a pre-defined search token
+      responses:
+        200:
+          description: ICS calendar feed
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - filter
 
 definitions:
   CreateModifyEventRequest:
@@ -156,8 +245,10 @@ definitions:
         type: array
         items:
           type: string
+          example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
       separateUsers:
         type: boolean
+        example: true
       events:
         type: array
         items:
@@ -170,10 +261,13 @@ definitions:
         type: array
         items:
           type: string
+          example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
       separateUsers:
         type: boolean
+        example: true
       ics:
         type: string
+        example: 'BEGIN:VCALENDAR\n...\nEND:VCALENDAR'
   DeleteEventRequest:
     type: object
     properties:
@@ -182,11 +276,13 @@ definitions:
         type: array
         items:
           type: string
+          example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
   CreateEventResponse:
     type: object
     properties:
       eventId:
-        type: number
+        type: string
+        example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
   GetEventResponse:
     type: object
     properties:
@@ -194,16 +290,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/EventJSON'
-  Error:
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
-      fields:
-        type: string
   EventJSON:
     type: object
     properties:
@@ -212,32 +298,41 @@ definitions:
         example: "CAFD94F5-6341-46B3-91FC-C96B80F4E357@schulcloud.org"
       SUMMARY:
         type: string
+        example: 'Legend Summer Party'
       LOCATION:
         type: string
+        example: 'HPI, Potsdam'
       DESCRIPTION:
         type: string
+        example: 'For students, alumni and special guest only'
       DTSTART:
         type: string
-        example: "20170101T214458Z"
+        format: date-time
+        example: "2017-07-28T15:00:00Z"
       DTEND:
         type: string
-        example: "20170102T214458Z"
+        format: date-time
+        example: "2017-07-28T23:00:00Z"
       DTSTAMP:
         type: string
-        example: "20170101T204458Z"
+        format: date-time
+        example: "2017-01-08T13:36:00Z"
       LAST-MODIFIED:
         type: string
-        example: "20170101T204458Z"
+        format: date-time
+        example: "2017-01-08T13:36:00Z"
       TRANSP:
         type: string
+        example: 'OPAQUE'
       RRULE:
         $ref: '#/definitions/RRuleJSON'
       SEQUENCE:
         type: integer
         format: int32
+        example: 0
       RECURRENCE-ID:
         type: string
-        example: "20170101T204458Z"
+        example: "20170108T133600Z"
       EXDATES:
         type: array
         items:
@@ -256,36 +351,69 @@ definitions:
           - WEEKLY
           - MONTHLY
           - YEARLY
+        example: WEEKLY
       INTERVAL:
         type: integer
         format: int32
+        example: 1
+      BYDAY:
+        type: array
+        items:
+          type: string
+          example: 'SU'
   ExDatesJSON:
     type: object
     properties:
       timestamp:
         type: string
-        example: "20170105T204458Z"
+        format: date-time
+        example: "2017-01-05T20:44:58Z"
   AlarmsJSON:
     type: object
     properties:
       TRIGGER:
         type: string
+        example: -PT5M
       REPEAT:
         type: integer
         format: int32
+        example: 2
       DURATION:
         type: string
+        example: PT15M
       ACTION:
         type: string
         enum:
           - DISPLAY
           - AUDIO
           - EMAIL
+        example: DISPLAY
       ATTACH:
         type: string
+        example: ';FMTTYPE=audio/basic:ftp://example.com/pub/sounds/bell-01.aud'
       DESCRIPTION:
         type: string
+        example: 'Prepare for summer party // Email body'
       ATTENDEE:
         type: string
+        example: 'mailto:user@example.org'
       SUMMARY:
         type: string
+        example: 'Email subject'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string    
+    
+securityDefinitions:
+  userToken:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Pass the user's token to authenticate for any method where the token is not part of the URL.
