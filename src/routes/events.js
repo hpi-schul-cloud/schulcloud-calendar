@@ -8,10 +8,11 @@ const icsToJson = require('../parsers/icsToJson');
 const insertEvents = require('../queries/insertEvents');
 const deleteEvent = require('../queries/deleteEvent');
 const getAllUsersForUUID = require('../http_requests').getAllUsersForUUID;
-const handleSuccess = require('./utils/handleSuccess')
-const handleError = require('./utils/handleError')
+const handleSuccess = require('./utils/handleSuccess');
+const handleError = require('./utils/handleError');
 const consoleError = require('../utils/consoleError');
 const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent');
+const addAlarmToEvent = require('../queries/addAlarmToEvent');
 
 router.post('/', function (req, res) {
     const scopeIds = req.body.scopeIds;
@@ -57,8 +58,8 @@ router.delete('/:eventId', function (req, res) {
 
 function handleJson(json, separateUsers, scopeIds, req, res) {
     /*
-     * json contains id, summary, location, description, start_timestamp,
-     * end_timestamp, reference_id, created_timestamp, last_modified_timestamp, repeat, repeat_interval
+     * json contains id, summary, location, description, start_timestamp, end_timestamp
+     * reference_id, created_timestamp, last_modified_timestamp, repeat, repeat_interval, alarms Array
      */
     var params = [];
     var referenceIds;
@@ -95,6 +96,24 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
                             }
                         }
                     }
+                    if (Array.isArray(json["alarms"])) {
+                        json["alarms"].forEach(function(alarm) {
+                            results.forEach(function(createdEvent) {
+                                let params = [];
+                                params[0] = createdEvent;
+                                params[1] = alarm["trigger"];
+                                params[2] = alarm["repeat"];
+                                params[3] = alarm["duration"];
+                                params[4] = alarm["action"];
+                                params[5] = alarm["attach"];
+                                params[6] = alarm["description"];
+                                params[7] = alarm["attendee"];
+                                params[8] = alarm["summary"];
+                                addAlarmToEvent(params);
+                                console.log("Successfully inserted alarm." + params)
+                            });
+                        });
+                    }
                 }
 
                 handleSuccess(res);
@@ -113,7 +132,7 @@ function insertSeparateEvents(res, response) {
 
     referenceIds = result.map(function(entry) {
         return entry.id;
-    })
+    });
 
     Promise.resolve(insertEvents(params, referenceIds)).then(
         handleSuccess.bind(null, res),

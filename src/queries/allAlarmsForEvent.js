@@ -24,7 +24,7 @@ function getAlarmsIcsForEvent(eventId) {
                     resolve('');
                 }
 
-                var ics = '';
+                let ics = '';
 
                 alarms.map(function (alarm) {
                     ics += 'BEGIN:VALARM\n';

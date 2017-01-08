@@ -1,10 +1,10 @@
 const client = require('../models/database');
-const errorMessage = require('./errorMessage');
+const errorMessage = require('./utils/errorMessage');
 
-function insertAlarmForEvent(params, eventId) {
+function addAlarmToEvent(params, eventId) {
     return new Promise(function(resolve, reject) {
         const query = 'INSERT INTO alarms (event_id, trigger, repeat, duration, action, attach, description, attendee, summary) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-        client.query(query, [eventId] + params, function (error, result) {
+        client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
@@ -15,4 +15,4 @@ function insertAlarmForEvent(params, eventId) {
     });
 }
 
-module.exports = insertAlarmForEvent;
+module.exports = addAlarmToEvent;
