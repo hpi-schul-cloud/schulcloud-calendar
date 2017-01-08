@@ -26,3 +26,7 @@ INSERT INTO events VALUES
   (uuid_generate_v4(), 'Termin den keiner besuchen darf', 'HPI, Potsdam', NULL, '2016-11-22 09:00:00.000000',
    '2016-11-23 18:30:00.000000', '8b0753ab-6fa8-4f42-80bd-700fe8f7d66f', NOW(), NOW(), NULL, NULL)
 ON CONFLICT DO NOTHING;
+
+INSERT INTO repetition_exception_dates VALUES
+  (uuid_generate_v4(), new_event_id, '2016-11-21 09:00:00.000000')
+ON CONFLICT DO NOTHING;

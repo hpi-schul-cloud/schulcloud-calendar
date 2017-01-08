@@ -120,7 +120,7 @@ function lineToJson(line, event) {
         case "EXDATE":
             if (!Array.isArray(event["exdate"]))
                 event["exdate"] = [];
-            event["exdate"] = regularDateFormat(fieldValue);
+            event["exdate"].push(regularDateFormat(fieldValue));
             break;
         default:
             // temporary for timezone support...

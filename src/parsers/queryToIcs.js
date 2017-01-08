@@ -1,4 +1,6 @@
-function queryToIcs(queryResult, scope) {
+const allAlarmsForEvent = require('../queries/allAlarmsForEvent');
+
+function queryToIcs(queryResult, scope, exdates, alarms) {
     var ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
     ics += 'PRODID:http://schulcloud.org/calendar/test/\n';
@@ -31,13 +33,16 @@ function queryToIcs(queryResult, scope) {
         if (event.repeat) {
             ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + '\n';
         }
+        if (exdates && exdates.exdates && exdates.exdates.length > 0)
+            ics += exdates.exdates;
         ics += 'DTSTART:' + iCalendarDateFormat(startDate);
         ics += 'DTEND:' + iCalendarDateFormat(endDate);
         ics += 'DTSTAMP:' + iCalendarDateFormat(createdAt);
         ics += 'LAST-MODIFIED:' + iCalendarDateFormat(lastModified);
 
         // TODO: Move code for alarms? (or at least SQL query)
-        ics += getAlarmsForEvent(event.id);
+        if (alarms && alarms.alarms && alarms.alarms.length > 0)
+            ics += alarms.alarms;
 
         ics += 'END:VEVENT\n';
     });
@@ -49,61 +54,61 @@ function iCalendarDateFormat(date) {
     return date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
 }
 
-function getAlarmsForEvent(event_id) {
-    const client = require('../models/database');
-
-    const query = 'SELECT trigger, repeat, duration, action, attach, description, attendee, summary FROM alarms WHERE event_id = $1 ORDER BY id ASC;';
-
-    client.query(query, [event_id], function (error, queryResult) {
-        if (error) {
-            console.error("Query error");
-            return '';
-        } else {
-            const alarms = queryResult.rows;
-            if (alarms.length === 0) {
-                return '';
-            }
-
-            var ics = '';
-
-            alarms.map(function (alarm) {
-                ics += 'BEGIN:VALARM\n';
-
-                ics += 'TRIGGER';
-                if (!alarm.trigger.startsWith(';')) {
-                    ics += ':';
-                }
-                ics += alarm.trigger + '\n';
-
-                if (alarm.repeat && alarm.duration) {
-                    ics += 'REPEAT:' + alarm.repeat + '\n';
-                    ics += 'DURATION:' + alarm.duration + '\n';
-                }
-
-                ics += 'ACTION:' + alarm.action + '\n';
-
-                if (alarm.attach) {
-                    ics += 'ATTACH:' + alarm.attach + '\n';
-                }
-
-                if (alarm.description) {
-                    ics += 'DESCRIPTION:' + alarm.description + '\n';
-                }
-
-                if (alarm.attendee) {
-                    ics += 'ATTENDEE:' + alarm.attendee + '\n';
-                }
-
-                if (alarm.summary) {
-                    ics += 'SUMMARY:' + alarm.summary + '\n';
-                }
-
-                ics += 'END:VALARM\n';
-            });
-            console.log(ics);
-            return ics;
-        }
-    });
-}
+// function getAlarmsForEvent(event_id) {
+//     const client = require('../models/database');
+//
+//     const query = 'SELECT trigger, repeat, duration, action, attach, description, attendee, summary FROM alarms WHERE event_id = $1 ORDER BY id ASC;';
+//
+//     client.query(query, [event_id], function (error, queryResult) {
+//         if (error) {
+//             console.error("Query error");
+//             return '';
+//         } else {
+//             const alarms = queryResult.rows;
+//             if (alarms.length === 0) {
+//                 return '';
+//             }
+//
+//             var ics = '';
+//
+//             alarms.map(function (alarm) {
+//                 ics += 'BEGIN:VALARM\n';
+//
+//                 ics += 'TRIGGER';
+//                 if (!alarm.trigger.startsWith(';')) {
+//                     ics += ':';
+//                 }
+//                 ics += alarm.trigger + '\n';
+//
+//                 if (alarm.repeat && alarm.duration) {
+//                     ics += 'REPEAT:' + alarm.repeat + '\n';
+//                     ics += 'DURATION:' + alarm.duration + '\n';
+//                 }
+//
+//                 ics += 'ACTION:' + alarm.action + '\n';
+//
+//                 if (alarm.attach) {
+//                     ics += 'ATTACH:' + alarm.attach + '\n';
+//                 }
+//
+//                 if (alarm.description) {
+//                     ics += 'DESCRIPTION:' + alarm.description + '\n';
+//                 }
+//
+//                 if (alarm.attendee) {
+//                     ics += 'ATTENDEE:' + alarm.attendee + '\n';
+//                 }
+//
+//                 if (alarm.summary) {
+//                     ics += 'SUMMARY:' + alarm.summary + '\n';
+//                 }
+//
+//                 ics += 'END:VALARM\n';
+//             });
+//             console.log(ics);
+//             return ics;
+//         }
+//     });
+// }
 
 module.exports = queryToIcs;
