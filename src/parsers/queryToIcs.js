@@ -3,7 +3,7 @@ const allAlarmsForEvent = require('../queries/allAlarmsForEvent');
 function queryToIcs(queryResult, scope, exdates, alarms) {
     var ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
-    ics += 'PRODID:http://schulcloud.org/calendar/test/\n';
+    ics += 'PRODID:https://schulcloud.org:3000/calendar/test/\n';
 
     const name = scope && scope.attributes.name;
     if (name) {
