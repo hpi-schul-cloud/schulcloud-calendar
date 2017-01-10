@@ -1,8 +1,10 @@
 swagger: '2.0'
 info:
   title: Calendar API
-  description: "API specification of the Schul-Cloud Calendar Service. Contribute today on https://github.com/schulcloud/schulcloud-calendar"
-  version: "0.0.3"
+  description: >-
+    API specification of the Schul-Cloud Calendar Service. Contribute today on
+    https://github.com/schulcloud/schulcloud-calendar
+  version: 0.0.4
   contact:
     email: schulcloud-dev@lists.myhpi.de
 host: 'schulcloud.org:3000'
@@ -23,9 +25,25 @@ tags:
     description: Work with one or multiple events as ICS string
   - name: filter
     description: Get an ICS feed based on a pre-defined search token
-
 paths:
-  /calendar/{userToken}/{scopeId}:
+  '/calendarlist':
+    get:
+      summary: Get an array with all ICS feeds for the given token
+      responses:
+        '200':
+          description: All ICS feeds
+          schema:
+            $ref: '#/definitions/CalendarList'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - calendar
+      security:
+        - userToken: []
+
+  '/calendar/{userToken}/{scopeId}':
     parameters:
       - name: userToken
         in: path
@@ -38,7 +56,7 @@ paths:
     get:
       summary: Get an ICS feed for the specified user token and scope ID
       responses:
-        200:
+        '200':
           description: ICS calendar feed
           schema:
             type: file
@@ -48,12 +66,11 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - calendar
-
   /events:
     get:
       summary: Get the events for a list of UUIDs
       responses:
-        200:
+        '200':
           description: GetEventResponse
           schema:
             $ref: '#/definitions/GetEventResponse'
@@ -61,14 +78,14 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-      tags: 
+      tags:
         - events
       security:
         - userToken: []
     post:
       summary: Create a new Event for a list of UUIDs
       responses:
-        201:
+        '201':
           description: CreateEventResponse
           schema:
             $ref: '#/definitions/CreateEventResponse'
@@ -86,8 +103,7 @@ paths:
         - events
       security:
         - userToken: []
-
-  /events/{eventId}:
+  '/events/{eventId}':
     parameters:
       - name: eventId
         in: path
@@ -96,7 +112,7 @@ paths:
     get:
       summary: Get the event for a given eventId
       responses:
-        200:
+        '200':
           description: GetEventResponse
           schema:
             $ref: '#/definitions/GetEventResponse'
@@ -109,9 +125,11 @@ paths:
       security:
         - userToken: []
     put:
-      summary: Modify an Event for a list of UUIDs, which has been created by the same service earlier
+      summary: >-
+        Modify an Event for a list of UUIDs, which has been created by the same
+        service earlier
       responses:
-        204:
+        '204':
           description: Successful
         default:
           description: Unexpected error
@@ -130,7 +148,7 @@ paths:
     delete:
       summary: Delete an Event for a list of UUIDs
       responses:
-        204:
+        '204':
           description: Successful
         default:
           description: Unexpected error
@@ -146,8 +164,7 @@ paths:
         - events
       security:
         - userToken: []
-
-  /events/?scope={scopeId}:
+  '/events/?scope={scopeId}':
     parameters:
       - name: scopeId
         in: path
@@ -156,7 +173,7 @@ paths:
     get:
       summary: Get all events for a given scopeId
       responses:
-        200:
+        '200':
           description: GetEventResponse
           schema:
             $ref: '#/definitions/GetEventResponse'
@@ -168,12 +185,11 @@ paths:
         - events
       security:
         - userToken: []
-
   /events/ics:
     post:
       summary: Create a new Event for a list of UUIDs where the ics is given
       responses:
-        201:
+        '201':
           description: CreateEventResponse
           schema:
             $ref: '#/definitions/CreateEventResponse'
@@ -191,17 +207,18 @@ paths:
         - events/ics
       security:
         - userToken: []
-
-  /events/ics/{eventId}:
+  '/events/ics/{eventId}':
     parameters:
       - name: eventId
         in: path
         required: true
         type: number
     put:
-      summary: Modify an Event for a list of UUIDs, which has been created by the same service earlier. Thereby the ics is transcribed.
+      summary: >-
+        Modify an Event for a list of UUIDs, which has been created by the same
+        service earlier. Thereby the ics is transcribed.
       responses:
-        204:
+        '204':
           description: Successful
         default:
           description: Unexpected error
@@ -217,8 +234,7 @@ paths:
         - events/ics
       security:
         - userToken: []
-        
-  /filter/{searchToken}:
+  '/filter/{searchToken}':
     parameters:
       - name: searchToken
         in: path
@@ -227,7 +243,7 @@ paths:
     get:
       summary: Get an extract of one calendar based on a pre-defined search token
       responses:
-        200:
+        '200':
           description: ICS calendar feed
         default:
           description: Unexpected error
@@ -237,6 +253,20 @@ paths:
         - filter
 
 definitions:
+  CalendarList:
+    type: array
+    items:
+      type: object
+      properties:
+        scopeId:
+          type: string
+          example: "5d5b48a5-96f7-466d-850f-24069b869b64"
+        scopeName:
+          type: string
+          example: "Maxi Mustermann"
+        icsUrl:
+          type: string
+          example: "https://schulcloud.org:3000/calendar/{userToken}/5d5b48a5-96f7-466d-850f-24069b869b64"
   CreateModifyEventRequest:
     type: object
     properties:
@@ -245,7 +275,7 @@ definitions:
         type: array
         items:
           type: string
-          example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
+          example: 3b611d43-cf33-4a08-a50d-eac63975ea00
       separateUsers:
         type: boolean
         example: true
@@ -261,7 +291,7 @@ definitions:
         type: array
         items:
           type: string
-          example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
+          example: 3b611d43-cf33-4a08-a50d-eac63975ea00
       separateUsers:
         type: boolean
         example: true
@@ -276,13 +306,13 @@ definitions:
         type: array
         items:
           type: string
-          example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
+          example: 3b611d43-cf33-4a08-a50d-eac63975ea00
   CreateEventResponse:
     type: object
     properties:
       eventId:
         type: string
-        example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
+        example: 3b611d43-cf33-4a08-a50d-eac63975ea00
   GetEventResponse:
     type: object
     properties:
@@ -295,10 +325,10 @@ definitions:
     properties:
       UID:
         type: string
-        example: "CAFD94F5-6341-46B3-91FC-C96B80F4E357@schulcloud.org"
+        example: CAFD94F5-6341-46B3-91FC-C96B80F4E357@schulcloud.org
       SUMMARY:
         type: string
-        example: 'Legend Summer Party'
+        example: Legend Summer Party
       LOCATION:
         type: string
         example: 'HPI, Potsdam'
@@ -308,22 +338,22 @@ definitions:
       DTSTART:
         type: string
         format: date-time
-        example: "2017-07-28T15:00:00Z"
+        example: '2017-07-28T15:00:00Z'
       DTEND:
         type: string
         format: date-time
-        example: "2017-07-28T23:00:00Z"
+        example: '2017-07-28T23:00:00Z'
       DTSTAMP:
         type: string
         format: date-time
-        example: "2017-01-08T13:36:00Z"
+        example: '2017-01-08T13:36:00Z'
       LAST-MODIFIED:
         type: string
         format: date-time
-        example: "2017-01-08T13:36:00Z"
+        example: '2017-01-08T13:36:00Z'
       TRANSP:
         type: string
-        example: 'OPAQUE'
+        example: OPAQUE
       RRULE:
         $ref: '#/definitions/RRuleJSON'
       SEQUENCE:
@@ -332,7 +362,7 @@ definitions:
         example: 0
       RECURRENCE-ID:
         type: string
-        example: "20170108T133600Z"
+        example: 20170108T133600Z
       EXDATES:
         type: array
         items:
@@ -360,20 +390,20 @@ definitions:
         type: array
         items:
           type: string
-          example: 'SU'
+          example: SU
   ExDatesJSON:
     type: object
     properties:
       timestamp:
         type: string
         format: date-time
-        example: "2017-01-05T20:44:58Z"
+        example: '2017-01-05T20:44:58Z'
   AlarmsJSON:
     type: object
     properties:
       TRIGGER:
         type: string
-        example: -PT5M
+        example: '-PT5M'
       REPEAT:
         type: integer
         format: int32
@@ -393,13 +423,13 @@ definitions:
         example: ';FMTTYPE=audio/basic:ftp://example.com/pub/sounds/bell-01.aud'
       DESCRIPTION:
         type: string
-        example: 'Prepare for summer party // Email body'
+        example: Prepare for summer party // Email body
       ATTENDEE:
         type: string
         example: 'mailto:user@example.org'
       SUMMARY:
         type: string
-        example: 'Email subject'
+        example: Email subject
   Error:
     type: object
     properties:
@@ -409,11 +439,12 @@ definitions:
       message:
         type: string
       fields:
-        type: string    
-    
+        type: string
 securityDefinitions:
   userToken:
     type: apiKey
     name: Authorization
     in: header
-    description: Pass the user's token to authenticate for any method where the token is not part of the URL.
+    description: >-
+      Pass the user's token to authenticate for any method where the token is
+      not part of the URL.

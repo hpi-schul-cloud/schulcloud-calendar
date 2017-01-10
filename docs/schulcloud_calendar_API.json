@@ -3,7 +3,7 @@
     "info": {
         "title": "Calendar API",
         "description": "API specification of the Schul-Cloud Calendar Service. Contribute today on https://github.com/schulcloud/schulcloud-calendar",
-        "version": "0.0.3",
+        "version": "0.0.4",
         "contact": {
             "email": "schulcloud-dev@lists.myhpi.de"
         }
@@ -39,6 +39,33 @@
         }
     ],
     "paths": {
+        "/calendarlist": {
+            "get": {
+                "summary": "Get an array with all ICS feeds for the given token",
+                "responses": {
+                    "200": {
+                        "description": "All ICS feeds",
+                        "schema": {
+                            "$ref": "#/definitions/CalendarList"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "calendar"
+                ],
+                "security": [
+                    {
+                        "userToken": []
+                    }
+                ]
+            }
+        },
         "/calendar/{userToken}/{scopeId}": {
             "parameters": [
                 {
@@ -379,6 +406,26 @@
         }
     },
     "definitions": {
+        "CalendarList": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "scopeId": {
+                        "type": "string",
+                        "example": "5d5b48a5-96f7-466d-850f-24069b869b64"
+                    },
+                    "scopeName": {
+                        "type": "string",
+                        "example": "Maxi Mustermann"
+                    },
+                    "icsUrl": {
+                        "type": "string",
+                        "example": "https://schulcloud.org:3000/calendar/{userToken}/5d5b48a5-96f7-466d-850f-24069b869b64"
+                    }
+                }
+            }
+        },
         "CreateModifyEventRequest": {
             "type": "object",
             "properties": {
