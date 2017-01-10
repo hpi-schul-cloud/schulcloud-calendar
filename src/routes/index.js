@@ -1,6 +1,13 @@
 const express = require('express');
-const router = express.Router();
 const bodyParser = require('body-parser');
+const router = express.Router();
+
+const cors = require('cors');
+let corsOptions = {
+    origin: 'https://schulcloud.github.io'
+};
+router.use(cors(corsOptions));
+
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 

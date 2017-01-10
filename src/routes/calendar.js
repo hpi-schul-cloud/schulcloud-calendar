@@ -1,6 +1,13 @@
 const express = require('express');
-const router = express.Router();
 const bodyParser = require('body-parser');
+const router = express.Router();
+
+const cors = require('cors');
+let corsOptions = {
+    origin: 'https://schulcloud.github.io'
+};
+router.use(cors(corsOptions));
+
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
@@ -14,7 +21,7 @@ const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionFor
 const getAlarmsIcsForEvent = require('../queries/allAlarmsForEvent').getAlarmsIcsForEvent;
 
 // GET /calendar/test
-router.get('/test', function(req, res) {
+router.get('/test', function (req, res) {
     // TODO: get token from authentication header
     const token = 'student1_1';
     Promise.resolve(getAllScopesForToken(token)).then(
@@ -25,7 +32,7 @@ router.get('/test', function(req, res) {
 
 function getEventsForScopes(res, scopes) {
     scopes = JSON.parse(scopes).data;
-    const referenceIds = scopes.map(function(entry) {
+    const referenceIds = scopes.map(function (entry) {
         return entry.id;
     });
     var referenceIdPromises = [];
@@ -45,14 +52,15 @@ function writeEventsIntoIcs(res, scopes, queryResults) {
     const contentLength = {length: 0};
     const exdates = {};
     const alarms = {};
-    queryResults.forEach(function(queryResult) {
-        if (queryResult.rows[0] == null)
-            return;
-        const event = queryResult.rows[0] || {};
-        const scope = scopes.find(function(scope) {
-            return scope.id === event.reference_id;
+    queryResults.forEach(function (queryResult) {
+        queryResult.rows.forEach(function (event) {
+            if (event == null)
+                return;
+            const scope = scopes.find(function (scope) {
+                return scope.id === event.reference_id;
+            });
+            queryPromises.push(catchExdates(res, scope, queryResult, event, icsFile, contentLength, exdates, alarms));
         });
-        queryPromises.push(catchExdates(res, scope, queryResult, event, icsFile, contentLength, exdates, alarms));
     });
     Promise.all(queryPromises).then(
         sendResponse.bind(null, icsFile, contentLength, res),
