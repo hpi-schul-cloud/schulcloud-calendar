@@ -16,7 +16,7 @@ const handleError = require('./utils/handleError')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-        res.render('index', {text: 'Blub!!'});
+        res.render('index', {text: 'Welcome!'});
 });
 
 router.get('/system-info/haproxy', function (req, res) {
