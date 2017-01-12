@@ -3,39 +3,127 @@
 ### Endpoints
 
 #### Map from usertoken to related UUIDs
-As the calendar service we need to get all scopes belonging to a user (represented by UUIDs) to find all his appointments.
+As the calendar service we need to get all scopes belonging to a user (represented by UUIDs) to find all his appointments. In order to work for the notification service, a service token should be accepted as well and return the related service with its authorities.
 
-_Request_: Usertoken
+_Request_: Usertoken / Servicetoken
 
-_Response_: UUIDs with tags (after basic verification). The format of the JSON-response could be:
-
-```
-[
-  {
-    id: '234gh',
-    name: 'Max Mustermann',
-    scope: 5,
-    canRead: true,
-    canWrite: true,
-    ...
-  }, {
-    id: '123ef',
-    name: 'HPI',
-    scope: 1,
-    canRead: true,
-    canWrite: false,
-    ...
-  },
-  ...
-]
-```
-
-The format of scope (Integer, String, ...) is not important for us but should be fix and documented.
+_Response_: UUIDs with tags (after basic verification). The format of the JSON API conform respone could be as follows.
 
 _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
 
-`token ∈ {student[1|2]\_[1|2], teacher[1|2]\_[1|2]}`
+`token ∈ {student[1|2]\_[1|2], teacher[1|2]\_[1|2], service[1|2]}`
 
+
+```
+{
+  "links": {
+    "self": "https://schulcloud-api-mock.herokuapp.com/api/all_scopes/student1_1",
+    "first": "",
+    "last": "",
+    "next": "",
+    "prev": ""
+  },
+  "data": [
+    {
+      "type": "user",
+      "id": "874a9be4-ea6a-4364-852d-1a46b0d155f3",
+      "attributes": {
+        "name": "Schüler 1.1",
+        "authorities": [
+          "canRead",
+          "canWrite"
+        ]
+      }
+    },
+    {
+      "type": "scope",
+      "id": "d46b16ce-6d98-44b7-bcbc-a36c50098144",
+      "attributes": {
+        "name": "Kurs Deutsch 1a",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    },
+    {
+      "type": "scope",
+      "id": "316866a2-41c3-444b-b82c-274697c546a0",
+      "attributes": {
+        "name": "Kurs Mathe 1a",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    },
+    {
+      "type": "scope",
+      "id": "8b0753ab-6fa8-4f42-80bd-700fe8f7d66d",
+      "attributes": {
+        "name": "Klasse 1a",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    },
+    {
+      "type": "scope",
+      "id": "145f4a21-1d55-438f-8a6b-599558f1aa47",
+      "attributes": {
+        "name": "Stufe 1",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    },
+    {
+      "type": "scope",
+      "id": "e22753f6-4cb5-4009-a9e0-dbcc3ac0993b",
+      "attributes": {
+        "name": "Schule 1",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    },
+    {
+      "type": "scope",
+      "id": "663ad332-3cd6-4e75-90bd-a2dfd9132f84",
+      "attributes": {
+        "name": "Bundesland 1",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    }
+  ]
+}
+```
+
+Response with Service token:
+
+```
+{
+  "links": {
+    "self": "https://schulcloud-api-mock.herokuapp.com/api/all_scopes/service1",
+    "first": "",
+    "last": "",
+    "next": "",
+    "prev": ""
+  },
+  "data": [
+    {
+      "type": "service",
+      "id": "139e903c-a786-44f9-97ff-2850d3a91a16",
+      "attributes": {
+        "name": "Service 1",
+        "authorities": [
+          "can-send-notifications"
+        ]
+      }
+    }
+  ]
+}
+```
 
 #### Map from usertoken to related user UUID
 (For the notification service.)
@@ -48,6 +136,30 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/user/:token
 
 `token ∈ {student[1|2]\_[1|2], teacher[1|2]\_[1|2]}`
 
+```
+{
+  "links": {
+    "self": "https://schulcloud-api-mock.herokuapp.com/api/user/student1_1",
+    "first": "",
+    "last": "",
+    "next": "",
+    "prev": ""
+  },
+  "data": [
+    {
+      "type": "user",
+      "id": "874a9be4-ea6a-4364-852d-1a46b0d155f3",
+      "attributes": {
+        "name": "Schüler 1.1",
+        "authorities": [
+          "canRead",
+          "canWrite"
+        ]
+      }
+    }
+  ]
+}
+```
 
 #### Map from UUID to related user UUID(s)
 As the calendar service we need to get all users belonging to a UUID in order to bulk create events (e.g. when accessed through our REST API by a submission system) individually for each user. In addition, the notification service requires this endpoint to notify all users belonging to an event.
@@ -60,6 +172,59 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_users/:uuid
 
 `uuid ∈ {id value form one of the queries above}`
 
+```
+{
+  "links": {
+    "self": "https://schulcloud-api-mock.herokuapp.com/api/all_users/663ad332-3cd6-4e75-90bd-a2dfd9132f84",
+    "first": "",
+    "last": "",
+    "next": "",
+    "prev": ""
+  },
+  "data": [
+    {
+      "type": "user",
+      "id": "874a9be4-ea6a-4364-852d-1a46b0d155f3",
+      "attributes": {
+        "name": "Schüler 1.1",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    },
+    {
+      "type": "user",
+      "id": "c6334438-f75b-46b3-8d0a-7f2588596e2e",
+      "attributes": {
+        "name": "Schülerin 1.2",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    },
+    {
+      "type": "user",
+      "id": "373fd11a-4c42-48ac-b245-0aa922bc1cc9",
+      "attributes": {
+        "name": "Lehrerin 1.1",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    },
+    {
+      "type": "user",
+      "id": "bd2df8b5-6253-4340-b6c2-dd0d6e13da37",
+      "attributes": {
+        "name": "Lehrer 1.2",
+        "authorities": [
+          "canRead"
+        ]
+      }
+    }
+  ]
+}
+```
 
 ### UUIDs
 UUIDs should be globally unique for each instance in the whole Schul-Cloud. An instance is for example a school, a class or a user (see [Scopes](#Scopes)).
