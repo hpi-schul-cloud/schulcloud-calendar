@@ -30,8 +30,8 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Lehrerin 1.1",
         "authorities": [
-          "canRead",
-          "canWrite",
+          "can-read",
+          "can-write",
           "can-send-notifications"
         ]
       }
@@ -42,8 +42,8 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Kurs Deutsch 1a",
         "authorities": [
-          "canRead",
-          "canWrite",
+          "can-read",
+          "can-write",
           "can-send-notifications"
         ]
       }
@@ -54,7 +54,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Kurs Mathe 1a",
         "authorities": [
-          "canWrite",
+          "can-write",
           "can-send-notifications"
         ]
       }
@@ -65,7 +65,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Klasse 1a",
         "authorities": [
-          "canRead"
+          "can-read"
         ]
       }
     },
@@ -75,7 +75,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Stufe 1",
         "authorities": [
-          "canRead"
+          "can-read"
         ]
       }
     },
@@ -85,7 +85,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Schule 1",
         "authorities": [
-          "canRead"
+          "can-read"
         ]
       }
     },
@@ -95,7 +95,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Bundesland 1",
         "authorities": [
-          "canRead"
+          "can-read"
         ]
       }
     }
@@ -156,8 +156,8 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/user/:token
       "attributes": {
         "name": "Schüler 1.1",
         "authorities": [
-          "canRead",
-          "canWrite"
+          "can-read",
+          "can-write"
         ]
       }
     }
@@ -192,7 +192,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_users/:uuid
       "attributes": {
         "name": "Schüler 1.1",
         "authorities": [
-          "canRead"
+          "can-read"
         ]
       }
     },
@@ -202,7 +202,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_users/:uuid
       "attributes": {
         "name": "Schülerin 1.2",
         "authorities": [
-          "canRead"
+          "can-read"
         ]
       }
     },
@@ -212,7 +212,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_users/:uuid
       "attributes": {
         "name": "Lehrerin 1.1",
         "authorities": [
-          "canRead"
+          "can-read"
         ]
       }
     },
@@ -222,7 +222,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_users/:uuid
       "attributes": {
         "name": "Lehrer 1.2",
         "authorities": [
-          "canRead"
+          "can-read"
         ]
       }
     }
