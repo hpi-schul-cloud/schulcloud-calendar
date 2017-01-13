@@ -65,7 +65,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             }
@@ -100,7 +100,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             }
@@ -160,7 +160,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             },
@@ -195,7 +195,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             },
@@ -230,7 +230,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             },
@@ -262,7 +262,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             }
@@ -299,7 +299,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             }
@@ -344,7 +344,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             }
@@ -398,7 +398,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             }
@@ -413,7 +413,7 @@
                 }
             ],
             "get": {
-                "summary": "Get an ICS feed for the specified search token",
+                "summary": "Get an ICS feed for the specified share token",
                 "responses": {
                     "200": {
                         "description": "ICS calendar feed",
@@ -448,7 +448,7 @@
                     "201": {
                         "description": "ShareTokenList",
                         "schema": {
-                            "$ref": "#/definitions/GetCreateSingleSearchTokenResponse"
+                            "$ref": "#/definitions/GetCreateSingleShareTokenResponse"
                         }
                     },
                     "default": {
@@ -463,27 +463,27 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             }
         },
-        "/share/{search-token}": {
+        "/share/{share-token}": {
             "parameters": [
                 {
-                    "name": "search-token",
+                    "name": "share-token",
                     "in": "path",
                     "required": true,
                     "type": "string"
                 }
             ],
             "get": {
-                "summary": "Get details for a given search token",
+                "summary": "Get details for a given share token",
                 "responses": {
                     "200": {
                         "description": "ShareToken",
                         "schema": {
-                            "$ref": "#/definitions/GetCreateSingleSearchTokenResponse"
+                            "$ref": "#/definitions/GetCreateSingleShareTokenResponse"
                         }
                     },
                     "default": {
@@ -498,12 +498,12 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             },
             "delete": {
-                "summary": "Revoke the specified search token",
+                "summary": "Revoke the specified share token",
                 "responses": {
                     "204": {
                         "description": "Successful"
@@ -520,7 +520,7 @@
                 ],
                 "security": [
                     {
-                        "userToken": []
+                        "user-token": []
                     }
                 ]
             }
@@ -547,10 +547,10 @@
                             "type": {
                                 "type": "string",
                                 "enum": [
-                                    "icsFeedPerScope",
-                                    "icsFeed"
+                                    "ics-feed-per-scope",
+                                    "ics-feed"
                                 ],
-                                "example": "icsFeedPerScope"
+                                "example": "ics-feed-per-scope"
                             },
                             "id": {
                                 "type": "string",
@@ -566,7 +566,7 @@
                                     "ics-url": {
                                         "type": "string",
                                         "description": "an ICS Feed with all scopes merged or for one scope",
-                                        "example": "https://schul-cloud.org:3000/calendar/{userToken}/5d5b48a5-96f7-466d-850f-24069b869b64"
+                                        "example": "https://schul-cloud.org:3000/calendar/5d5b48a5-96f7-466d-850f-24069b869b64"
                                     }
                                 }
                             }
@@ -936,7 +936,7 @@
                 }
             }
         },
-        "GetCreateSingleSearchTokenResponse": {
+        "GetCreateSingleShareTokenResponse": {
             "type": "object",
             "properties": {
                 "links": {
@@ -1119,7 +1119,7 @@
                     "properties": {
                         "token": {
                             "type": "string",
-                            "example": "{searchToken}"
+                            "example": "{share-token}"
                         },
                         "scope-id": {
                             "type": "string",
@@ -1157,7 +1157,7 @@
         }
     },
     "securityDefinitions": {
-        "userToken": {
+        "user-token": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header",

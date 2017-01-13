@@ -43,7 +43,7 @@ paths:
       tags:
         - calendar
       security:
-        - userToken: []
+        - user-token: []
 
   '/calendar':
     parameters:
@@ -65,7 +65,7 @@ paths:
       tags:
         - calendar
       security:
-        - userToken: []
+        - user-token: []
 
   /events:
     get:
@@ -104,7 +104,7 @@ paths:
       tags:
         - events
       security:
-        - userToken: []
+        - user-token: []
     post:
       summary: Create a new Event for a list of UUIDs
       responses:
@@ -125,7 +125,7 @@ paths:
       tags:
         - events
       security:
-        - userToken: []
+        - user-token: []
     put:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
@@ -148,7 +148,7 @@ paths:
       tags:
         - events
       security:
-        - userToken: []
+        - user-token: []
     delete:
       summary: Delete an Event for a list of UUIDs
       responses:
@@ -167,7 +167,7 @@ paths:
       tags:
         - events
       security:
-        - userToken: []
+        - user-token: []
   /events/ics:
     post:
       summary: Create a new Event for a list of UUIDs where the ics is given
@@ -189,7 +189,7 @@ paths:
       tags:
         - events/ics
       security:
-        - userToken: []
+        - user-token: []
   '/events/ics/{event-id}':
     parameters:
       - name: event-id
@@ -218,7 +218,7 @@ paths:
       tags:
         - events/ics
       security:
-        - userToken: []
+        - user-token: []
   '/filter/{search-token}':
     parameters:
       - name: search-token
@@ -252,7 +252,7 @@ paths:
       tags:
         - share
       security:
-        - userToken: []
+        - user-token: []
 
   '/share/calendar/{share-token}':
     parameters:
@@ -261,7 +261,7 @@ paths:
         required: true
         type: string
     get:
-      summary: Get an ICS feed for the specified search token
+      summary: Get an ICS feed for the specified share token
       responses:
         '200':
           description: ICS calendar feed
@@ -287,7 +287,7 @@ paths:
         '201':
           description: ShareTokenList
           schema:
-            $ref: '#/definitions/GetCreateSingleSearchTokenResponse'
+            $ref: '#/definitions/GetCreateSingleShareTokenResponse'
         default:
           description: Unexpected error
           schema:
@@ -295,21 +295,21 @@ paths:
       tags:
         - share
       security:
-        - userToken: []
+        - user-token: []
 
-  '/share/{search-token}':
+  '/share/{share-token}':
     parameters:
-      - name: search-token
+      - name: share-token
         in: path
         required: true
         type: string
     get:
-      summary: Get details for a given search token
+      summary: Get details for a given share token
       responses:
         '200':
           description: ShareToken
           schema:
-            $ref: '#/definitions/GetCreateSingleSearchTokenResponse'
+            $ref: '#/definitions/GetCreateSingleShareTokenResponse'
         default:
           description: Unexpected error
           schema:
@@ -317,9 +317,9 @@ paths:
       tags:
         - share
       security:
-        - userToken: []
+        - user-token: []
     delete:
-      summary: Revoke the specified search token
+      summary: Revoke the specified share token
       responses:
         '204':
           description: Successful
@@ -330,7 +330,7 @@ paths:
       tags:
         - share
       security:
-        - userToken: []
+        - user-token: []
 
 definitions:
   CalendarList:
@@ -350,9 +350,9 @@ definitions:
             type:
               type: string
               enum:
-                - icsFeedPerScope
-                - icsFeed
-              example: "icsFeedPerScope"
+                - ics-feed-per-scope
+                - ics-feed
+              example: "ics-feed-per-scope"
             id:
               type: string
               example: "5d5b48a5-96f7-466d-850f-24069b869b64"
@@ -365,7 +365,7 @@ definitions:
                 ics-url:
                   type: string
                   description: an ICS Feed with all scopes merged or for one scope
-                  example: "https://schul-cloud.org:3000/calendar/{userToken}/5d5b48a5-96f7-466d-850f-24069b869b64"
+                  example: "https://schul-cloud.org:3000/calendar/5d5b48a5-96f7-466d-850f-24069b869b64"
 
 
   CreateModifyEventRequest:
@@ -616,7 +616,7 @@ definitions:
           $ref: '#/definitions/ShareToken'
 
 
-  GetCreateSingleSearchTokenResponse:
+  GetCreateSingleShareTokenResponse:
     type: object
     properties:
       links:
@@ -759,7 +759,7 @@ definitions:
         properties:
           token:
             type: string
-            example: "{searchToken}"
+            example: "{share-token}"
           scope-id:
             type: string
             example: "5d5b48a5-96f7-466d-850f-24069b869b64"
@@ -783,7 +783,7 @@ definitions:
               type: string
 
 securityDefinitions:
-  userToken:
+  user-token:
     type: apiKey
     name: Authorization
     in: header
