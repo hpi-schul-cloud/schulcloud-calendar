@@ -23,8 +23,6 @@ tags:
     description: Work with one or multiple events as JSON
   - name: events/ics
     description: Work with one or multiple events as ICS string
-  - name: filter
-    description: Get an ICS feed based on a pre-defined search token
   - name: share
     description: Access an ICS feed from an external endpoint
 paths:
@@ -219,23 +217,6 @@ paths:
         - events/ics
       security:
         - user-token: []
-  '/filter/{search-token}':
-    parameters:
-      - name: search-token
-        in: path
-        required: true
-        type: string
-    get:
-      summary: Get an extract of one calendar based on a pre-defined search token
-      responses:
-        '200':
-          description: ICS calendar feed
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - filter
 
   '/share/list':
     get:
