@@ -17,7 +17,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
 ```
 {
   "links": {
-    "self": "https://schulcloud-api-mock.herokuapp.com/api/all_scopes/student1_1",
+    "self": "https://schulcloud-api-mock.herokuapp.com/api/all_scopes/teacher1_1",
     "first": "",
     "last": "",
     "next": "",
@@ -26,12 +26,13 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
   "data": [
     {
       "type": "user",
-      "id": "874a9be4-ea6a-4364-852d-1a46b0d155f3",
+      "id": "373fd11a-4c42-48ac-b245-0aa922bc1cc9",
       "attributes": {
-        "name": "Schüler 1.1",
+        "name": "Lehrerin 1.1",
         "authorities": [
           "canRead",
-          "canWrite"
+          "canWrite",
+          "can-send-notifications"
         ]
       }
     },
@@ -41,7 +42,9 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Kurs Deutsch 1a",
         "authorities": [
-          "canRead"
+          "canRead",
+          "canWrite",
+          "can-send-notifications"
         ]
       }
     },
@@ -51,7 +54,8 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
       "attributes": {
         "name": "Kurs Mathe 1a",
         "authorities": [
-          "canRead"
+          "canWrite",
+          "can-send-notifications"
         ]
       }
     },
