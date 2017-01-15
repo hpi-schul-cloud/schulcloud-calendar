@@ -1,4 +1,5 @@
 const allAlarmsForEvent = require('../queries/allAlarmsForEvent');
+const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
 
 function queryToIcs(queryResult, scope, exdates, alarms) {
     var ics = 'BEGIN:VCALENDAR\n';
@@ -35,10 +36,10 @@ function queryToIcs(queryResult, scope, exdates, alarms) {
         }
         if (exdates && exdates[event.id])
             ics += exdates[event.id];
-        ics += 'DTSTART:' + iCalendarDateFormat(startDate);
-        ics += 'DTEND:' + iCalendarDateFormat(endDate);
-        ics += 'DTSTAMP:' + iCalendarDateFormat(createdAt);
-        ics += 'LAST-MODIFIED:' + iCalendarDateFormat(lastModified);
+        ics += 'DTSTART:' + iCalendarDateFormat(startDate) + '\n';
+        ics += 'DTEND:' + iCalendarDateFormat(endDate) + '\n';
+        ics += 'DTSTAMP:' + iCalendarDateFormat(createdAt) + '\n';
+        ics += 'LAST-MODIFIED:' + iCalendarDateFormat(lastModified) + '\n';
 
         if (alarms && alarms[event.id])
             ics += alarms[event.id];
@@ -47,10 +48,6 @@ function queryToIcs(queryResult, scope, exdates, alarms) {
     });
 
     return ics += 'END:VCALENDAR\n';
-}
-
-function iCalendarDateFormat(date) {
-    return date.toISOString().replace(/([:-]|(\..{3}))/g, '') + '\n';
 }
 
 module.exports = queryToIcs;

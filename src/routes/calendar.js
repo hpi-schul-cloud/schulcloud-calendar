@@ -13,8 +13,10 @@ router.use(bodyParser.urlencoded({extended: false}));
 
 const allEvents = require('../queries/allEvents');
 const queryToIcs = require('../parsers/queryToIcs');
+const queryToEventIcs = require('../parsers/queryToEventIcs');
+const eventsToFinalIcs = require('../parsers/eventsToFinalIcs');
 const Readable = require('stream').Readable;
-const handleError = require('./utils/handleError')
+const handleError = require('./utils/handleError');
 
 const getAllScopesForToken = require('../http_requests').getAllScopesForToken;
 const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
@@ -48,72 +50,83 @@ function getEventsForScopes(res, scopes) {
 function writeEventsIntoIcs(res, scopes, queryResults) {
     const icsFile = [];
     const queryPromises = [];
-    // need objects here to pass it by reference, not by value
-    const contentLength = {length: 0};
-    const exdates = {};
-    const alarms = {};
     queryResults.forEach(function (queryResult) {
         queryResult.rows.forEach(function (event) {
             if (event == null)
                 return;
-            const scope = scopes.find(function (scope) {
-                return scope.id === event.reference_id;
-            });
-            queryPromises.push(catchExdates(res, scope, queryResult, event, icsFile, contentLength, exdates, alarms));
+            // TODO: remove when new API has been introduced and each link/request is for only one scope
+            // const scope = scopes.find(function (scope) {
+            //     return scope.id === event.reference_id;
+            // });
+            queryPromises.push(getEvent(res, event, icsFile));
         });
     });
     Promise.all(queryPromises).then(
-        sendResponse.bind(null, icsFile, contentLength, res),
+        sendResponse.bind(null, icsFile, res),
         handleError.bind(null, res)
     );
 }
 
-function catchExdates(res, scope, queryResult, event, icsFile, contentLength, exdates, alarms) {
+function getEvent(res, event, icsFile) {
+    return new Promise(function (resolve, reject) {
+        const exdates = {};
+        const alarms = {};
+        const eventPromises = [];
+        eventPromises.push(catchExdates(res, event, exdates));
+        eventPromises.push(catchAlarms(res, event, alarms));
+        Promise.all(eventPromises).then(
+            createAndAddEventIcs.bind(null, event, icsFile, exdates, alarms, resolve),
+            handleError.bind(null, res)
+        );
+    });
+}
+
+function createAndAddEventIcs(event, icsFile, exdates, alarms, resolve) {
+    const ics = queryToEventIcs(event, exdates, alarms);
+    icsFile.push(ics);
+    resolve();
+}
+
+function catchExdates(res, event, exdates) {
     return new Promise(function (resolve, reject) {
         Promise.resolve(getRepeatExceptionsIcsForEvent(event.id)).then(
-            resolveExdates.bind(null, res, resolve, reject, scope, queryResult, event, icsFile, contentLength, exdates, alarms),
+            resolveExdates.bind(null, resolve, event, exdates),
             handleError.bind(null, res)
         );
     });
 
 }
 
-function resolveExdates(res, resolve, reject, scope, queryResult, event, icsFile, contentLength, exdates, alarms, exdatesResult) {
+function resolveExdates(resolve, event, exdates, exdatesResult) {
     exdates[event.id] = exdatesResult;
-    catchAlarms(res, resolve, reject, scope, queryResult, event, icsFile, contentLength, exdates, alarms);
-}
-
-function catchAlarms(res, resolve, reject, scope, queryResult, event, icsFile, contentLength, exdates, alarms) {
-    Promise.resolve(getAlarmsIcsForEvent(event.id)).then(
-        resolveAlarms.bind(null, res, resolve, reject, scope, queryResult, event, icsFile, contentLength, exdates, alarms),
-        handleError.bind(null, res)
-    );
-}
-
-function resolveAlarms(res, resolve, reject, scope, queryResult, event, icsFile, contentLength, exdates, alarms, alarmsResult) {
-    alarms[event.id] = alarmsResult;
-    createAndAddIcs(res, resolve, reject, scope, queryResult, event, icsFile, contentLength, exdates, alarms)
-}
-
-function createAndAddIcs(res, resolve, reject, scope, queryResult, event, icsFile, contentLength, exdates, alarms) {
-    const ics = queryToIcs(queryResult, scope, exdates, alarms);
-    icsFile.push(ics);
-    contentLength.length += ics.length;
     resolve();
 }
 
-function sendResponse(icsFile, contentLength, res) {
-    let finalIcsString = "";
-    icsFile.forEach(function (entry) {
-        finalIcsString += entry;
+function catchAlarms(res, event, alarms) {
+    return new Promise(function (resolve, reject) {
+        Promise.resolve(getAlarmsIcsForEvent(event.id)).then(
+            resolveAlarms.bind(null, resolve, event, alarms),
+            handleError.bind(null, res)
+        );
     });
+}
+
+function resolveAlarms(resolve, event, alarms, alarmsResult) {
+    alarms[event.id] = alarmsResult;
+    resolve();
+}
+
+function sendResponse(icsFile, res) {
+    // TODO: after introducing new API, only one scope will be put into ics file, then set the correct scope here
+    const scope = '';
+    let finalIcsString = eventsToFinalIcs(icsFile, scope);
     const finalIcs = new Readable();
     finalIcs.push(finalIcsString);
     finalIcs.push(null);
     res.writeHead(200, {
         'Content-Disposition': 'attachment; filename=calendar.ics',
         'Content-Type': 'text/calendar', //application/octet-stream (?)
-        'Content-Length': contentLength.length
+        'Content-Length': finalIcsString.length
     });
     finalIcs.pipe(res);
 }
