@@ -12,7 +12,6 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
 const allEvents = require('../queries/allEvents');
-const queryToIcs = require('../parsers/queryToIcs');
 const queryToEventIcs = require('../parsers/queryToEventIcs');
 const eventsToFinalIcs = require('../parsers/eventsToFinalIcs');
 const Readable = require('stream').Readable;

@@ -80,6 +80,7 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
     params[6] = new Date();                 //$7: created_timestamp
     params[7] = json["repeat"];             //$8: repeat
     params[8] = json["repeat_interval"];    //$9: repeat_interval
+    params[9] = json["repeat_byday"];      //$10: repeat_byday
 
     if (separateUsers === true) {
         Promise.resolve(getAllUsersForUUID(scopeIds[0])).then(

@@ -1,6 +1,9 @@
 const allAlarmsForEvent = require('../queries/allAlarmsForEvent');
 const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
 
+/**
+ * @deprecated use queryToEventIcs and eventsToFinalIcs instead
+ */
 function queryToIcs(queryResult, scope, exdates, alarms) {
     var ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
@@ -32,7 +35,10 @@ function queryToIcs(queryResult, scope, exdates, alarms) {
             ics += 'DESCRIPTION:' + event.description + '\n';
         }
         if (event.repeat) {
-            ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + '\n';
+            if (event.repeat_byday)
+                ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + ';BYDAY=' + event.repeat_byday + '\n';
+            else
+                ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + '\n';
         }
         if (exdates && exdates[event.id])
             ics += exdates[event.id];

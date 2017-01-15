@@ -115,8 +115,11 @@ function lineToJson(line, event) {
                     case "INTERVAL":
                         event["repeat_interval"] = raValue;
                         break;
+                    case "BYDAY":
+                        event["repeat_byday"] = raValue;
+                        break;
                     default:
-                        console.error("Invalid repeat attribute: " + raName + ": " + raValue);
+                        console.error("[icsToJson] Invalid repeat attribute: " + raName + ": " + raValue);
                 }
             }
             break;
