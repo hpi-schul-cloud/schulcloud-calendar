@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const uuidV4 = require('uuid/v4');
 const router = express.Router();
 
 const cors = require('cors');
@@ -22,6 +23,22 @@ const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent'
 const addAlarmToEvent = require('../queries/addAlarmToEvent');
 
 router.post('/', function (req, res) {
+    handleInsertRequest(req, res, uuidV4());
+});
+
+router.options('/:eventId', cors(corsOptions));
+
+router.put('/:eventId', function (req, res) {
+    // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
+    handleDeleteRequest(req, null);
+    handleInsertRequest(req, res, req.params.eventId);
+});
+
+router.delete('/:eventId', function (req, res) {
+    handleDeleteRequest(req, res);
+});
+
+function handleInsertRequest(req, res, externalEventId) {
     const scopeIds = req.body.scopeIds;
     if (!Array.isArray(scopeIds) || scopeIds.length === 0) {
         consoleError("Got invalid 'scopeIds' array!");
@@ -38,34 +55,23 @@ router.post('/', function (req, res) {
 
     if (Array.isArray(json)) {
         json.forEach(function(event) {
-            handleJson(event, separateUsers, scopeIds, req, res);
+            handleJson(event, separateUsers, scopeIds, externalEventId, req, res);
         });
     } else {
-        handleJson(json, separateUsers, scopeIds, req, res);
+        handleJson(json, separateUsers, scopeIds, externalEventId, req, res);
     }
+}
 
-});
-
-router.options('/:eventId', cors(corsOptions));
-
-router.put('/:eventId', function (req, res) {
-    // TODO implement
-    var scopeIds = req.body.scopeIds;
-    var separateUsers = req.body.separateUsers;
-    var ics = req.body.ics;
-    var eventId = req.params.eventId;
-});
-
-router.delete('/:eventId', function (req, res) {
+function handleDeleteRequest(req, res) {
     // TODO implement with scopeIds
     var eventId = req.params.eventId;
     Promise.resolve(deleteEvent([eventId])).then(
-        handleSuccess.bind(null, res),
+        handleSuccess.bind(null, res, ''),
         handleError.bind(null, res)
     );
-});
+}
 
-function handleJson(json, separateUsers, scopeIds, req, res) {
+function handleJson(json, separateUsers, scopeIds, externalEventId, req, res) {
     /*
      * json contains id, summary, location, description, start_timestamp, end_timestamp
      * reference_id, created_timestamp, last_modified_timestamp, repeat, repeat_interval, alarms Array
@@ -81,10 +87,11 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
     params[7] = json["repeat"];             //$8: repeat
     params[8] = json["repeat_interval"];    //$9: repeat_interval
     params[9] = json["repeat_byday"];      //$10: repeat_byday
+    params[10] = externalEventId;          //$11: event_id
 
     if (separateUsers === true) {
         Promise.resolve(getAllUsersForUUID(scopeIds[0])).then(
-            insertSeparateEvents.bind(null, res),
+            insertSeparateEvents.bind(null, res, params),
             handleError.bind(null, res)
         );
     } else {
@@ -100,7 +107,7 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
                         for (var i = 0; i < exdates.length; i++) {
                             for (var j = 0; j < results.length; j++) {
                                 var params = [];
-                                params[0] = results[j];
+                                params[0] = results[j].id;
                                 params[1] = exdates[i];
                                 addRepeatExceptionToEvent(params);
                             }
@@ -110,7 +117,7 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
                         json["alarms"].forEach(function(alarm) {
                             results.forEach(function(createdEvent) {
                                 let params = [];
-                                params[0] = createdEvent;
+                                params[0] = createdEvent.id;
                                 params[1] = alarm["trigger"];
                                 params[2] = alarm["repeat"];
                                 params[3] = alarm["duration"];
@@ -120,18 +127,17 @@ function handleJson(json, separateUsers, scopeIds, req, res) {
                                 params[7] = alarm["attendee"];
                                 params[8] = alarm["summary"];
                                 addAlarmToEvent(params);
-                                console.log("Successfully inserted alarm." + params)
                             });
                         });
                     }
                 }
 
-                handleSuccess(res);
+                handleSuccess(res, results[0].event_id);
         }, handleError.bind(null, res));
     }
 }
 
-function insertSeparateEvents(res, response) {
+function insertSeparateEvents(res, response, params) {
     const responseJson = JSON.parse(response);
     const result = responseJson.data;
 
@@ -140,7 +146,7 @@ function insertSeparateEvents(res, response) {
         return;
     }
 
-    referenceIds = result.map(function(entry) {
+    const referenceIds = result.map(function(entry) {
         return entry.id;
     });
 
