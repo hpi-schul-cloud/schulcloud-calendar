@@ -25,7 +25,7 @@ describe('routes/calendar', function() {
                 .get('/calendar/test')
                 .expect('Content-Disposition', /attachment/)
                 .expect('Content-Type', 'text/calendar')
-                .expect('Content-Length', '680')
+                .expect('Content-Length', '543')
                 .expect(200, done);
         });
 

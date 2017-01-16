@@ -52,7 +52,7 @@ CREATE TABLE events (
 
 CREATE TABLE alarms (
   id          UUID UNIQUE PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-  event_id    UUID                    NOT NULL REFERENCES events (id),
+  event_id    UUID                    NOT NULL REFERENCES events (id) ON DELETE CASCADE,
   trigger     TEXT                    NOT NULL,              -- when to initially alarm
   repeat      INTEGER                          DEFAULT NULL, -- how many times
   duration    INTERVAL                         DEFAULT NULL, -- interval of repeated (additional) alarms
@@ -65,7 +65,7 @@ CREATE TABLE alarms (
 
 CREATE TABLE repetition_exception_dates (
   id       UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
-  event_id UUID                     NOT NULL REFERENCES events (id),
+  event_id UUID                     NOT NULL REFERENCES events (id) ON DELETE CASCADE,
   date     TIMESTAMP WITH TIME ZONE NOT NULL
   -- weitere Felder
 );

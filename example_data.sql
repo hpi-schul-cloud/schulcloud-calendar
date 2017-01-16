@@ -22,4 +22,4 @@ BEGIN
   INSERT INTO repetition_exception_dates VALUES
     (uuid_generate_v4(), new_event_id, '2016-11-21 09:00:00.000000')
   ON CONFLICT DO NOTHING;
-END $$
+END $$;
