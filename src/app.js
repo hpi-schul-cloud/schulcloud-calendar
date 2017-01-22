@@ -9,6 +9,10 @@ var index = require('./routes/index');
 var calendar = require('./routes/calendar');
 var eventsIcs = require('./routes/eventsIcs');
 var events = require('./routes/events');
+var share = require('./routes/share');
+var externalFeed = require('./routes/externalFeed');
+var toDos = require('./routes/toDos');
+var toDosIcs = require('./routes/toDosIcs');
 
 var app = express();
 
@@ -29,6 +33,10 @@ app.use('/', index);
 app.use('/calendar', calendar);
 app.use('/events/ics', eventsIcs);
 app.use('/events', events);
+app.use('/share', share);
+app.use('/external-feed-subscription', externalFeed);
+app.use('/to-dos', toDos);
+app.use('/to-dos/ics', toDosIcs);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

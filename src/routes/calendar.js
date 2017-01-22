@@ -31,6 +31,18 @@ router.get('/test', function (req, res) {
     );
 });
 
+// GET /calendar
+router.get('/', function (req, res) {
+    // TODO: implement
+    handleError(res);
+});
+
+// GET /calendar/list
+router.get('/list', function (req, res) {
+    // TODO: implement
+    handleError(res);
+});
+
 function getEventsForScopes(res, scopes) {
     scopes = JSON.parse(scopes).data;
     const referenceIds = scopes.map(function (entry) {

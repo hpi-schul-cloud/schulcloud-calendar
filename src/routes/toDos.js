@@ -9,31 +9,30 @@ let corsOptions = {
 router.use(cors(corsOptions));
 
 router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: false }));
+router.use(bodyParser.urlencoded({extended: false}));
 
-const handleDeleteRequest = require("./utils/handleDeleteRequest");
+const handleError = require('./utils/handleError');
 
-router.options('/:eventId', cors(corsOptions));
-
-// DELETE /events/:eventId
-router.delete('/:eventId', function (req, res) {
-    handleDeleteRequest(req, res);
-});
-
-// GET /events/
+// GET /to-dos
 router.get('/', function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
-// POST /events/
+// POST /to-dos
 router.post('/', function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
-// PUT /events/:eventId
-router.put('/:eventId', function (req, res) {
+// PUT /to-dos/:toDoId
+router.put('/:toDoId', function (req, res) {
+    // TODO: implement
+    handleError(res);
+});
+
+// DELETE /to-dos/:toDoId
+router.delete('/:toDoId', function (req, res) {
     // TODO: implement
     handleError(res);
 });
