@@ -35,10 +35,34 @@ function queryToIcs(queryResult, scope, exdates, alarms) {
             ics += 'DESCRIPTION:' + event.description + '\n';
         }
         if (event.repeat) {
+            ics += 'RRULE:FREQ=' + event.repeat + ';';
+            if (event.repeat_until)
+                ics += 'UNTIL=' + iCalendarDateFormat(event.repeat_until) + ';';
+            if (event.repeat_count)
+                ics += 'COUNT=' + event.repeat_count + ';';
+            if (event.repeat_interval)
+                ics += 'INTERVAL=' + event.repeat_interval + ';';
+            if (event.repeat_bysecond)
+                ics += 'BYSECOND=' + event.repeat_bysecond + ';';
+            if (event.repeat_byminute)
+                ics += 'BYMINUTE=' + event.repeat_byminute + ';';
+            if (event.repeat_byhour)
+                ics += 'BYHOUR=' + event.repeat_byhour + ';';
             if (event.repeat_byday)
-                ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + ';BYDAY=' + event.repeat_byday + '\n';
-            else
-                ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + '\n';
+                ics += 'BYDAY=' + event.repeat_byday + ';';
+            if (event.repeat_bymonthday)
+                ics += 'BYMONTHDAY=' + event.repeat_bymonthday + ';';
+            if (event.repeat_byyearday)
+                ics += 'BYYEARDAY=' + event.repeat_byyearday + ';';
+            if (event.repeat_byweekno)
+                ics += 'BYWEEKNO=' + event.repeat_byweekno + ';';
+            if (event.repeat_bymonth)
+                ics += 'BYMONTH=' + event.repeat_bymonth + ';';
+            if (event.repeat_bysetpos)
+                ics += 'BYSETPOS=' + event.repeat_bysetpos + ';';
+            if (event.repeat_wkst)
+                ics += 'WKST=' + event.repeat_wkst + ';';
+            ics += '\n';
         }
         if (exdates && exdates[event.id])
             ics += exdates[event.id];

@@ -22,15 +22,30 @@ const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent'
 const addAlarmToEvent = require('../queries/addAlarmToEvent');
 const handleDeleteRequest = require("./utils/handleDeleteRequest");
 const authentication = require("../authorization/index");
+const newNotificationForScopeIds = require('../http_requests/newNotificationForScopeIds');
 
 router.post('/', authentication, function (req, res) {
     handleInsertRequest(req, res, uuidV4());
+
+    //TODO: only, if created successful
+    const scopeIds = req.body.scopeIds;
+    const title = "Neuer Termin erstellt";
+    const body = "Es wurde ein neuer Termin für Sie erstellt!";
+    const token = "";   //TODO
+    newNotificationForScopeIds(title, body, token, scopeIds);
 });
 
 router.put('/:eventId', authentication, function (req, res) {
     // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
     handleDeleteRequest(req, null);
     handleInsertRequest(req, res, req.params.eventId);
+
+    //TODO: only, if modified successful
+    const scopeIds = req.body.scopeIds;
+    const title = "Ein Termin wurde verändert";
+    const body = "Einer Ihrer Termine wurde verändert!";
+    const token = "";   //TODO
+    newNotificationForScopeIds(title, body, token, scopeIds);
 });
 
 function handleInsertRequest(req, res, externalEventId) {
@@ -71,9 +86,20 @@ function handleJson(json, separateUsers, scopeIds, externalEventId, req, res) {
     params[4] = json["end_timestamp"];      //$5: end_timestamp
     params[6] = new Date();                 //$7: created_timestamp
     params[7] = json["repeat"];             //$8: repeat
-    params[8] = json["repeat_interval"];    //$9: repeat_interval
-    params[9] = json["repeat_byday"];      //$10: repeat_byday
-    params[10] = externalEventId;          //$11: event_id
+    params[8] = json["repeat_until"];       //$9: repeat_until
+    params[9] = json["repeat_count"];       //$10: repeat_count
+    params[10] = json["repeat_interval"];   //$11: repeat_interval
+    params[11] = json["repeat_bysecond"];   //$12: repeat_bysecond
+    params[12] = json["repeat_byminute"];   //$13: repeat_byminute
+    params[13] = json["repeat_byhour"];     //$14: repeat_byhour
+    params[14] = json["repeat_byday"];      //$15: repeat_byday
+    params[15] = json["repeat_bymonthday"]; //$16: repeat_bymonthday
+    params[16] = json["repeat_byyearday"];  //$17: repeat_byyearday
+    params[17] = json["repeat_byweekno"];   //$18: repeat_byweekno
+    params[18] = json["repeat_bymonth"];    //$19: repeat_bymonth
+    params[19] = json["repeat_bysetpos"];   //$20: repeat_bysetpos
+    params[20] = json["repeat_wkst"];       //$21: repeat_wkst
+    params[21] = externalEventId;          //$22: event_id
 
     if (separateUsers === true) {
         scopeIds.forEach(function(scopeId) {

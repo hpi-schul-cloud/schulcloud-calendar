@@ -44,8 +44,19 @@ CREATE TABLE events (
   created_timestamp       TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   last_modified_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   repeat                  repeat_type                       DEFAULT NULL,
+  repeat_until            TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
+  repeat_count            INT                               DEFAULT NULL,
   repeat_interval         INT                               DEFAULT NULL,
+  repeat_bysecond         TEXT                              DEFAULT NULL,
+  repeat_byminute         TEXT                              DEFAULT NULL,
+  repeat_byhour           TEXT                              DEFAULT NULL,
   repeat_byday            TEXT                              DEFAULT NULL,
+  repeat_bymonthday       TEXT                              DEFAULT NULL,
+  repeat_byyearday        TEXT                              DEFAULT NULL,
+  repeat_byweekno         TEXT                              DEFAULT NULL,
+  repeat_bymonth          TEXT                              DEFAULT NULL,
+  repeat_bysetpos         TEXT                              DEFAULT NULL,
+  repeat_wkst             TEXT                              DEFAULT NULL,
   event_id                UUID                     NOT NULL DEFAULT uuid_generate_v4()
   -- weitere Felder
 );

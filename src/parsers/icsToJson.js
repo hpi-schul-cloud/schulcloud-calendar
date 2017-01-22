@@ -112,11 +112,44 @@ function lineToJson(line, event) {
                     case "FREQ":
                         event["repeat"] = raValue;
                         break;
+                    case "UNTIL":
+                        event["repeat_until"] = regularDateFormat(raValue);
+                        break;
+                    case "COUNT":
+                        event["repeat_count"] = raValue;
+                        break;
                     case "INTERVAL":
                         event["repeat_interval"] = raValue;
                         break;
+                    case "BYSECOND":
+                        event["repeat_bysecond"] = raValue;
+                        break;
+                    case "BYMINUTE":
+                        event["repeat_byminute"] = raValue;
+                        break;
+                    case "BYHOUR":
+                        event["repeat_byhour"] = raValue;
+                        break;
                     case "BYDAY":
                         event["repeat_byday"] = raValue;
+                        break;
+                    case "BYMONTHDAY":
+                        event["repeat_bymonthday"] = raValue;
+                        break;
+                    case "BYYEARDAY":
+                        event["repeat_byyearday"] = raValue;
+                        break;
+                    case "BYWEEKNO":
+                        event["repeat_byweekno"] = raValue;
+                        break;
+                    case "BYMONTH":
+                        event["repeat_bymonth"] = raValue;
+                        break;
+                    case "BYSETPOS":
+                        event["repeat_bysetpos"] = raValue;
+                        break;
+                    case "WKST":
+                        event["repeat_wkst"] = raValue;
                         break;
                     default:
                         console.error("[icsToJson] Invalid repeat attribute: " + raName + ": " + raValue);
