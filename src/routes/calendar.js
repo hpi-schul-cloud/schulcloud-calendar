@@ -35,4 +35,16 @@ router.get('/test', function (req, res) {
     handleError.bind(null, res));
 });
 
+// GET /calendar
+router.get('/', function (req, res) {
+    // TODO: implement
+    handleError(res);
+});
+
+// GET /calendar/list
+router.get('/list', function (req, res) {
+    // TODO: implement
+    handleError(res);
+});
+
 module.exports = router;
