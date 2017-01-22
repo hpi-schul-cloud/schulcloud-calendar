@@ -12,10 +12,10 @@ function authentication(req, res, next) {
             console.log(value);
             next();
         }, function (value) {
-            handleError(res, 'Invalid authentication token!', 401)
+            handleError(res, 'Invalid Authorization token!', 401, 'Unauthorized')
         });
     } else {
-        handleError(res, 'Invalid authentication token!', 401);
+        handleError(res, 'Invalid Authorization token!', 401, 'Unauthorized')
     }
 }
 
