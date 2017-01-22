@@ -24,12 +24,7 @@ const authorize = require("../authorization/index");
 
 // GET /calendar/test
 router.get('/test', authorize, function (req, res) {
-    // TODO: get token from authentication header
-    const token = 'student1_1';
-    Promise.resolve(getAllScopesForToken(token)).then(
-        getEventsForScopes.bind(null, res),
-        handleError.bind(null, res)
-    );
+    getEventsForScopes(res, req.user);
 });
 
 // GET /calendar
@@ -44,22 +39,24 @@ router.get('/list', authorize, function (req, res) {
     handleError(res);
 });
 
-function getEventsForScopes(res, scopes) {
-    scopes = JSON.parse(scopes).data;
-    const referenceIds = scopes.map(function (entry) {
-        return entry.id;
-    });
+function getEventsForScopes(res, user) {
+    let referenceIds = [];
+    for (let scope in user.scope) {
+        referenceIds.push(scope)
+    }
+    referenceIds.push(user.id);
+
     var referenceIdPromises = [];
     for (var i = 0; i < referenceIds.length; i++) {
         referenceIdPromises.push(allEvents(referenceIds[i]));
     }
     Promise.all(referenceIdPromises).then(
-        writeEventsIntoIcs.bind(null, res, scopes),
+        writeEventsIntoIcs.bind(null, res),
         handleError.bind(null, res)
     );
 }
 
-function writeEventsIntoIcs(res, scopes, queryResults) {
+function writeEventsIntoIcs(res, queryResults) {
     const icsFile = [];
     const queryPromises = [];
     queryResults.forEach(function (queryResult) {
