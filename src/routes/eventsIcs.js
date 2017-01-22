@@ -75,13 +75,14 @@ function handleJson(json, separateUsers, scopeIds, externalEventId, req, res) {
     params[10] = externalEventId;          //$11: event_id
 
     if (separateUsers === true) {
-        Promise.resolve(getAllUsersForUUID(scopeIds[0])).then(
-            insertSeparateEvents.bind(null, res, params),
-            handleError.bind(null, res)
-        );
+        scopeIds.forEach(function(scopeId) {
+            Promise.resolve(getAllUsersForUUID(scopeId)).then(
+                insertSeparateEvents.bind(null, res, params),
+                handleError.bind(null, res)
+            );
+        });
     } else {
-        referenceIds = [scopeIds[0]];
-        Promise.resolve(insertEvents(params, referenceIds))
+        Promise.resolve(insertEvents(params, scopeIds))
             .then(function (results) {
                 // TODO: check if result is uuid
                 if (Array.isArray(results)) {
@@ -122,7 +123,7 @@ function handleJson(json, separateUsers, scopeIds, externalEventId, req, res) {
     }
 }
 
-function insertSeparateEvents(res, response, params) {
+function insertSeparateEvents(res, params, response) {
     const responseJson = JSON.parse(response);
     const result = responseJson.data;
 
@@ -134,6 +135,8 @@ function insertSeparateEvents(res, response, params) {
     const referenceIds = result.map(function(entry) {
         return entry.id;
     });
+
+    // TODO: This is not going to add alarms and exdates!
 
     Promise.resolve(insertEvents(params, referenceIds)).then(
         handleSuccess.bind(null, res),
