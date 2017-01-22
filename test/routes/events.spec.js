@@ -21,6 +21,7 @@ describe('routes/events', function() {
         it('handles invalid ids', function(done) {
             request(app)
                 .post('/events')
+                .set('Authorization', 'student1_1')
                 .send({ ids: 'not an array' })
                 .expect(500, done);
         });
