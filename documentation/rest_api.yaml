@@ -4,7 +4,7 @@ info:
   description: >-
     API specification of the Schul-Cloud Calendar Service based on the JSON API specification 1.0 (http://jsonapi.org). Contribute today on
     https://github.com/schulcloud/schulcloud-calendar.
-  version: 0.0.5
+  version: 0.0.6
   contact:
     email: schulcloud-dev@lists.myhpi.de
 host: 'schul-cloud.org:3000'
@@ -25,6 +25,12 @@ tags:
     description: Work with one or multiple events as ICS string
   - name: share
     description: Access an ICS feed from an external endpoint
+  - name: external-feed
+    description: Manage subscribed ICS feeds
+  - name: to-dos
+    description: Work with one or multiple to-dos as JSON
+  - name: to-dos/ics
+    description: Work with one or multiple to-dos as ICS string
 paths:
   '/calendar/list':
     get:
@@ -67,15 +73,16 @@ paths:
 
   /events:
     get:
+      summary: Get a list of events
       parameters:
       - name: scope-id
         in: query
         required: false
-        type: number
+        type: string
       - name: event-id
         in: query
         required: false
-        type: number
+        type: string
       - name: from
         in: query
         required: false
@@ -124,6 +131,12 @@ paths:
         - events
       security:
         - user-token: []
+  '/events/{event-id}':
+    parameters:
+      - name: event-id
+        in: path
+        required: true
+        type: string
     put:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
@@ -193,7 +206,7 @@ paths:
       - name: event-id
         in: path
         required: true
-        type: number
+        type: string
     put:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
@@ -313,6 +326,258 @@ paths:
       security:
         - user-token: []
 
+  '/external-feed-subscription':
+    get:
+      summary: Get a list of subscribed feeds for the scopes you have write access to
+      parameters:
+      - name: scope-id
+        in: query
+        required: false
+        type: string
+      - name: external-feed-id
+        in: query
+        required: false
+        type: string
+      - name: last-update-failed
+        in: query
+        required: false
+        type: boolean
+      responses:
+        '200':
+          description: FeedUrlList
+          schema:
+            $ref: '#/definitions/GetExternalFeedResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - external-feed
+      security:
+        - user-token: []
+    post:
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateModifyExternalFeedRequest'
+      summary: Add a new feed to be synced with one of your calendars
+      responses:
+        '201':
+          description: FeedUrlList
+          schema:
+            $ref: '#/definitions/GetCreateSingleExternalFeedResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - external-feed
+      security:
+        - user-token: []
+
+  '/external-feed-subscription/{feed-id}':
+    parameters:
+      - name: feed-id
+        in: path
+        required: true
+        type: string
+    put:
+      summary: Update synchronisation settings for a subscribed feed
+      responses:
+        '200':
+          description: FeedUrlList
+          schema:
+            $ref: '#/definitions/GetCreateSingleExternalFeedResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateModifyExternalFeedRequest'
+      tags:
+        - external-feed
+      security:
+        - user-token: []
+    delete:
+      summary: Unsubscribe the external feed and stop syncing
+      responses:
+        '204':
+          description: Successful
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - external-feed
+      security:
+        - user-token: []
+
+  '/to-dos':
+    get:
+      summary: Get a list of To-Dos
+      parameters:
+      - name: scope-id
+        in: query
+        required: false
+        type: string
+      - name: to-do-id
+        in: query
+        required: false
+        type: string
+      - name: from
+        in: query
+        required: false
+        type: string
+        format: date-time
+      - name: until
+        in: query
+        required: false
+        type: string
+        format: date-time
+      - name: all
+        in: query
+        required: false
+        type: boolean
+      responses:
+        '200':
+          description: GetToDoResponse
+          schema:
+            $ref: '#/definitions/GetToDoResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - to-dos
+      security:
+        - user-token: []
+    post:
+      summary: Create a new To Do for a list of UUIDs
+      responses:
+        '201':
+          description: CreateToDoResponse
+          schema:
+            $ref: '#/definitions/GetCreateSingleToDoResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateModifyToDoRequest'
+      tags:
+        - to-dos
+      security:
+        - user-token: []
+  '/to-dos/{to-do-id}':
+    parameters:
+      - name: to-do-id
+        in: path
+        required: true
+        type: string
+    put:
+      summary: >-
+        Modify a To Do for a list of UUIDs, which has been created by the same
+        service earlier
+      responses:
+        '200':
+          description: Successful
+          schema:
+            $ref: '#/definitions/GetCreateSingleToDoResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateModifyToDoRequest'
+      tags:
+        - to-dos
+      security:
+        - user-token: []
+    delete:
+      summary: Delete a To Do for a list of UUIDs
+      responses:
+        '204':
+          description: Successful
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DeleteToDoRequest'
+      tags:
+        - to-dos
+      security:
+        - user-token: []
+  '/to-dos/ics':
+    post:
+      summary: Create a new To Do for a list of UUIDs where the ics is given
+      responses:
+        '201':
+          description: CreateToDoResponse
+          schema:
+            $ref: '#/definitions/GetCreateSingleIcsToDoResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateModifyIcsToDoRequest'
+      tags:
+        - to-dos/ics
+      security:
+        - user-token: []
+  '/to-dos/ics/{to-do-id}':
+    parameters:
+      - name: to-do-id
+        in: path
+        required: true
+        type: string
+    put:
+      summary: >-
+        Modify a To Do for a list of UUIDs, which has been created by the same
+        service earlier. Thereby the ics is transcribed.
+      responses:
+        '200':
+          description: Successful
+          schema:
+            $ref: '#/definitions/GetCreateSingleIcsToDoResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateModifyIcsToDoRequest'
+      tags:
+        - to-dos/ics
+      security:
+        - user-token: []
+
 definitions:
   CalendarList:
     type: object
@@ -363,17 +628,7 @@ definitions:
             attributes:
               $ref: '#/definitions/EventJSONattributes'
             relationships:
-              type: object
-              properties:
-                separate-users:
-                  type: boolean
-                  example: true
-                scope-ids:
-                  description: ids of entities
-                  type: array
-                  items:
-                    type: string
-                    example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
+              $ref: '#/definitions/RelationshipScopeIds'
             included:
               type: array
               items:
@@ -420,17 +675,7 @@ definitions:
                   type: string
                   example: 'BEGIN:VCALENDAR\n...\nEND:VCALENDAR'
             relationships:
-              type: object
-              properties:
-                separate-users:
-                  type: boolean
-                  example: true
-                scope-ids:
-                  description: ids of entities
-                  type: array
-                  items:
-                    type: string
-                    example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
+              $ref: '#/definitions/RelationshipScopeIds'
 
   DeleteEventRequest:
     type: object
@@ -516,7 +761,7 @@ definitions:
                   type: string
                   example: 'BEGIN:VCALENDAR\n...\nEND:VCALENDAR'
             relationships:
-              $ref: '#/definitions/GetEventResponseDataRelationships'
+              $ref: '#/definitions/RelationshipScopeIds'
 
   GetEventResponseData:
     type: array
@@ -532,7 +777,7 @@ definitions:
         attributes:
           $ref: '#/definitions/EventJSONattributes'
         relationships:
-          $ref: '#/definitions/GetEventResponseDataRelationships'
+          $ref: '#/definitions/RelationshipScopeIds'
         included:
           type: array
           items:
@@ -568,19 +813,6 @@ definitions:
                     example: "24897696-ee2a-4dcc-ba14-6d8dc1107fb5"
                   attributes:
                     $ref: '#/definitions/AlarmsJSONattributes'
-
-  GetEventResponseDataRelationships:
-    type: object
-    properties:
-      separate-users:
-        type: boolean
-        example: true
-      scope-ids:
-        description: ids of entities
-        type: array
-        items:
-          type: string
-          example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
 
   ShareTokenList:
     type: object
@@ -744,6 +976,330 @@ definitions:
           scope-id:
             type: string
             example: "5d5b48a5-96f7-466d-850f-24069b869b64"
+
+  CreateModifyToDoRequest:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "to-do"
+            attributes:
+              $ref: '#/definitions/ToDoJSONattributes'
+            relationships:
+              $ref: '#/definitions/RelationshipScopeIds'
+            included:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        example: "rrule"
+                      attributes:
+                        $ref: '#/definitions/RRuleJSONattributes'
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        example: "exdate"
+                      attributes:
+                        $ref: '#/definitions/ExDatesJSONattributes'
+
+
+  CreateModifyIcsToDoRequest:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "to-do"
+            attributes:
+              type: object
+              properties:
+                ics:
+                  type: string
+                  example: 'BEGIN:VTODO\n...\nEND:VTODO'
+            relationships:
+              $ref: '#/definitions/RelationshipScopeIds'
+
+  DeleteToDoRequest:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "to-do"
+            relationships:
+              type: object
+              properties:
+                scope-ids:
+                  description: ids of entities. Might be empty to delete the To Do completely.
+                  type: array
+                  items:
+                    type: string
+                    example: '3b611d43-cf33-4a08-a50d-eac63975ea00'
+
+  GetToDoResponse:
+    type: object
+    properties:
+      links:
+        type: object
+        properties:
+          self:
+            type: string
+            example: "https://schul-cloud.org:3000/to-dos"
+          next:
+            type: string
+            example: ""
+          prev:
+            type: string
+            example: ""
+          first:
+            type: string
+            example: ""
+          last:
+            type: string
+            example: ""
+      data:
+        $ref: '#/definitions/GetToDoResponseData'
+
+  GetCreateSingleToDoResponse:
+    type: object
+    properties:
+      links:
+        type: object
+        properties:
+          self:
+            type: string
+            example: "https://schul-cloud.org:3000/to-dos/?to-do-id=71c2f833-e26b-4635-b954-2f72f136cfd9"
+      data:
+        $ref: '#/definitions/GetToDoResponseData'
+
+  GetCreateSingleIcsToDoResponse:
+    type: object
+    properties:
+      links:
+        type: object
+        properties:
+          self:
+            type: string
+            example: "https://schul-cloud.org:3000/to-dos/?to-do-id=71c2f833-e26b-4635-b954-2f72f136cfd9"
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "to-do"
+            id:
+              type: string
+              example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
+            attributes:
+              type: object
+              properties:
+                ics:
+                  type: string
+                  example: 'BEGIN:VTODO\n...\nEND:VTODO'
+            relationships:
+              $ref: '#/definitions/RelationshipScopeIds'
+
+  GetToDoResponseData:
+    type: array
+    items:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "to-do"
+        id:
+          type: string
+          example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
+        attributes:
+          $ref: '#/definitions/ToDoJSONattributes'
+        relationships:
+          $ref: '#/definitions/RelationshipScopeIds'
+        included:
+          type: array
+          items:
+            type: object
+            allOf:
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    example: "rrule"
+                  id:
+                    type: string
+                    example: "db7c2a08-0963-460d-a0e6-948bac85b145"
+                  attributes:
+                    $ref: '#/definitions/RRuleJSONattributes'
+              - type: object
+                properties:
+                  type:
+                    type: string
+                    example: "exdate"
+                  id:
+                    type: string
+                    example: "37dc1705-be2a-4410-b435-d8d95ce7a5f8"
+                  attributes:
+                    $ref: '#/definitions/ExDatesJSONattributes'
+
+  ToDoJSONattributes:
+    type: object
+    properties:
+      uid:
+        type: string
+        example: "01395c2b-d975-4a55-a6b7-6074cd5ecd22@schul-cloud.org"
+      summary:
+        type: string
+        example: Finish Homework
+      location:
+        type: string
+        example: 'School'
+      description:
+        type: string
+        example: "Don't forget to hand in submission"
+      dtstart:
+        type: string
+        format: date-time
+        example: '2017-02-01T09:00:00Z'
+      dtstamp:
+        type: string
+        format: date-time
+        example: '2017-01-22T21:36:00Z'
+      last-modified:
+        type: string
+        format: date-time
+        example: '2017-01-22T21:36:00Z'
+      priority:
+        type: number
+        format: int32
+        example: 1
+      class:
+        type: string
+        example: 'confidential'
+      completed:
+        type: string
+        example: 20170201T081700Z
+      x-sc-...:
+        description: custom Schul-Cloud specific fields, MUST have a 'x-sc-' prefix
+        type: string
+
+  GetExternalFeedResponse:
+    type: object
+    properties:
+      links:
+        type: object
+        properties:
+          self:
+            type: string
+            example: "https://schul-cloud.org:3000/external-feed-subscription"
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalFeedData'
+
+  CreateModifyExternalFeedRequest:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "external-feed"
+            attributes:
+              $ref: '#/definitions/ExternalFeedAttributesRequest'
+            relationships:
+              $ref: '#/definitions/RelationshipScopeIds'
+
+  GetCreateSingleExternalFeedResponse:
+    type: object
+    properties:
+      links:
+        type: object
+        properties:
+          self:
+            type: string
+            example: "https://schul-cloud.org:3000/external-feed-subscription/1b48af86-eb3d-4bff-937a-939a47a8e957"
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/ExternalFeedData'
+
+  ExternalFeedData:
+    type: object
+    properties:
+      type:
+        type: string
+        example: "external-feed"
+      id:
+        type: string
+        example: "8ad5a293-8ed8-45d9-8a20-2e353051af1c"
+      attributes:
+        $ref: '#/definitions/ExternalFeedAttributesResponse'
+      relationships:
+        $ref: '#/definitions/RelationshipScopeIds'
+
+  ExternalFeedAttributesRequest:
+    type: object
+    properties:
+      ics-url:
+        type: string
+        example: "https://calendars.icloud.com/holidays/de_de.ics"
+      description:
+        type: string
+        example: "Public Holidays in Germany"
+
+  ExternalFeedAttributesResponse:
+    type: object
+    properties:
+      ics-url:
+        type: string
+        example: "https://calendars.icloud.com/holidays/de_de.ics"
+      description:
+        type: string
+        example: "Public Holidays in Germany"
+      last-updated:
+        type: string
+        format: date-time
+        example: '2017-01-23T10:00:00Z'
+      last-update-status:
+        type: integer
+        format: int32
+        example: '200'
+        description: HTTP Status Code of last update attempt
+
+  RelationshipScopeIds:
+    type: object
+    properties:
+      separate-users:
+        type: boolean
+        example: true
+      scope-ids:
+        description: ids of entities
+        type: array
+        items:
+          type: string
+          example: 'c985809e-a232-4fb0-a069-1cc59375304c'
 
   Error:
     type: object
