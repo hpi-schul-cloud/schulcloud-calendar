@@ -13,6 +13,8 @@ router.use(bodyParser.urlencoded({extended: false}));
 
 const handleError = require('./utils/handleError');
 
+router.options('/:toDoId', cors(corsOptions));
+
 // POST /to-dos/ics
 router.post('/', function (req, res) {
     // TODO: implement

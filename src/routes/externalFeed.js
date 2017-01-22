@@ -13,6 +13,8 @@ router.use(bodyParser.urlencoded({extended: false}));
 
 const handleError = require('./utils/handleError');
 
+router.options('/:feedId', cors(corsOptions));
+
 // GET /external-feed-subscription
 router.get('/', function (req, res) {
     // TODO: implement
