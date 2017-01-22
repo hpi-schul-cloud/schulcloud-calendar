@@ -12,30 +12,30 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
 const handleError = require('./utils/handleError');
-const authentication = require("../authorization/index");
+const authorize = require("../authorization/index");
 
 router.options('/:feedId', cors(corsOptions));
 
 // GET /external-feed-subscription
-router.get('/', authentication, function (req, res) {
+router.get('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // POST /external-feed-subscription
-router.post('/', authentication, function (req, res) {
+router.post('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // PUT /external-feed-subscription/:feedId
-router.put('/:feedId', authentication, function (req, res) {
+router.put('/:feedId', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // DELETE /external-feed-subscription/:feedId
-router.delete('/:feedId', authentication, function (req, res) {
+router.delete('/:feedId', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });

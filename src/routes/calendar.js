@@ -20,10 +20,10 @@ const handleError = require('./utils/handleError');
 const getAllScopesForToken = require('../http_requests').getAllScopesForToken;
 const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
 const getAlarmsIcsForEvent = require('../queries/allAlarmsForEvent').getAlarmsIcsForEvent;
-const authentication = require("../authorization/index");
+const authorize = require("../authorization/index");
 
 // GET /calendar/test
-router.get('/test', authentication, function (req, res) {
+router.get('/test', authorize, function (req, res) {
     // TODO: get token from authentication header
     const token = 'student1_1';
     Promise.resolve(getAllScopesForToken(token)).then(
@@ -33,13 +33,13 @@ router.get('/test', authentication, function (req, res) {
 });
 
 // GET /calendar
-router.get('/', authentication, function (req, res) {
+router.get('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // GET /calendar/list
-router.get('/list', authentication, function (req, res) {
+router.get('/list', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });

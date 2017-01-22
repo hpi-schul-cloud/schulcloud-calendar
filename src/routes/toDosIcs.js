@@ -12,18 +12,18 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
 const handleError = require('./utils/handleError');
-const authentication = require("../authorization/index");
+const authorize = require("../authorization/index");
 
 router.options('/:toDoId', cors(corsOptions));
 
 // POST /to-dos/ics
-router.post('/', authentication, function (req, res) {
+router.post('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // PUT /to-dos/ics/:toDoId
-router.put('/:toDoId', authentication, function (req, res) {
+router.put('/:toDoId', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });

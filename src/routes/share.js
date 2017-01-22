@@ -12,12 +12,12 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
 const handleError = require('./utils/handleError');
-const authentication = require("../authorization/index");
+const authorize = require("../authorization/index");
 
 router.options('/:shareToken', cors(corsOptions));
 
 // GET /share/list
-router.get('/list', authentication, function (req, res) {
+router.get('/list', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
@@ -29,19 +29,19 @@ router.get('/calendar/:shareToken', function (req, res) {
 });
 
 // POST /share/:scopeId
-router.post('/:scopeId', authentication, function (req, res) {
+router.post('/:scopeId', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // DELETE /share/:shareToken
-router.delete('/:shareToken', authentication, function (req, res) {
+router.delete('/:shareToken', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // GET /share/:shareToken
-router.get('/:shareToken', authentication, function (req, res) {
+router.get('/:shareToken', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });

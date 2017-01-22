@@ -12,29 +12,29 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 const handleDeleteRequest = require("./utils/handleDeleteRequest");
-const authentication = require("../authorization/index");
+const authorize = require("../authorization/index");
 
 router.options('/:eventId', cors(corsOptions));
 
 // DELETE /events/:eventId
-router.delete('/:eventId', authentication, function (req, res) {
+router.delete('/:eventId', authorize, function (req, res) {
     handleDeleteRequest(req, res);
 });
 
 // GET /events/
-router.get('/', authentication, function (req, res) {
+router.get('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // POST /events/
-router.post('/', authentication, function (req, res) {
+router.post('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // PUT /events/:eventId
-router.put('/:eventId', authentication, function (req, res) {
+router.put('/:eventId', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
