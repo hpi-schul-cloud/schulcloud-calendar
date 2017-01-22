@@ -14,13 +14,18 @@ router.use(bodyParser.urlencoded({extended: false}));
 const getEventsForToken = require('../services/events/getEventsForToken');
 const Readable = require('stream').Readable;
 const handleError = require('./utils/handleError');
-const getIcsWithEventsForToken = require('../services/ics/getIcsWithEventsForToken');
+const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForScopes');
+
+const getAllScopesForToken = require('../http_requests').getAllScopesForToken;
+const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
+const getAlarmsIcsForEvent = require('../queries/allAlarmsForEvent').getAlarmsIcsForEvent;
+const authorize = require("../authorization/index");
 
 // GET /calendar/test
-router.get('/test', function (req, res) {
+router.get('/test', authorize, function (req, res) {
     // TODO: get token from authentication header
     const token = 'student1_1';
-    Promise.resolve(getIcsWithEventsForToken(token)).then(
+    Promise.resolve(getIcsWithEventsForScopes(req.user)).then(
         function (finalIcsString) {
             const finalIcs = new Readable();
             finalIcs.push(finalIcsString);
@@ -36,13 +41,13 @@ router.get('/test', function (req, res) {
 });
 
 // GET /calendar
-router.get('/', function (req, res) {
+router.get('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // GET /calendar/list
-router.get('/list', function (req, res) {
+router.get('/list', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });

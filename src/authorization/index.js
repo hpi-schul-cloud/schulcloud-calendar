@@ -9,13 +9,32 @@ function authentication(req, res, next) {
 
     if (token) {
         Promise.resolve(getAllScopesForToken(token)).then(function (value) {
-            console.log(value);
+            value = JSON.parse(value);
+
+            let user = {};
+            user.scope = {};
+            value.data.forEach(function (scope) {
+                if (scope.type == 'user') {
+                    user.id = scope.id;
+                    user.name = scope.attributes.name;
+                } else if (scope.type == 'scope') {
+                    user.scope[scope.id] = {};
+                    user.scope[scope.id].id = scope.id;
+                    user.scope[scope.id].name = scope.attributes.name;
+                    user.scope[scope.id].authorities = {};
+                    scope.attributes.authorities.forEach(function (authority) {
+                        user.scope[scope.id].authorities[authority] = true
+                    });
+                }
+            });
+
+            req.user = user;
             next();
         }, function (value) {
-            handleError(res, 'Invalid authentication token!', 401)
+            handleError(res, 'Invalid Authorization token!', 401, 'Unauthorized')
         });
     } else {
-        handleError(res, 'Invalid authentication token!', 401);
+        handleError(res, 'Invalid Authorization token!', 401, 'Unauthorized')
     }
 }
 

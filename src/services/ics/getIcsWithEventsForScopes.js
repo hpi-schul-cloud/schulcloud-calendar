@@ -1,12 +1,9 @@
-const getEventsForToken = require('../events/getEventsForToken');
+const getEventsForScopes = require('../events/getEventsForScopes');
 const createIcsFromEvents = require('../ics/createIcsFromEvents');
 
-/**
- * @deprecated
- */
-function getIcsWithEventsForToken(token) {
+function getIcsWithEventsForScopes(user) {
     return new Promise(function (resolve, reject) {
-        Promise.resolve(getEventsForToken(token)).then(
+        Promise.resolve(getEventsForScopes(user)).then(
             function (events) {
                 Promise.resolve(createIcsFromEvents(events)).then(
                     resolve.bind(null),
@@ -18,4 +15,4 @@ function getIcsWithEventsForToken(token) {
     })
 }
 
-module.exports = getIcsWithEventsForToken;
+module.exports = getIcsWithEventsForScopes;

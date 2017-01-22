@@ -21,10 +21,10 @@ const consoleError = require('../utils/consoleError');
 const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent');
 const addAlarmToEvent = require('../queries/addAlarmToEvent');
 const handleDeleteRequest = require("./utils/handleDeleteRequest");
-const authentication = require("../authorization/index");
+const authorize = require("../authorization/index");
 const newNotificationForScopeIds = require('../http_requests/newNotificationForScopeIds');
 
-router.post('/', authentication, function (req, res) {
+router.post('/', authorize, function (req, res) {
     handleInsertRequest(req, res, uuidV4());
 
     //TODO: only, if created successful
@@ -35,7 +35,7 @@ router.post('/', authentication, function (req, res) {
     newNotificationForScopeIds(title, body, token, scopeIds);
 });
 
-router.put('/:eventId', authentication, function (req, res) {
+router.put('/:eventId', authorize, function (req, res) {
     // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
     handleDeleteRequest(req, null);
     handleInsertRequest(req, res, req.params.eventId);

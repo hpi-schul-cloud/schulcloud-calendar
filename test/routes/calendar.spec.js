@@ -23,6 +23,7 @@ describe('routes/calendar', function() {
             this.timeout(10000);
             request(app)
                 .get('/calendar/test')
+                .set('Authorization', 'student1_1')
                 .expect('Content-Disposition', /attachment/)
                 .expect('Content-Type', 'text/calendar')
                 .expect('Content-Length', '543')

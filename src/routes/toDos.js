@@ -12,29 +12,30 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
 const handleError = require('./utils/handleError');
+const authorize = require("../authorization/index");
 
 router.options('/:toDoId', cors(corsOptions));
 
 // GET /to-dos
-router.get('/', function (req, res) {
+router.get('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // POST /to-dos
-router.post('/', function (req, res) {
+router.post('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // PUT /to-dos/:toDoId
-router.put('/:toDoId', function (req, res) {
+router.put('/:toDoId', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });
 
 // DELETE /to-dos/:toDoId
-router.delete('/:toDoId', function (req, res) {
+router.delete('/:toDoId', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });

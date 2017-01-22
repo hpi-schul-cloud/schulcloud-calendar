@@ -1,6 +1,9 @@
 const getAllScopesForToken = require('../../http_requests/index').getAllScopesForToken;
 const getEventsForScopes = require('./getEventsForScopes');
 
+/**
+ * @deprecated
+ */
 function getEventsForToken(token) {
     return new Promise(function (resolve, reject) {
         Promise.resolve(getAllScopesForToken(token)).then(
