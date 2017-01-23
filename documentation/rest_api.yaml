@@ -4,7 +4,7 @@ info:
   description: >-
     API specification of the Schul-Cloud Calendar Service based on the JSON API specification 1.0 (http://jsonapi.org). Contribute today on
     https://github.com/schulcloud/schulcloud-calendar.
-  version: 0.0.6
+  version: 0.0.7
   contact:
     email: schulcloud-dev@lists.myhpi.de
 host: 'schul-cloud.org:3000'
@@ -899,10 +899,39 @@ definitions:
           - monthly
           - yearly
         example: weekly
+      until:
+        type: string
+        format: date-time
+        example: '2017-07-28T23:00:00Z'
+      count:
+        type: integer
+        format: int32
+        example: 2
       interval:
         type: integer
         format: int32
         example: 1
+      bysecond:
+        type: array
+        items:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 59
+      byminute:
+        type: array
+        items:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 59
+      byhour:
+        type: array
+        items:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 23
       byday:
         type: array
         items:
@@ -916,6 +945,52 @@ definitions:
             - sa
             - su
           example: su
+      bymonthday:
+        type: array
+        items:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 31
+      byyearday:
+        type: array
+        items:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 366
+      byweekno:
+        type: array
+        items:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 53
+      bymonth:
+        type: array
+        items:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 12
+      bysetpos:
+        type: array
+        items:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 366
+      wkst:
+        type: string
+        enum:
+          - mo
+          - tu
+          - we
+          - th
+          - fr
+          - sa
+          - su
+        example: su
 
   ExDatesJSONattributes:
     type: object
