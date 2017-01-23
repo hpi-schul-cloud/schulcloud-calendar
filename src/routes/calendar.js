@@ -23,8 +23,6 @@ const authorize = require("../authorization/index");
 
 // GET /calendar/test
 router.get('/test', authorize, function (req, res) {
-    // TODO: get token from authentication header
-    const token = 'student1_1';
     Promise.resolve(getIcsWithEventsForScopes(req.user)).then(
         function (finalIcsString) {
             const finalIcs = new Readable();
