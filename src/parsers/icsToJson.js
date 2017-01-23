@@ -77,7 +77,6 @@ function lineToJson(line, event) {
             } else if (splittedUid.length ===1) {
                 event['id'] = fieldValue
             } else {
-                // TODO: an UID is not required to contain an @.
                 consoleError("[icsToJson] Invalid UID")
             }
             break;

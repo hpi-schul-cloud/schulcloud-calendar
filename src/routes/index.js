@@ -11,7 +11,6 @@ router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-// const queryToJson = require('../parsers/queryToJson');
 const handleError = require('./utils/handleError');
 
 /* GET home page. */

@@ -7,7 +7,7 @@ function queryToEventIcs(event, exdates, alarms) {
     const createdAt = new Date(event.created_timestamp);
     const lastModified = new Date(event.last_modified_timestamp);
     let ics = 'BEGIN:VEVENT\n';
-    ics += 'UID:' + event.id + '@schulcloud.org\n';
+    ics += 'UID:' + event.event_id + '@schulcloud.org\n';
     if (event.location) {
         ics += 'LOCATION:' + event.location + '\n';
     }
