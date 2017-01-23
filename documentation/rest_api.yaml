@@ -2,8 +2,8 @@ swagger: '2.0'
 info:
   title: Calendar API
   description: >-
-    API specification of the Schul-Cloud Calendar Service based on the JSON API specification 1.0 (http://jsonapi.org). Contribute today on
-    https://github.com/schulcloud/schulcloud-calendar.
+    API specification of the Schul-Cloud Calendar Service based on the JSON API specification 1.0 (http://jsonapi.org). Contribute today on https://github.com/schulcloud/schulcloud-calendar.
+    _Important_: Routes with a `X` as last character in the summary (next to the route) are not yet implemented, those with an asterisk `*` are not yet finished.
   version: 0.0.7
   contact:
     email: schulcloud-dev@lists.myhpi.de
@@ -28,13 +28,13 @@ tags:
   - name: external-feed
     description: Manage subscribed ICS feeds
   - name: to-dos
-    description: Work with one or multiple to-dos as JSON
+    description: Work with one or multiple To Dos as JSON
   - name: to-dos/ics
-    description: Work with one or multiple to-dos as ICS string
+    description: Work with one or multiple To Dos as ICS string
 paths:
   '/calendar/list':
     get:
-      summary: Get an array with all ICS feeds for the given token
+      summary: Get an array with all ICS feeds for the given token (X).
       responses:
         '200':
           description: All ICS feeds
@@ -56,7 +56,7 @@ paths:
         required: false
         type: string
     get:
-      summary: Get an ICS feed
+      summary: Get an ICS feed  (*).
       responses:
         '200':
           description: ICS calendar feed
@@ -73,7 +73,7 @@ paths:
 
   /events:
     get:
-      summary: Get a list of events
+      summary: Get a list of events (X).
       parameters:
       - name: scope-id
         in: query
@@ -111,7 +111,7 @@ paths:
       security:
         - user-token: []
     post:
-      summary: Create a new Event for a list of UUIDs
+      summary: Create a new Event for a list of UUIDs (X).
       responses:
         '201':
           description: CreateEventResponse
@@ -140,7 +140,8 @@ paths:
     put:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
-        service earlier
+        service earlier (X).
+      description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details.
       responses:
         '200':
           description: Successful
@@ -161,7 +162,7 @@ paths:
       security:
         - user-token: []
     delete:
-      summary: Delete an Event for a list of UUIDs
+      summary: Delete an Event for a list of UUIDs (*).
       responses:
         '204':
           description: Successful
@@ -211,6 +212,7 @@ paths:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
         service earlier. Thereby the ics is transcribed.
+      description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details.
       responses:
         '200':
           description: Successful
@@ -233,7 +235,7 @@ paths:
 
   '/share/list':
     get:
-      summary: Get a list of current share tokens for the given authentication token
+      summary: Get a list of current share tokens for the given authentication token (X).
       responses:
         '200':
           description: ShareTokenList
@@ -255,7 +257,7 @@ paths:
         required: true
         type: string
     get:
-      summary: Get an ICS feed for the specified share token
+      summary: Get an ICS feed for the specified share token (X).
       responses:
         '200':
           description: ICS calendar feed
@@ -276,7 +278,7 @@ paths:
         required: true
         type: string
     post:
-      summary: Create a new share token for the specified scope id
+      summary: Create a new share token for the specified scope id (X).
       responses:
         '201':
           description: ShareTokenList
@@ -298,7 +300,7 @@ paths:
         required: true
         type: string
     get:
-      summary: Get details for a given share token
+      summary: Get details for a given share token (X).
       responses:
         '200':
           description: ShareToken
@@ -313,7 +315,7 @@ paths:
       security:
         - user-token: []
     delete:
-      summary: Revoke the specified share token
+      summary: Revoke the specified share token (X).
       responses:
         '204':
           description: Successful
@@ -328,7 +330,7 @@ paths:
 
   '/external-feed-subscription':
     get:
-      summary: Get a list of subscribed feeds for the scopes you have write access to
+      summary: Get a list of subscribed feeds for the scopes you have write access to (X).
       parameters:
       - name: scope-id
         in: query
@@ -362,7 +364,7 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/CreateModifyExternalFeedRequest'
-      summary: Add a new feed to be synced with one of your calendars
+      summary: Add a new feed to be synced with one of your calendars (X).
       responses:
         '201':
           description: FeedUrlList
@@ -384,7 +386,8 @@ paths:
         required: true
         type: string
     put:
-      summary: Update synchronisation settings for a subscribed feed
+      summary: Update synchronisation settings for a subscribed feed (X).
+      description: The calendar service will delete the old external feed subscription completely. Therefore, you MUST ensure to re-submit the subscription with all details.
       responses:
         '200':
           description: FeedUrlList
@@ -405,7 +408,7 @@ paths:
       security:
         - user-token: []
     delete:
-      summary: Unsubscribe the external feed and stop syncing
+      summary: Unsubscribe the external feed and stop syncing (X).
       responses:
         '204':
           description: Successful
@@ -420,7 +423,7 @@ paths:
 
   '/to-dos':
     get:
-      summary: Get a list of To-Dos
+      summary: Get a list of To Dos (X).
       parameters:
       - name: scope-id
         in: query
@@ -458,7 +461,7 @@ paths:
       security:
         - user-token: []
     post:
-      summary: Create a new To Do for a list of UUIDs
+      summary: Create a new To Do for a list of UUIDs (X).
       responses:
         '201':
           description: CreateToDoResponse
@@ -487,7 +490,8 @@ paths:
     put:
       summary: >-
         Modify a To Do for a list of UUIDs, which has been created by the same
-        service earlier
+        service earlier (X).
+      description: The calendar service will delete the old To Do completely (including all exdates, ...). Therefore, you MUST ensure to re-submit the To Do with all details.
       responses:
         '200':
           description: Successful
@@ -508,7 +512,7 @@ paths:
       security:
         - user-token: []
     delete:
-      summary: Delete a To Do for a list of UUIDs
+      summary: Delete a To Do for a list of UUIDs (X).
       responses:
         '204':
           description: Successful
@@ -528,7 +532,7 @@ paths:
         - user-token: []
   '/to-dos/ics':
     post:
-      summary: Create a new To Do for a list of UUIDs where the ics is given
+      summary: Create a new To Do for a list of UUIDs where the ics is given (X).
       responses:
         '201':
           description: CreateToDoResponse
@@ -557,7 +561,8 @@ paths:
     put:
       summary: >-
         Modify a To Do for a list of UUIDs, which has been created by the same
-        service earlier. Thereby the ics is transcribed.
+        service earlier. Thereby the ics is transcribed. (X).
+      description: The calendar service will delete the old To Do completely (including all exdates, ...). Therefore, you MUST ensure to re-submit the To Do with all details.
       responses:
         '200':
           description: Successful
