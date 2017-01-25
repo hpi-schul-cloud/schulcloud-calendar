@@ -16,8 +16,8 @@ const authorize = require("../authorization/index");
 
 router.options('/:feedId', cors(corsOptions));
 
-// GET /external-feed-subscription
-router.get('/', authorize, function (req, res) {
+// GET /external-feed-subscription/list
+router.get('/list', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 });

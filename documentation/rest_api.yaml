@@ -328,7 +328,7 @@ paths:
       security:
         - user-token: []
 
-  '/external-feed-subscription':
+  '/external-feed-subscription/list':
     get:
       summary: Get a list of subscribed feeds for the scopes you have write access to (X).
       parameters:
@@ -357,6 +357,8 @@ paths:
         - external-feed
       security:
         - user-token: []
+        
+  '/external-feed-subscription':
     post:
       parameters:
         - name: body
