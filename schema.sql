@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS repetition_exception_dates;
 DROP TABLE IF EXISTS alarms;
 DROP TABLE IF EXISTS events;
 
+DROP TABLE IF EXISTS feeds;
+
 DROP TYPE IF EXISTS repeat_type;
 DROP TYPE IF EXISTS alarm_action;
 
@@ -79,4 +81,14 @@ CREATE TABLE repetition_exception_dates (
   event_id UUID                     NOT NULL REFERENCES events (id) ON DELETE CASCADE,
   date     TIMESTAMP WITH TIME ZONE NOT NULL
   -- weitere Felder
+);
+
+CREATE TABLE feeds (
+  id                    UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
+  ics_url               TEXT                     NOT NULL,
+  description           TEXT                              DEFAULT NULL,
+  last_updated          TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
+  last_updated_status   INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
+  reference_ids         UUID ARRAY               NOT NULL,
+  separate_users        BOOLEAN                           DEFAULT FALSE
 );
