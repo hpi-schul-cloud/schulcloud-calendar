@@ -1321,7 +1321,7 @@ definitions:
         properties:
           self:
             type: string
-            example: "https://schul-cloud.org:3000/external-feed-subscription/1b48af86-eb3d-4bff-937a-939a47a8e957"
+            example: "https://schul-cloud.org:3000/external-feed-subscription/8ad5a293-8ed8-45d9-8a20-2e353051af1c"
       data:
         type: array
         items:
