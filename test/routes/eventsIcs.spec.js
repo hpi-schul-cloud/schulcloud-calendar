@@ -6,7 +6,7 @@ const fillDatabase = require('../_testutils/fillDatabase');
 const DatabaseCleaner = require('database-cleaner');
 const databaseCleaner = new DatabaseCleaner('postgresql');
 
-describe('routes/events', function() {
+describe('routes/events/ics', function() {
 
     beforeEach(function(done) {
         fillDatabase(dbClient, done);
@@ -20,7 +20,7 @@ describe('routes/events', function() {
 
         it('handles invalid ids', function(done) {
             request(app)
-                .post('/events')
+                .post('/events/ics')
                 .set('Authorization', 'student1_1')
                 .send({ ids: 'not an array' })
                 .expect(500, done);

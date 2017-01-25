@@ -14,4 +14,4 @@ function insertFeedSubscription(params) {
     });
 }
 
-module.exports = insertEvents;
+module.exports = insertFeedSubscription;

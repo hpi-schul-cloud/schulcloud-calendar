@@ -26,8 +26,13 @@ describe('routes/calendar', function() {
                 .set('Authorization', 'student1_1')
                 .expect('Content-Disposition', /attachment/)
                 .expect('Content-Type', 'text/calendar')
-                .expect('Content-Length', '543')
+                .expect(hasCalendarEntry)
                 .expect(200, done);
+
+            function hasCalendarEntry(res) {
+                const lines = res.text.split('\n');
+                if (lines.lenth < 5) throw new Error("No event entry");
+            }
         });
 
     });
