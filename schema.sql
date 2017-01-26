@@ -45,7 +45,7 @@ CREATE TABLE events (
   reference_id      UUID                     NOT NULL,
   dtstamp           TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "last-modified"   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  repeat            repeat_type                       DEFAULT NULL,
+  repeat_freq       repeat_type                       DEFAULT NULL,
   repeat_until      TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
   repeat_count      INT                               DEFAULT NULL,
   repeat_interval   INT                               DEFAULT NULL,

@@ -109,7 +109,7 @@ function lineToJson(line, event) {
                 const raValue = (repeatAttributes[i].split('='))[1];
                 switch (raName) {
                     case "FREQ":
-                        event["repeat"] = raValue;
+                        event["repeat_freq"] = raValue;
                         break;
                     case "UNTIL":
                         event["repeat_until"] = regularDateFormat(raValue);

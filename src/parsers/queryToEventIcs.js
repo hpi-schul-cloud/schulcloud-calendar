@@ -11,11 +11,11 @@ function queryToEventIcs(event, exdates, alarms) {
     if (event.description) {
         ics += 'DESCRIPTION:' + event.description + '\n';
     }
-    if (event.repeat) {
+    if (event.repeat_freq) {
         if (event.repeat_byday)
-            ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + ';BYDAY=' + event.repeat_byday + '\n';
+            ics += 'RRULE:FREQ=' + event.repeat_freq + ';INTERVAL=' + event.repeat_interval + ';BYDAY=' + event.repeat_byday + '\n';
         else
-            ics += 'RRULE:FREQ=' + event.repeat + ';INTERVAL=' + event.repeat_interval + '\n';
+            ics += 'RRULE:FREQ=' + event.repeat_freq + ';INTERVAL=' + event.repeat_interval + '\n';
     }
     if (exdates && exdates[event.id])
         ics += exdates[event.id];

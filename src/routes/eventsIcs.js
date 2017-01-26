@@ -85,7 +85,7 @@ function handleJson(json, separateUsers, scopeIds, externalEventId, req, res) {
     params[3] = json["dtstart"];            //$4: dtstart
     params[4] = json["dtend"];              //$5: dtend
     params[6] = new Date();                 //$7: dtstamp
-    params[7] = json["repeat"];             //$8: repeat
+    params[7] = json["repeat_freq"];        //$8: repeat_freq
     params[8] = json["repeat_until"];       //$9: repeat_until
     params[9] = json["repeat_count"];       //$10: repeat_count
     params[10] = json["repeat_interval"];   //$11: repeat_interval
