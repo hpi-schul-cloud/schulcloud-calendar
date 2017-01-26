@@ -16,7 +16,6 @@ const Readable = require('stream').Readable;
 const handleError = require('./utils/handleError');
 const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForScopes');
 
-const getAllScopesForToken = require('../http_requests').getAllScopesForToken;
 const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
 const getAlarmsIcsForEvent = require('../queries/allAlarmsForEvent').getAlarmsIcsForEvent;
 const authorize = require("../authorization/index");
