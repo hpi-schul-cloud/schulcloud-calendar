@@ -84,11 +84,10 @@ CREATE TABLE repetition_exception_dates (
 );
 
 CREATE TABLE feeds (
-  id                  UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
-  ics_url             TEXT                     NOT NULL,
-  description         TEXT                              DEFAULT NULL,
-  last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
-  last_updated_status INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
-  reference_ids       UUID ARRAY               NOT NULL,
-  separate_users      BOOLEAN                           DEFAULT FALSE
+  id                    UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
+  ics_url               TEXT                     NOT NULL,
+  description           TEXT                              DEFAULT NULL,
+  last_updated          TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
+  last_updated_status   INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
+  reference_id          UUID                     NOT NULL
 );

@@ -8,7 +8,7 @@ function getRequest(url) {
         request.responseType = 'json';
         request.onload = function() {
             const httpStatus = request.status;
-            if (httpStatus == 200) {
+            if (httpStatus === 200) {
                 resolve(request.responseText);
             } else {
                 consoleError('Error status ' + httpStatus + 'for GET ' + url);

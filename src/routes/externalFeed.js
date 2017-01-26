@@ -15,6 +15,7 @@ const handleError = require('./utils/handleError');
 const handleSuccess = require('./utils/handleSuccess');
 const authorize = require("../authorization/index");
 const insertFeedSubscription = require('../queries/insertFeedSubscription');
+const allScopeIds = require('./utils/allScopeIds');
 
 router.options('/:feedId', cors(corsOptions));
 
@@ -26,7 +27,7 @@ router.get('/list', authorize, function (req, res) {
 
 // POST /external-feed-subscription
 router.post('/', authorize, function (req, res) {
-    handleFeedInsertRequest(req, res);
+    handleInsertFeedRequest(req, res);
 });
 
 // PUT /external-feed-subscription/:feedId
@@ -41,26 +42,37 @@ router.delete('/:feedId', authorize, function (req, res) {
     handleError(res);
 });
 
-function handleFeedInsertRequest(req, res) {
-    const data = req.body.data;
-    const relationships = req.body.relationships;
-    const scopeIds = relationships.scopeIds;
-    if (!Array.isArray(scopeIds) || scopeIds.length === 0) {
-        consoleError("Got invalid 'scopeIds' array!");
-        handleError(res);
-        return;
-    }
-    const params = [
-        data.attributes['ics-url'],
-        data.attributes['description'],
-        relationships['scope-ids'],
-        relationships['separate-users']
-    ];
-    Promise.resolve(insertFeedSubscription(params)).then(
-      // TODO return id
-      handleSuccess.bind(null, res),
-      handleError.bind(null, res)
-    );
+function handleInsertFeedRequest(req, res) {
+    // TODO iterate over data array? Are multiple entries possible?
+    const data = req.body.data[0];
+    allScopeIds(data)
+        .then((scopeIds) => {
+            const icsUrl = data.attributes['ics-url'];
+            const description = data.attributes['description'];
+            let feedIds = [];
+            // Not a nice solution (see handleEnd)
+            scopeIds.forEach((scopeId, index) => {
+                insertFeedSubscription([icsUrl, description, scopeId])
+                    .then((feedId) => {
+                        feedIds = [...feedIds, feedId];
+                        handleEnd(index);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        handleEnd(index);
+                    })
+            });
+
+            function handleEnd(index) {
+                if (index === scopeIds.length - 1) {
+                    handleSuccess(res, feedIds)
+                }
+            }
+
+        })
+        .catch((error) => {
+            handleError(res, error)
+        })
 }
 
 module.exports = router;
