@@ -74,17 +74,17 @@ function handleInsertRequest(req, res, externalEventId) {
 
 function handleJson(json, separateUsers, scopeIds, externalEventId, req, res) {
     /*
-     * json contains id, summary, location, description, start_timestamp, end_timestamp
-     * reference_id, created_timestamp, last_modified_timestamp, repeat, repeat_interval, alarms Array
+     * json contains id, summary, location, description, dtstart, dtend
+     * reference_id, dtstamp, last-modified, repeat, repeat_interval, alarms Array
      */
     var params = [];
     var referenceIds;
     params[0] = json["summary"];            //$1: summary
     params[1] = json["location"];           //$2: location
     params[2] = json["description"];        //$3: description
-    params[3] = json["start_timestamp"];    //$4: start_timestamp
-    params[4] = json["end_timestamp"];      //$5: end_timestamp
-    params[6] = new Date();                 //$7: created_timestamp
+    params[3] = json["dtstart"];            //$4: dtstart
+    params[4] = json["dtend"];              //$5: dtend
+    params[6] = new Date();                 //$7: dtstamp
     params[7] = json["repeat"];             //$8: repeat
     params[8] = json["repeat_until"];       //$9: repeat_until
     params[9] = json["repeat_count"];       //$10: repeat_count

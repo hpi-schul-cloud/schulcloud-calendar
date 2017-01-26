@@ -91,16 +91,16 @@ function lineToJson(line, event) {
             event[field] = fieldValue;
             break;
         case "DTSTART":
-            event["start_timestamp"] = regularDateFormat(fieldValue);
+            event["dtstart"] = regularDateFormat(fieldValue);
             break;
         case "DTEND":
-            event["end_timestamp"] = regularDateFormat(fieldValue);
+            event["dtend"] = regularDateFormat(fieldValue);
             break;
         case "DTSTAMP":
-            event["created_timestamp"] = regularDateFormat(fieldValue);
+            event["dtstamp"] = regularDateFormat(fieldValue);
             break;
         case "LAST-MODIFIED":
-            event["modified_timestamp"] = regularDateFormat(fieldValue);
+            event["last-modified"] = regularDateFormat(fieldValue);
             break;
         case "RRULE":
             const repeatAttributes = fieldValue.split(';');
@@ -173,16 +173,16 @@ function lineToJson(line, event) {
 
             switch (realFieldName) {
                 case "DTSTART":
-                    event["start_timestamp"] = regularDateFormat(fieldValue);
+                    event["dtstart"] = regularDateFormat(fieldValue);
                     break;
                 case "DTEND":
-                    event["end_timestamp"] = regularDateFormat(fieldValue);
+                    event["dtend"] = regularDateFormat(fieldValue);
                     break;
                 case "DTSTAMP":
-                    event["created_timestamo"] = regularDateFormat(fieldValue);
+                    event["dtstamp"] = regularDateFormat(fieldValue);
                     break;
                 case "LAST-MODIFIED":
-                    event["modified_timestamp"] = regularDateFormat(fieldValue);
+                    event["last-modified"] = regularDateFormat(fieldValue);
                     break;
                 case "EXDATE":
                     if (!Array.isArray(event["exdate"])) {

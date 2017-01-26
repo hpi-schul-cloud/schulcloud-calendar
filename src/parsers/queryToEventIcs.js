@@ -2,10 +2,6 @@ const allAlarmsForEvent = require('../queries/allAlarmsForEvent');
 const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
 
 function queryToEventIcs(event, exdates, alarms) {
-    const startDate = new Date(event.start_timestamp);
-    const endDate = new Date(event.end_timestamp);
-    const createdAt = new Date(event.created_timestamp);
-    const lastModified = new Date(event.last_modified_timestamp);
     let ics = 'BEGIN:VEVENT\n';
     ics += 'UID:' + event.event_id + '@schulcloud.org\n';
     if (event.location) {
@@ -23,10 +19,10 @@ function queryToEventIcs(event, exdates, alarms) {
     }
     if (exdates && exdates[event.id])
         ics += exdates[event.id];
-    ics += 'DTSTART:' + iCalendarDateFormat(startDate) + '\n';
-    ics += 'DTEND:' + iCalendarDateFormat(endDate) + '\n';
-    ics += 'DTSTAMP:' + iCalendarDateFormat(createdAt) + '\n';
-    ics += 'LAST-MODIFIED:' + iCalendarDateFormat(lastModified) + '\n';
+    ics += 'DTSTART:' + iCalendarDateFormat(event.dtstart) + '\n';
+    ics += 'DTEND:' + iCalendarDateFormat(event.dtend) + '\n';
+    ics += 'DTSTAMP:' + iCalendarDateFormat(event.dtstamp) + '\n';
+    ics += 'LAST-MODIFIED:' + iCalendarDateFormat(event['last-modified']) + '\n';
 
     if (alarms && alarms[event.id])
         ics += alarms[event.id];
