@@ -14,10 +14,10 @@ function authentication(req, res, next) {
             let user = {};
             user.scope = {};
             value.data.forEach(function (scope) {
-                if (scope.type == 'user') {
+                if (scope.type === 'user') {
                     user.id = scope.id;
                     user.name = scope.attributes.name;
-                } else if (scope.type == 'scope') {
+                } else if (scope.type === 'scope') {
                     user.scope[scope.id] = {};
                     user.scope[scope.id].id = scope.id;
                     user.scope[scope.id].name = scope.attributes.name;
