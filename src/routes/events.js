@@ -13,8 +13,15 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 const handleDeleteRequest = require("./utils/handleDeleteRequest");
 const authorize = require("../authorization/index");
+const selectEvents = require('../queries/selectEvents');
+const handleSuccess = require('./utils/handleSuccess');
+const handleError = require('./utils/handleError');
 
 router.options('/:eventId', cors(corsOptions));
+
+const THREE_WEEKS = 1000 * 60 * 60 * 24 * 21;
+const FROM = new Date(new Date().getTime() - THREE_WEEKS);
+const UNTIL = new Date(new Date().getTime() + THREE_WEEKS);
 
 // DELETE /events/:eventId
 router.delete('/:eventId', authorize, function (req, res) {
@@ -31,7 +38,7 @@ router.delete('/:eventId', authorize, function (req, res) {
 // GET /events/
 router.get('/', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    handleGetEvents(req, res);
 });
 
 // POST /events/
@@ -59,5 +66,23 @@ router.put('/:eventId', authorize, function (req, res) {
     const token = "";   //TODO
     newNotificationForScopeIds(title, body, token, scopeIds);
 });
+
+function handleGetEvents(req, res) {
+    const scopeId = req.get('scope-id');
+    const eventId = req.get('event-id');
+    const from = req.get('from') || FROM;
+    const until = req.get('until') || UNTIL;
+    const all = req.get('all');
+
+    if (!scopeId && !eventId) {
+        // TODO get all scope Ids & all events for these
+    } else {
+        // TODO implement success
+        const filter = { scopeId, eventId, from, until, all };
+        selectEvents(filter)
+            .then(handleSuccess)
+            .catch((error) => { handleError(error) })
+    }
+}
 
 module.exports = router;
