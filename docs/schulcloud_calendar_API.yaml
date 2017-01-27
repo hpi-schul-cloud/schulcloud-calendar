@@ -357,7 +357,7 @@ paths:
         - external-feed
       security:
         - user-token: []
-        
+
   '/external-feed-subscription':
     post:
       parameters:
@@ -366,7 +366,7 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/CreateModifyExternalFeedRequest'
-      summary: Add a new feed to be synced with one of your calendars (X).
+      summary: Add a new feed to be synced with one of your calendars (*).
       responses:
         '201':
           description: FeedUrlList
