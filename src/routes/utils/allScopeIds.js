@@ -1,4 +1,4 @@
-const getAllUsersForUUID = require('../../http_requests').getAllUsersForUUID;
+const getAllUsersForUUID = require('../../http-requests').getAllUsersForUUID;
 
 function allScopeIds(data) {
         return new Promise((resolve, reject) => {

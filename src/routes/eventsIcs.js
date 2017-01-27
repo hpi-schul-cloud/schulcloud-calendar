@@ -14,7 +14,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 const icsToJson = require('../parsers/icsToJson');
 const insertEvents = require('../queries/insertEvents');
-const getAllUsersForUUID = require('../http_requests').getAllUsersForUUID;
+const getAllUsersForUUID = require('../http-requests').getAllUsersForUUID;
 const handleSuccess = require('./utils/handleSuccess');
 const handleError = require('./utils/handleError');
 const consoleError = require('../utils/consoleError');
@@ -22,7 +22,7 @@ const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent'
 const addAlarmToEvent = require('../queries/addAlarmToEvent');
 const handleDeleteRequest = require("./utils/handleDeleteRequest");
 const authorize = require("../authorization/index");
-const newNotificationForScopeIds = require('../http_requests/newNotificationForScopeIds');
+const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
 
 router.post('/', authorize, function (req, res) {
     handleInsertRequest(req, res, uuidV4());
