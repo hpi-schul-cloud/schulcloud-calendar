@@ -34,7 +34,7 @@ tags:
 paths:
   '/calendar/list':
     get:
-      summary: Get an array with all ICS feeds for the given token (X).
+      summary: Get an array with all ICS feeds for the given token.
       responses:
         '200':
           description: All ICS feeds

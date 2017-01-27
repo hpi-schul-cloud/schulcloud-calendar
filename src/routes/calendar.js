@@ -12,8 +12,10 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
 const getEventsForToken = require('../services/events/getEventsForToken');
+const getScopesForToken = require('../services/scopes/getScopesForToken');
 const Readable = require('stream').Readable;
 const handleError = require('./utils/handleError');
+const handleSuccess = require('./utils/handleSuccess');
 const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForScopes');
 
 const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
@@ -45,8 +47,18 @@ router.get('/', authorize, function (req, res) {
 
 // GET /calendar/list
 router.get('/list', authorize, function (req, res) {
-    // TODO: implement
-    handleError(res);
+  const token = req.get('Authorization')
+  Promise.resolve(getScopesForToken(req))
+    .then(
+      (scopes) => {
+        handleSuccess(res, scopes);
+      }
+    )
+    .catch(
+      (error) => {
+        handleError(res, error);
+      }
+    );
 });
 
 module.exports = router;
