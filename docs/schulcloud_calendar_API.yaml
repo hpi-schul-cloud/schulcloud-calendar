@@ -73,7 +73,7 @@ paths:
 
   /events:
     get:
-      summary: Get a list of events (X).
+      summary: Get a list of events (*).
       parameters:
       - name: scope-id
         in: query

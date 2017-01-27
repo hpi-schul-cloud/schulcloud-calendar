@@ -19,7 +19,7 @@ describe('routes/external-feed-subscription', function() {
                 .post('/external-feed-subscription')
                 .set('Authorization', 'student1_1')
                 .send(withSingleScopeId)
-                .expect(201, done);
+                .expect(200, done);
         });
 
     });

@@ -17,6 +17,7 @@ const Readable = require('stream').Readable;
 const handleError = require('./utils/handleError');
 const handleSuccess = require('./utils/handleSuccess');
 const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForScopes');
+const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
 
 const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
 const getAlarmsIcsForEvent = require('../queries/allAlarmsForEvent').getAlarmsIcsForEvent;
@@ -48,10 +49,10 @@ router.get('/', authorize, function (req, res) {
 // GET /calendar/list
 router.get('/list', authorize, function (req, res) {
   const token = req.get('Authorization')
-  Promise.resolve(getScopesForToken(req))
+  Promise.resolve(getScopesForToken(token))
     .then(
       (scopes) => {
-        handleSuccess(res, scopes);
+        handleSuccess(res, getCalendarListOutput(scopes));
       }
     )
     .catch(

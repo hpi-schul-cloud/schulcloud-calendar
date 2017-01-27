@@ -16,12 +16,9 @@ const authorize = require("../authorization/index");
 const selectEvents = require('../queries/selectEvents');
 const handleSuccess = require('./utils/handleSuccess');
 const handleError = require('./utils/handleError');
+const getScopesForToken = require('../services/scopes/getScopesForToken');
 
 router.options('/:eventId', cors(corsOptions));
-
-const THREE_WEEKS = 1000 * 60 * 60 * 24 * 21;
-const FROM = new Date(new Date().getTime() - THREE_WEEKS);
-const UNTIL = new Date(new Date().getTime() + THREE_WEEKS);
 
 // DELETE /events/:eventId
 router.delete('/:eventId', authorize, function (req, res) {
@@ -46,7 +43,7 @@ router.post('/', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 
-    //TODO: only, if created successful
+    //TODO: only, if created successfully
     const scopeIds = req.body.scopeIds;
     const title = "Neuer Termin erstellt";
     const body = "Es wurde ein neuer Termin für Sie erstellt!";
@@ -59,7 +56,7 @@ router.put('/:eventId', authorize, function (req, res) {
     // TODO: implement
     handleError(res);
 
-    //TODO: only, if modified successful
+    //TODO: only, if modified successfully
     const scopeIds = req.body.scopeIds;
     const title = "Ein Termin wurde verändert";
     const body = "Einer Ihrer Termine wurde verändert!";
@@ -68,20 +65,53 @@ router.put('/:eventId', authorize, function (req, res) {
 });
 
 function handleGetEvents(req, res) {
-    const scopeId = req.get('scope-id');
-    const eventId = req.get('event-id');
-    const from = req.get('from') || FROM;
-    const until = req.get('until') || UNTIL;
-    const all = req.get('all');
+    const filter = {
+        scopeId: req.get('scope-id'),
+        eventId: req.get('event-id'),
+        from: req.get('from'),
+        until: req.get('until'),
+        all: req.get('all')
+    };
 
-    if (!scopeId && !eventId) {
-        // TODO get all scope Ids & all events for these
-    } else {
-        // TODO implement success
-        const filter = { scopeId, eventId, from, until, all };
+    if (filter.scopeId || filter.eventId) {
         selectEvents(filter)
-            .then(handleSuccess)
-            .catch((error) => { handleError(error) })
+            .then((events) => {
+                returnEvents(events);
+            })
+            .catch((error) => { handleError(res, error) })
+    } else {
+        const token = req.get('Authorization');
+        getScopesForToken(token)
+            .then((scopes) => { selectEventsPerScope(scopes, filter) })
+            .catch((error) => { handleError(res, error) })
+    }
+
+    function returnEvents(events) {
+        // TODO events in JSON API format
+        handleSuccess(res, events);
+    }
+
+    function selectEventsPerScope(scopes, filter) {
+        const { from, until, all } = filter;
+        const eventsPerScope = scopes.map((scope) => {
+            filter = { scopeId: scope.id, from, until, all };
+            return selectEvents(filter);
+        });
+
+        Promise.all(eventsPerScope)
+            .then((eventsCollection) => {
+                returnEvents(flatten(eventsCollection));
+            })
+            .catch((error) => { handleError(res, error) })
+    }
+
+    // flatten result of results and filter empty results
+    function flatten(collection) {
+        return collection.reduce((flattened, current) => {
+            return current.length > 0
+                ? [...flattened, ...current]
+                : flattened;
+        }, [])
     }
 }
 

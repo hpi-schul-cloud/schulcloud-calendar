@@ -15,7 +15,7 @@ const handleError = require('./utils/handleError');
 const handleSuccess = require('./utils/handleSuccess');
 const authorize = require("../authorization/index");
 const insertFeedSubscription = require('../queries/insertFeedSubscription');
-const allScopeIds = require('./utils/allScopeIds');
+const getScopesForRequest = require('../services/scopes/getScopesForRequest');
 
 router.options('/:feedId', cors(corsOptions));
 
@@ -45,7 +45,7 @@ router.delete('/:feedId', authorize, function (req, res) {
 function handleInsertFeedRequest(req, res) {
     // TODO iterate over data array? Are multiple entries possible?
     const data = req.body.data[0];
-    allScopeIds(data)
+    getScopesForRequest(data)
         .then((scopeIds) => {
             const icsUrl = data.attributes['ics-url'];
             const description = data.attributes['description'];

@@ -1,6 +1,6 @@
 const getAllUsersForUUID = require('../../http-requests').getAllUsersForUUID;
 
-function allScopeIds(data) {
+function getScopesForRequest(data) {
         return new Promise((resolve, reject) => {
             let scopeIds = data.relationships['scope-ids'];
             if (!Array.isArray(scopeIds) || scopeIds.length === 0) {
@@ -32,4 +32,4 @@ function allScopeIds(data) {
         });
 }
 
-module.exports = allScopeIds;
+module.exports = getScopesForRequest;

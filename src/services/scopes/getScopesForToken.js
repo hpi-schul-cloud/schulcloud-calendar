@@ -1,8 +1,6 @@
 const getAllScopesForToken = require('../../http-requests/index').getAllScopesForToken;
-const getCalendarListOutput = require('../to-json-api/getCalendarList');
 
-function getScopesForToken(req) {
-    const token = req.get('Authorization');
+function getScopesForToken(token) {
     return new Promise((resolve, reject) => {
         getAllScopesForToken(token)
         .then((response) => {
@@ -19,7 +17,7 @@ function getScopesForToken(req) {
                   name: scope.attributes.name
                 };
             });
-            resolve(getCalendarListOutput(scopes));
+            resolve(scopes);
         })
         .catch((error) => {
             reject(error);
