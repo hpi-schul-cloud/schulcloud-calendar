@@ -1,8 +1,8 @@
 # schulcloud-calendar
 
-[Specification of the calendar API](https://github.com/schulcloud/schulcloud-calendar/blob/master/documentation/calendar_api_specification.md)
+[Calendar API](https://schulcloud.github.io/schulcloud-calendar/#/default)
 
-[Requirements for the schulcloud API](https://github.com/schulcloud/schulcloud-calendar/blob/master/documentation/schulcloud_api_requirements.md)
+[Schul-Cloud API Requirements](https://github.com/schulcloud/schulcloud-calendar/blob/master/wiki/schulcloud_api_requirements.md)
 
 ## Setup
 ### Installation
