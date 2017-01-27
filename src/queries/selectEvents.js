@@ -47,18 +47,7 @@ function buildQuery(filter) {
         ? query
         : `${query} AND dtstart > '${from}' AND dtstart < '${until}'`;
 
-    query = (joinAlarms(joinExdates(query)));
     return `${query} ORDER BY id ASC;`;
-}
-
-function joinAlarms(query) {
-    // TODO implement
-    return query;
-}
-
-function joinExdates(query) {
-    // TODO implement
-    return query;
 }
 
 module.exports = selectEvents;

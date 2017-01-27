@@ -1,15 +1,15 @@
 const client = require('../models/database');
 const errorMessage = require('./utils/errorMessage');
 
-function allAlarmsForEvent(eventID) {
+function allAlarmsForEvent(eventId) {
     return new Promise(function(resolve, reject) {
         const query = 'SELECT trigger, repeat, duration, action, attach, description, attendee, summary FROM alarms WHERE event_id = $1 ORDER BY id ASC;';
-        client.query(query,[eventID], function (error, result) {
+        client.query(query,[eventId], function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
             } else {
-                resolve(result);
+                resolve(result.rows);
             }
         });
     });
@@ -18,8 +18,7 @@ function allAlarmsForEvent(eventID) {
 function getAlarmsIcsForEvent(eventId) {
     return new Promise(function (resolve, reject) {
         Promise.resolve(allAlarmsForEvent(eventId)).then(
-            function (queryResult) {
-                const alarms = queryResult.rows;
+            function (alarms) {
                 if (alarms.length === 0) {
                     resolve('');
                 }

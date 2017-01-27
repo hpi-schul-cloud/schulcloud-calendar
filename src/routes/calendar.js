@@ -20,7 +20,6 @@ const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForSc
 const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
 
 const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
-const getAlarmsIcsForEvent = require('../queries/allAlarmsForEvent').getAlarmsIcsForEvent;
 const authorize = require("../authorization/index");
 
 // GET /calendar/test

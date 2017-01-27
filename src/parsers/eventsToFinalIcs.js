@@ -1,4 +1,3 @@
-const allAlarmsForEvent = require('../queries/allAlarmsForEvent');
 const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
 
 function queryToIcs(events, scope) {

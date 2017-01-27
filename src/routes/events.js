@@ -13,7 +13,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 const handleDeleteRequest = require("./utils/handleDeleteRequest");
 const authorize = require("../authorization/index");
-const selectEvents = require('../queries/selectEvents');
+const getEvents = require('../services/events/getEvents');
 const handleSuccess = require('./utils/handleSuccess');
 const handleError = require('./utils/handleError');
 const getScopesForToken = require('../services/scopes/getScopesForToken');
@@ -74,7 +74,7 @@ function handleGetEvents(req, res) {
     };
 
     if (filter.scopeId || filter.eventId) {
-        selectEvents(filter)
+        getEvents(filter)
             .then((events) => {
                 returnEvents(events);
             })
@@ -82,7 +82,7 @@ function handleGetEvents(req, res) {
     } else {
         const token = req.get('Authorization');
         getScopesForToken(token)
-            .then((scopes) => { selectEventsPerScope(scopes, filter) })
+            .then((scopes) => { getEventsPerScope(scopes, filter) })
             .catch((error) => { handleError(res, error) })
     }
 
@@ -91,11 +91,11 @@ function handleGetEvents(req, res) {
         handleSuccess(res, events);
     }
 
-    function selectEventsPerScope(scopes, filter) {
+    function getEventsPerScope(scopes, filter) {
         const { from, until, all } = filter;
         const eventsPerScope = scopes.map((scope) => {
             filter = { scopeId: scope.id, from, until, all };
-            return selectEvents(filter);
+            return getEvents(filter);
         });
 
         Promise.all(eventsPerScope)

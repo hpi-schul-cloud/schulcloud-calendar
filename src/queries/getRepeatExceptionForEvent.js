@@ -3,6 +3,7 @@ const errorMessage = require('./utils/errorMessage');
 const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
 
 function getRepeatExceptionForEvent(eventId) {
+    console.log(eventId);
     return new Promise(function(resolve, reject) {
         const query = 'SELECT date FROM repetition_exception_dates WHERE event_id = $1';
         client.query(query, [eventId], function (error, result) {
@@ -10,7 +11,7 @@ function getRepeatExceptionForEvent(eventId) {
                 errorMessage(query, error);
                 reject(error);
             } else {
-                resolve(result);
+                resolve(result.rows);
             }
         });
     });
@@ -19,9 +20,8 @@ function getRepeatExceptionForEvent(eventId) {
 function getRepeatExceptionsIcsForEvent(eventId) {
     return new Promise(function (resolve, reject) {
         Promise.resolve(getRepeatExceptionForEvent(eventId)).then(
-            function (queryResult) {
-                if (queryResult) {
-                    const exceptions = queryResult.rows;
+            function (exceptions) {
+                if (exceptions) {
                     if (exceptions.length === 0) {
                         resolve('');
                     }
