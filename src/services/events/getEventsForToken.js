@@ -1,4 +1,4 @@
-const getAllScopesForToken = require('../../http_requests/index').getAllScopesForToken;
+const getAllScopesForToken = require('../../http-requests/index').getAllScopesForToken;
 const getEventsForScopes = require('./getEventsForScopes');
 
 /**
