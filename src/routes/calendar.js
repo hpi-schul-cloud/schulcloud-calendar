@@ -9,6 +9,9 @@ const handleError = require('./utils/returnError');
 const handleSuccess = require('./utils/returnSuccess');
 const returnICalendar = require('./utils/returnICalendar');
 
+// Queries
+const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
+
 // Authorization
 const authorize = require("../authorization/index");
 
@@ -49,6 +52,7 @@ router.get('/', authorize, function (req, res) {
 
 // GET /calendar/list
 router.get('/list', authorize, function (req, res) {
+    // TODO: Reuse req.user
   const token = req.get('Authorization');
   Promise.resolve(getScopesForToken(token))
     .then(

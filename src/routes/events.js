@@ -20,6 +20,7 @@ const returnSuccess = require('./utils/returnSuccess');
 const returnError = require('./utils/returnError');
 const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
 const returnJSONResponse = require('./utils/returnJSONResponse');
+const handleDeleteRequest = require("./utils/handleDeleteRequest");
 
 // Imports
 const express = require('express');

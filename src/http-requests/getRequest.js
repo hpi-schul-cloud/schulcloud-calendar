@@ -11,7 +11,7 @@ function getRequest(url) {
             if (httpStatus === 200) {
                 resolve(request.responseText);
             } else {
-                consoleError('Error status ' + httpStatus + 'for GET ' + url);
+                consoleError('Error status ' + httpStatus + ' for GET ' + url);
                 reject(httpStatus);
             }
         };

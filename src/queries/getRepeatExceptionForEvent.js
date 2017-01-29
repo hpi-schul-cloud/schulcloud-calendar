@@ -3,7 +3,6 @@ const errorMessage = require('./utils/errorMessage');
 const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
 
 function getRepeatExceptionForEvent(eventId) {
-    console.log(eventId);
     return new Promise(function(resolve, reject) {
         const query = 'SELECT date FROM repetition_exception_dates WHERE event_id = $1';
         client.query(query, [eventId], function (error, result) {

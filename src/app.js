@@ -1,21 +1,21 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var authentication = require('./authorization');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var calendar = require('./routes/calendar');
-var eventsIcs = require('./routes/eventsIcs');
-var events = require('./routes/events');
-var share = require('./routes/share');
-var externalFeed = require('./routes/externalFeed');
-var toDos = require('./routes/toDos');
-var toDosIcs = require('./routes/toDosIcs');
+const index = require('./routes/index');
+const calendar = require('./routes/calendar');
+const eventsIcs = require('./routes/eventsIcs');
+const events = require('./routes/events');
+const share = require('./routes/share');
+const externalFeed = require('./routes/externalFeed');
+const toDos = require('./routes/toDos');
+const toDosIcs = require('./routes/toDosIcs');
+const handleError = require('./routes/utils/handleError');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -53,8 +53,7 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
-  res.send(`{"code": ${err.status}}`);
+  handleError(res,err.message,err.status);
 });
 
 module.exports = app;

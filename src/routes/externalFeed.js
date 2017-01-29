@@ -52,6 +52,7 @@ router.delete('/:feedId', authorize, function (req, res) {
 
 function handleInsertFeedRequest(req, res) {
     // TODO iterate over data array? Are multiple entries possible?
+    // TODO: Yes, multiple events are allowed
     const data = req.body.data[0];
     getScopesForRequest(data)
         .then((scopeIds) => {
