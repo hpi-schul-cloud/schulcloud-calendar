@@ -1,5 +1,4 @@
 // Services
-const getEventsForToken = require('../services/events/getEventsForToken');
 const getScopesForToken = require('../services/scopes/getScopesForToken');
 const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForScopes');
 const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
@@ -53,8 +52,7 @@ router.get('/', authorize, function (req, res) {
 // GET /calendar/list
 router.get('/list', authorize, function (req, res) {
     // TODO: Reuse req.user
-  const token = req.get('Authorization');
-  Promise.resolve(getScopesForToken(token))
+  Promise.resolve(getScopesForToken(req.token))
     .then(
       (scopes) => {
         handleSuccess(res, getCalendarListOutput(scopes));

@@ -1,12 +1,13 @@
 /**
- * @author Niklas Hoffmann
+ * Global Settings fot the Schul-Cloud Calendar Service
  */
 
 /**
- * Service-Tokens
+ * Notification Settings
  */
 
-exports.NOTIFICATION_SERVICE_TOKEN = "";
+exports.NOTIFICATION_SERVICE_TOKEN = "service1";
+exports.NOTIFICATION_SCHULCLOUD_ID = "1";
 
 /**
  * Base Paths

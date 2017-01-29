@@ -8,7 +8,7 @@ function newNotificationForScopeIds(title, body, scopeIds) {
         request.open('POST', config.NOTIFICATION_SERVICE_NEW_NOTIFICATION, true);
         request.setRequestHeader('Content-Type', 'application/json');
         request.send(JSON.stringify({
-            schulcloudId: '1', // TODO: Ask for value!
+            schulcloudId: config.NOTIFICATION_SCHULCLOUD_ID,
             title: title,
             body: body,
             token: config.NOTIFICATION_SERVICE_TOKEN,

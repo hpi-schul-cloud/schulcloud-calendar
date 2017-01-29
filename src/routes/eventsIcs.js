@@ -46,7 +46,7 @@ router.post('/', authorize, icsToJson, function (req, res) {
     const scopeIds = req.body.scopeIds;
     const title = "Neuer Termin erstellt";
     const body = "Es wurde ein neuer Termin für Sie erstellt!";
-    newNotificationForScopeIds(title, body, req.token, scopeIds);
+    newNotificationForScopeIds(title, body, scopeIds);
 });
 
 router.put('/:eventId', authorize, icsToJson, function (req, res) {
@@ -58,7 +58,7 @@ router.put('/:eventId', authorize, icsToJson, function (req, res) {
     const scopeIds = req.body.scopeIds;
     const title = "Ein Termin wurde verändert";
     const body = "Einer Ihrer Termine wurde verändert!";
-    newNotificationForScopeIds(title, body, req.token, scopeIds);
+    newNotificationForScopeIds(title, body, scopeIds);
 });
 
 function handleInsertRequest(req, res, externalEventId) {
