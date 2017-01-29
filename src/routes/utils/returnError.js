@@ -8,7 +8,7 @@ const errorMessage = {
     ]
 };
 
-function handleError(res, error, statusCode = 500, errorTitle = "Internal Server Error") {
+function returnError(res, error, statusCode = 500, errorTitle = "Internal Server Error") {
     if (error) {
         errorMessage.errors[0].detail = error;
         errorMessage.errors[0].title = errorTitle;
@@ -21,4 +21,4 @@ function handleError(res, error, statusCode = 500, errorTitle = "Internal Server
         console.error("res unavailable or headers already sent");
 }
 
-module.exports = handleError;
+module.exports = returnError;

@@ -11,7 +11,7 @@ router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-const handleError = require('./utils/handleError');
+const handleError = require('./utils/returnError');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {

@@ -14,8 +14,8 @@ router.use(bodyParser.urlencoded({extended: false}));
 const getEventsForToken = require('../services/events/getEventsForToken');
 const getScopesForToken = require('../services/scopes/getScopesForToken');
 const Readable = require('stream').Readable;
-const handleError = require('./utils/handleError');
-const handleSuccess = require('./utils/handleSuccess');
+const handleError = require('./utils/returnError');
+const handleSuccess = require('./utils/returnSuccess');
 const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForScopes');
 const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
 

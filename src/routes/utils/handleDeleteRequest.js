@@ -1,5 +1,5 @@
-const handleSuccess = require('./handleSuccess');
-const handleError = require('./handleError');
+const handleSuccess = require('./returnSuccess');
+const handleError = require('./returnError');
 const deleteEvent = require('../../queries/deleteEvent');
 
 function handleDeleteRequest(req, res) {

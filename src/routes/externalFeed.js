@@ -11,8 +11,8 @@ router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
-const handleError = require('./utils/handleError');
-const handleSuccess = require('./utils/handleSuccess');
+const handleError = require('./utils/returnError');
+const handleSuccess = require('./utils/returnSuccess');
 const authorize = require("../authorization/index");
 const insertFeedSubscription = require('../queries/insertFeedSubscription');
 const getScopesForRequest = require('../services/scopes/getScopesForRequest');

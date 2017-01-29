@@ -11,59 +11,74 @@ router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-const handleDeleteRequest = require("./utils/handleDeleteRequest");
+// Queries
+const deleteEvent = require('../queries/deleteEvent');
+
+// HTTP Requests
+const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
+
+// Authorization
 const authorize = require("../authorization/index");
+
+// Services
 const getEvents = require('../services/events/getEvents');
-const handleSuccess = require('./utils/handleSuccess');
-const handleError = require('./utils/handleError');
 const getScopesForToken = require('../services/scopes/getScopesForToken');
+const createAndSendNotification = require('../services/notifications/createAndSendNotification');
+
+// Event Handler
+const returnSuccess = require('./utils/returnSuccess');
+const returnError = require('./utils/returnError');
+const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
 
 router.options('/:eventId', cors(corsOptions));
 
 // DELETE /events/:eventId
 router.delete('/:eventId', authorize, function (req, res) {
-    handleDeleteRequest(req, res);
-
-    //TODO: only, if deleted successful
-    const scopeIds = req.body.scopeIds;
-    const title = "Termin gelöscht";
-    const body = "Ein Termin wurde gelöscht!";
-    const token = "";   //TODO
-    newNotificationForScopeIds(title, body, token, scopeIds);
+    const eventId = req.params.eventId;
+    Promise.resolve(deleteEvent([eventId])).then(
+        function (result) {
+            returnSuccessWithoutContent(res);
+            createAndSendNotification.forDeletedEvent(req.body.scopeIds);
+        },
+        returnError.bind(null, res)
+    );
 });
 
 // GET /events/
 router.get('/', authorize, function (req, res) {
-    // TODO: implement
+    // TODO: implement & refactor
     handleGetEvents(req, res);
 });
 
 // POST /events/
 router.post('/', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 
-    //TODO: only, if created successfully
-    const scopeIds = req.body.scopeIds;
-    const title = "Neuer Termin erstellt";
-    const body = "Es wurde ein neuer Termin für Sie erstellt!";
-    const token = "";   //TODO
-    newNotificationForScopeIds(title, body, token, scopeIds);
+    // Promise.resolve(/*TODO*/).then(
+    //     function (result) {
+    //         res.status(200).send(/*TODO*/);
+    //         createAndSendNotification.forNewEvent(req.body.scopeIds);
+    //     },
+    //     returnError.bind(null, res)
+    // );
 });
 
 // PUT /events/:eventId
 router.put('/:eventId', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 
-    //TODO: only, if modified successfully
-    const scopeIds = req.body.scopeIds;
-    const title = "Ein Termin wurde verändert";
-    const body = "Einer Ihrer Termine wurde verändert!";
-    const token = "";   //TODO
-    newNotificationForScopeIds(title, body, token, scopeIds);
+    // Promise.resolve(/*TODO*/).then(
+    //     function (result) {
+    //         res.status(200).send(/*TODO*/);
+    //         createAndSendNotification.forModifiedEvent(req.body.scopeIds);
+    //     },
+    //     returnError.bind(null, res)
+    // );
 });
 
+//TODO: refactor...
 function handleGetEvents(req, res) {
     const filter = {
         scopeId: req.get('scope-id'),
@@ -78,17 +93,17 @@ function handleGetEvents(req, res) {
             .then((events) => {
                 returnEvents(events);
             })
-            .catch((error) => { handleError(res, error) })
+            .catch((error) => { returnError(res, error) })
     } else {
         const token = req.get('Authorization');
         getScopesForToken(token)
             .then((scopes) => { getEventsPerScope(scopes, filter) })
-            .catch((error) => { handleError(res, error) })
+            .catch((error) => { returnError(res, error) })
     }
 
     function returnEvents(events) {
         // TODO events in JSON API format
-        handleSuccess(res, events);
+        returnSuccess(res, events);
     }
 
     function getEventsPerScope(scopes, filter) {
@@ -102,7 +117,7 @@ function handleGetEvents(req, res) {
             .then((eventsCollection) => {
                 returnEvents(flatten(eventsCollection));
             })
-            .catch((error) => { handleError(res, error) })
+            .catch((error) => { returnError(res, error) })
     }
 
     // flatten result of results and filter empty results
