@@ -13,7 +13,7 @@ function validateIcs(lines) {
     // in case the last line is empty
     const lastLine = lines[lines.length - 1] === ''
         ? lines[lines.length - 2]
-        : lines[lines.length - 1]
+        : lines[lines.length - 1];
 
     if (lastLine !== "END:VCALENDAR") {
         consoleError("[validateIcs] The end of the given ics file does not match the expectation!");

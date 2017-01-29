@@ -49,7 +49,7 @@ router.get('/', authorize, function (req, res) {
 
 // GET /calendar/list
 router.get('/list', authorize, function (req, res) {
-  const token = req.get('Authorization')
+  const token = req.get('Authorization');
   Promise.resolve(getScopesForToken(token))
     .then(
       (scopes) => {

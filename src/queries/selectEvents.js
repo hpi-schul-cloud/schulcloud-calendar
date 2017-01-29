@@ -1,10 +1,10 @@
 const client = require('../models/database');
 const errorMessage = require('./utils/errorMessage');
-const ensureISODate = require('../utils/ensureISODate')
+const ensureISODate = require('../utils/ensureISODate');
 
 const THREE_WEEKS = 1000 * 60 * 60 * 24 * 21;
-const FROM = new Date(new Date().getTime() - THREE_WEEKS)
-const UNTIL = new Date(new Date().getTime() + THREE_WEEKS)
+const FROM = new Date(new Date().getTime() - THREE_WEEKS);
+const UNTIL = new Date(new Date().getTime() + THREE_WEEKS);
 
 function selectEvents(filter) {
     return new Promise(function(resolve, reject) {
