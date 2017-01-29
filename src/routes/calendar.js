@@ -11,7 +11,6 @@ router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
 
-const getEventsForToken = require('../services/events/getEventsForToken');
 const getScopesForToken = require('../services/scopes/getScopesForToken');
 const Readable = require('stream').Readable;
 const handleError = require('./utils/handleError');
@@ -47,6 +46,7 @@ router.get('/', authorize, function (req, res) {
 
 // GET /calendar/list
 router.get('/list', authorize, function (req, res) {
+    // TODO: Reuse req.user
   const token = req.get('Authorization')
   Promise.resolve(getScopesForToken(token))
     .then(
