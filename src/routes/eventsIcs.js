@@ -1,9 +1,10 @@
 // Services
-const handleJson = require('../services/json/handleJson');
+const createAndSendNotification = require('../services/notifications/createAndSendNotification');
+const storeEventsInDb = require('../services/events/storeEventsInDb');
 
 // Utilities
-const handleSuccess = require('./utils/returnSuccess');
-const handleError = require('./utils/returnError');
+const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
+const returnError = require('./utils/returnError');
 const consoleError = require('../utils/consoleError');
 const handleDeleteRequest = require("./utils/handleDeleteRequest");
 
@@ -11,12 +12,9 @@ const handleDeleteRequest = require("./utils/handleDeleteRequest");
 const icsToJson = require('../parsers/icsToJson');
 
 // Queries
-const insertEvents = require('../queries/insertEvents');
-const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent');
 const addAlarmToEvent = require('../queries/addAlarmToEvent');
 
 // HTTP Requests
-const getAllUsersForUUID = require('../http-requests').getAllUsersForUUID;
 const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
 
 // Authorization
@@ -28,7 +26,6 @@ const config = require('../config');
 // Imports
 const express = require('express');
 const bodyParser = require('body-parser');
-const uuidV4 = require('uuid/v4');
 const router = express.Router();
 
 // Configuration
@@ -43,37 +40,40 @@ router.use(bodyParser.urlencoded({ extended: false }));
 //Routes
 
 router.post('/', authorize, icsToJson, function (req, res) {
-    handleInsertRequest(req, res, uuidV4());
-
-    //TODO: only, if created successful
-    const scopeIds = req.body.scopeIds;
-    const title = "Neuer Termin erstellt";
-    const body = "Es wurde ein neuer Termin für Sie erstellt!";
-    newNotificationForScopeIds(title, body, scopeIds);
+    const events = req.events;
+    if (!events || !Array.isArray(events))
+        returnError(res);
+    Promise.resolve(storeEventsInDb(events)).then(
+        function (responses) {
+            /**
+             * response = [{eventId, scopeIds, summary, start, end}]
+             */
+            returnSuccessWithoutContent(res); //TODO: return (complete) events?
+            if (Array.isArray(responses)) {
+                responses.forEach(function (response) {
+                    createAndSendNotification.forNewEvent(response.scopeIds, response.summary, response.start, response.end);
+                });
+            }
+        },
+        returnError.bind(null, res)
+    );
 });
 
 router.put('/:eventId', authorize, icsToJson, function (req, res) {
-    // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
-    handleDeleteRequest(req, null);
-    handleInsertRequest(req, res, req.params.eventId);
+    // TODO: implement
+    returnError(res);
 
-    //TODO: only, if modified successful
-    const scopeIds = req.body.scopeIds;
-    const title = "Ein Termin wurde verändert";
-    const body = "Einer Ihrer Termine wurde verändert!";
-    newNotificationForScopeIds(title, body, scopeIds);
+    // Promise.resolve(/*TODO*/).then(
+    //     function (result) {
+    //         res.status(200).send(/*TODO*/);
+    //         createAndSendNotification.forModifiedEvent(req.body.scopeIds);
+    //     },
+    //     returnError.bind(null, res)
+    // );
+
+    // // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
+    // handleDeleteRequest(req, null);
+    // handleInsertRequest(req, res, req.params.eventId);
 });
-
-function handleInsertRequest(req, res, externalEventId) {
-    req.events.forEach(function(event) {
-        // TODO: Move to validation
-        if (!Array.isArray(event.scopeIds) || event.scopeIds.length === 0) {
-            consoleError("Got invalid 'scopeIds' array!");
-            handleError(res);
-        } else {
-            handleJson(event, event.separateUsers, event.scopeIds, externalEventId, req, res);
-        }
-    });
-}
 
 module.exports = router;
