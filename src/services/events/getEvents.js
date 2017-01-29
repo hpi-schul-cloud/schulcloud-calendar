@@ -1,42 +1,19 @@
-const selectEvents = require('../../queries/selectEvents');
-const allAlarmsForEvent = require('../../queries/allAlarmsForEvent').allAlarmsForEvent;
-const getRepeatExceptionForEvent = require('../../queries/getRepeatExceptionForEvent').getRepeatExceptionForEvent;
 
-function getEvents(filter) {
-    return new Promise((resolve, reject) => {
-        selectEvents(filter)
-            .then(appendAlarms)
-            .then(appendExdates)
-            .then(resolve)
-            .catch((error) => { reject(error) })
-    });
-}
+const getEventsForFilter = require('./getEventsForFilter');
+const getScopesForToken = require('../scopes/getScopesForToken');
+const getEventsPerScope = require('./getEventsPerScope');
 
-function appendAlarms(events) {
-    return new Promise((resolve, reject) => {
-        events.forEach((event, index) => {
-            allAlarmsForEvent(event["id"])
-                .then((alarms) => {
-                    console.log(alarms);
-                    event.alarms = alarms;
-                    if (index === events.length - 1) resolve(events)
-                })
+function getEvents(filter, token) {
+    return new Promise(function (resolve, reject) {
+        if (filter.scopeId || filter.eventId) {
+            getEventsForFilter(filter)
+                .then((events) => { resolve(events) })
                 .catch((error) => { reject(error) })
-        });
-    });
-}
-
-function appendExdates(events) {
-    return new Promise((resolve, reject) => {
-        events.forEach((event, index) => {
-            getRepeatExceptionForEvent(event["id"])
-                .then((exdates) => {
-                    console.log(exdates);
-                    event.exdates = exdates;
-                    if (index === events.length - 1) resolve(events)
-                })
-                .catch((error) => { reject(error) })
-        });
+        } else {
+            getScopesForToken(token)
+                .then((scopes) => { resolve(getEventsPerScope(scopes, filter)) })
+                .catch((error) => { reject(res, error) })
+        }
     });
 }
 

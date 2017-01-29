@@ -29,6 +29,7 @@ const createAndSendNotification = require('../services/notifications/createAndSe
 const returnSuccess = require('./utils/returnSuccess');
 const returnError = require('./utils/returnError');
 const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
+const returnJSONResponse = require('./utils/returnJSONResponse');
 
 router.options('/:eventId', cors(corsOptions));
 
@@ -46,8 +47,20 @@ router.delete('/:eventId', authorize, function (req, res) {
 
 // GET /events/
 router.get('/', authorize, function (req, res) {
-    // TODO: implement & refactor
-    handleGetEvents(req, res);
+    const filter = {
+        scopeId: req.get('scope-id'),
+        eventId: req.get('event-id'),
+        from: req.get('from'),
+        until: req.get('until'),
+        all: req.get('all')
+    };
+    const token = req.get('Authorization');
+    Promise.resolve(getEvents(filter, token)).then(
+        function (result) {
+            returnJSONResponse(res, result);
+        },
+        returnError.bind(null, res)
+    );
 });
 
 // POST /events/
@@ -77,57 +90,5 @@ router.put('/:eventId', authorize, function (req, res) {
     //     returnError.bind(null, res)
     // );
 });
-
-//TODO: refactor...
-function handleGetEvents(req, res) {
-    const filter = {
-        scopeId: req.get('scope-id'),
-        eventId: req.get('event-id'),
-        from: req.get('from'),
-        until: req.get('until'),
-        all: req.get('all')
-    };
-
-    if (filter.scopeId || filter.eventId) {
-        getEvents(filter)
-            .then((events) => {
-                returnEvents(events);
-            })
-            .catch((error) => { returnError(res, error) })
-    } else {
-        const token = req.get('Authorization');
-        getScopesForToken(token)
-            .then((scopes) => { getEventsPerScope(scopes, filter) })
-            .catch((error) => { returnError(res, error) })
-    }
-
-    function returnEvents(events) {
-        // TODO events in JSON API format
-        returnSuccess(res, events);
-    }
-
-    function getEventsPerScope(scopes, filter) {
-        const { from, until, all } = filter;
-        const eventsPerScope = scopes.map((scope) => {
-            filter = { scopeId: scope.id, from, until, all };
-            return getEvents(filter);
-        });
-
-        Promise.all(eventsPerScope)
-            .then((eventsCollection) => {
-                returnEvents(flatten(eventsCollection));
-            })
-            .catch((error) => { returnError(res, error) })
-    }
-
-    // flatten result of results and filter empty results
-    function flatten(collection) {
-        return collection.reduce((flattened, current) => {
-            return current.length > 0
-                ? [...flattened, ...current]
-                : flattened;
-        }, [])
-    }
-}
 
 module.exports = router;
