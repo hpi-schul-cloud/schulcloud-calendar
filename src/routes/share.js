@@ -1,20 +1,28 @@
+// Utilities
+const handleError = require('./utils/returnError');
+
+// Authorization
+const authorize = require("../authorization/index");
+
+// Project Configuration
+const config = require('../config');
+
+// Imports
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
-
 const cors = require('cors');
+
+// Configuration
 let corsOptions = {
-    origin: 'https://schulcloud.github.io'
+    origin: config.CORS_ORIGIN
 };
 router.use(cors(corsOptions));
-
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
-
-const handleError = require('./utils/returnError');
-const authorize = require("../authorization/index");
-
 router.options('/:shareToken', cors(corsOptions));
+
+// Routes
 
 // GET /share/list
 router.get('/list', authorize, function (req, res) {

@@ -1,28 +1,43 @@
+// Utilities
+const handleSuccess = require('./utils/returnSuccess');
+const handleError = require('./utils/returnError');
+const consoleError = require('../utils/consoleError');
+const handleDeleteRequest = require("./utils/handleDeleteRequest");
+
+// Parsers
+const icsToJson = require('../parsers/icsToJson');
+
+// Queries
+const insertEvents = require('../queries/insertEvents');
+const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent');
+const addAlarmToEvent = require('../queries/addAlarmToEvent');
+
+// HTTP Requests
+const getAllUsersForUUID = require('../http-requests').getAllUsersForUUID;
+const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
+
+// Authorization
+const authorize = require("../authorization/index");
+
+// Project Configuration
+const config = require('../config');
+
+// Imports
 const express = require('express');
 const bodyParser = require('body-parser');
 const uuidV4 = require('uuid/v4');
 const router = express.Router();
 
+// Configuration
 const cors = require('cors');
 let corsOptions = {
-    origin: 'https://schulcloud.github.io'
+    origin: config.CORS_ORIGIN
 };
 router.use(cors(corsOptions));
-
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-const icsToJson = require('../parsers/icsToJson');
-const insertEvents = require('../queries/insertEvents');
-const getAllUsersForUUID = require('../http-requests').getAllUsersForUUID;
-const handleSuccess = require('./utils/returnSuccess');
-const handleError = require('./utils/returnError');
-const consoleError = require('../utils/consoleError');
-const addRepeatExceptionToEvent = require('../queries/addRepeatExceptionToEvent');
-const addAlarmToEvent = require('../queries/addAlarmToEvent');
-const handleDeleteRequest = require("./utils/handleDeleteRequest");
-const authorize = require("../authorization/index");
-const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
+//Routes
 
 router.post('/', authorize, function (req, res) {
     handleInsertRequest(req, res, uuidV4());

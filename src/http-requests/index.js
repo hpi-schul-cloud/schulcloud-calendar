@@ -1,5 +1,5 @@
 const getRequest = require('./getRequest');
-const config = require('./config');
+const config = require('./../config');
 
 function getAllUsersForUUID(uuid) {
     return getRequest(config.SCHULCLOUD_ALL_USERS_FOR_UUID + uuid);

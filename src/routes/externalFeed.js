@@ -1,22 +1,30 @@
+// Services
+const getScopesForRequest = require('../services/scopes/getScopesForRequest');
+
+// Utilities
+const handleError = require('./utils/returnError');
+const handleSuccess = require('./utils/returnSuccess');
+
+// Authorization
+const authorize = require("../authorization/index");
+
+// Project Configuration
+const config = require('../config');
+
+// Queries
+const insertFeedSubscription = require('../queries/insertFeedSubscription');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
-
 const cors = require('cors');
+
 let corsOptions = {
-    origin: 'https://schulcloud.github.io'
+    origin: config.CORS_ORIGIN
 };
 router.use(cors(corsOptions));
-
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
-
-const handleError = require('./utils/returnError');
-const handleSuccess = require('./utils/returnSuccess');
-const authorize = require("../authorization/index");
-const insertFeedSubscription = require('../queries/insertFeedSubscription');
-const getScopesForRequest = require('../services/scopes/getScopesForRequest');
-
 router.options('/:feedId', cors(corsOptions));
 
 // GET /external-feed-subscription/list

@@ -1,6 +1,6 @@
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const consoleError = require('../utils/consoleError');
-const config = require('./config');
+const config = require('./../config');
 
 function newNotificationForScopeIds(title, body, scopeIds) {
     return new Promise(function(resolve, reject) {
