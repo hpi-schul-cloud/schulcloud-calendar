@@ -25,6 +25,16 @@ CREATE TYPE repeat_type AS ENUM (
   'YEARLY'
 );
 
+CREATE TYPE weekday_type AS ENUM (
+  'SU',
+  'MO',
+  'TU',
+  'WE',
+  'TH',
+  'FR',
+  'SA'
+);
+
 CREATE TYPE alarm_action AS ENUM (
   'AUDIO',
   'DISPLAY',
@@ -49,16 +59,16 @@ CREATE TABLE events (
   repeat_until      TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
   repeat_count      INT                               DEFAULT NULL,
   repeat_interval   INT                               DEFAULT NULL,
-  repeat_bysecond   TEXT                              DEFAULT NULL,
-  repeat_byminute   TEXT                              DEFAULT NULL,
-  repeat_byhour     TEXT                              DEFAULT NULL,
-  repeat_byday      TEXT                              DEFAULT NULL,
-  repeat_bymonthday TEXT                              DEFAULT NULL,
-  repeat_byyearday  TEXT                              DEFAULT NULL,
-  repeat_byweekno   TEXT                              DEFAULT NULL,
-  repeat_bymonth    TEXT                              DEFAULT NULL,
-  repeat_bysetpos   TEXT                              DEFAULT NULL,
-  repeat_wkst       TEXT                              DEFAULT NULL,
+  repeat_bysecond   INT ARRAY                         DEFAULT NULL,
+  repeat_byminute   INT ARRAY                         DEFAULT NULL,
+  repeat_byhour     INT ARRAY                         DEFAULT NULL,
+  repeat_byday      TEXT ARRAY                        DEFAULT NULL,
+  repeat_bymonthday INT ARRAY                         DEFAULT NULL,
+  repeat_byyearday  INT ARRAY                         DEFAULT NULL,
+  repeat_byweekno   INT ARRAY                         DEFAULT NULL,
+  repeat_bymonth    INT ARRAY                         DEFAULT NULL,
+  repeat_bysetpos   INT ARRAY                         DEFAULT NULL,
+  repeat_wkst       weekday_type                      DEFAULT NULL,
   event_id          UUID                     NOT NULL DEFAULT uuid_generate_v4()
   -- weitere Felder
 );
@@ -84,10 +94,10 @@ CREATE TABLE repetition_exception_dates (
 );
 
 CREATE TABLE feeds (
-  id                    UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
-  ics_url               TEXT                     NOT NULL,
-  description           TEXT                              DEFAULT NULL,
-  last_updated          TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
-  last_updated_status   INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
-  reference_id          UUID                     NOT NULL
+  id                  UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
+  ics_url             TEXT                     NOT NULL,
+  description         TEXT                              DEFAULT NULL,
+  last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
+  last_updated_status INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
+  reference_id        UUID                     NOT NULL
 );

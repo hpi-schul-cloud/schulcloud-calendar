@@ -8,6 +8,7 @@ function newNotificationForScopeIds(title, body, token, scopeIds) {
         request.open('POST', config.NOTIFICATION_SERVICE_NEW_NOTIFICATION, true);
         request.setRequestHeader('Content-Type', 'application/json');
         request.send(JSON.stringify({
+            schulcloudId: '1', // TODO: Ask for value!
             title: title,
             body: body,
             token: token,
@@ -18,7 +19,7 @@ function newNotificationForScopeIds(title, body, token, scopeIds) {
             if (httpStatus == 201) {
                 resolve();
             } else {
-                consoleError('Error status ' + httpStatus + ' while creating notification for scopeIds ' + JSON.stringify(scopeIds));
+                consoleError('Error status ' + httpStatus + ' while creating notification for scopeIds ' + JSON.stringify(scopeIds) + ': ' + JSON.parse(request.responseText).message);
                 reject(httpStatus);
             }
         };

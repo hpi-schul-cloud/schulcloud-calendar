@@ -17,6 +17,10 @@ const getEvents = require('../services/events/getEvents');
 const handleSuccess = require('./utils/handleSuccess');
 const handleError = require('./utils/handleError');
 const getScopesForToken = require('../services/scopes/getScopesForToken');
+const jsonApiToJson = require('../parsers/jsonApiToJson');
+const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
+
+const uuidV4 = require('uuid/v4');
 
 router.options('/:eventId', cors(corsOptions));
 
@@ -39,16 +43,18 @@ router.get('/', authorize, function (req, res) {
 });
 
 // POST /events/
-router.post('/', authorize, function (req, res) {
-    // TODO: implement
-    handleError(res);
+router.post('/', authorize, jsonApiToJson, function (req, res) {
 
-    //TODO: only, if created successfully
-    const scopeIds = req.body.scopeIds;
-    const title = "Neuer Termin erstellt";
-    const body = "Es wurde ein neuer Termin für Sie erstellt!";
-    const token = "";   //TODO
-    newNotificationForScopeIds(title, body, token, scopeIds);
+    const externalEventId = uuidV4();
+
+    req.events.forEach(function(event) {
+        // handleJson(event, event.separateUsers, event.scopeIds, externalEventId, req, res);
+
+        //TODO: only, if created successfully
+        const title = "Neuer Termin erstellt";
+        const body = "Es wurde ein neuer Termin für Sie erstellt!";
+        newNotificationForScopeIds(title, body, req.token, event.scopeIds);
+    });
 });
 
 // PUT /events/:eventId

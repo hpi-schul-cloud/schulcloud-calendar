@@ -1,10 +1,10 @@
 const validateIcs = require('./validate/validateIcs');
 const validateJson = require('./validate/validateJson');
 const consoleError = require('../utils/consoleError');
-const regularDateFormat = require('../parsers/regularDateFormat');
+const regularDateFormat = require('./utils/regularDateFormat');
 
-function icsToJson(ics) {
-    const lines = ics.split("\n");
+function icsToJson(req, res, next) {
+    const lines = req.body.ics.split("\n");
 
     if (!validateIcs(lines)) {
         consoleError('[icsToJson] Invalid ICS file');
@@ -26,6 +26,8 @@ function icsToJson(ics) {
                 break;
             case 'BEGIN:VEVENT':
                 event = {};
+                event.scopeIds = req.body.scopeIds;
+                event.separateUsers = req.body.separateUsers;
                 break;
             case 'END:VEVENT':
                 if (validateJson(event) && !parseAlarm) {
@@ -55,7 +57,8 @@ function icsToJson(ics) {
         }
     });
 
-    return events;
+    req.events = events;
+    next();
 }
 
 function lineToJson(line, event) {
@@ -121,31 +124,31 @@ function lineToJson(line, event) {
                         event["repeat_interval"] = raValue;
                         break;
                     case "BYSECOND":
-                        event["repeat_bysecond"] = raValue;
+                        event["repeat_bysecond"] = raValue.split(',');
                         break;
                     case "BYMINUTE":
-                        event["repeat_byminute"] = raValue;
+                        event["repeat_byminute"] = raValue.split(',');
                         break;
                     case "BYHOUR":
-                        event["repeat_byhour"] = raValue;
+                        event["repeat_byhour"] = raValue.split(',');
                         break;
                     case "BYDAY":
-                        event["repeat_byday"] = raValue;
+                        event["repeat_byday"] = raValue.split(',');
                         break;
                     case "BYMONTHDAY":
-                        event["repeat_bymonthday"] = raValue;
+                        event["repeat_bymonthday"] = raValue.split(',');
                         break;
                     case "BYYEARDAY":
-                        event["repeat_byyearday"] = raValue;
+                        event["repeat_byyearday"] = raValue.split(',');
                         break;
                     case "BYWEEKNO":
-                        event["repeat_byweekno"] = raValue;
+                        event["repeat_byweekno"] = raValue.split(',');
                         break;
                     case "BYMONTH":
-                        event["repeat_bymonth"] = raValue;
+                        event["repeat_bymonth"] = raValue.split(',');
                         break;
                     case "BYSETPOS":
-                        event["repeat_bysetpos"] = raValue;
+                        event["repeat_bysetpos"] = raValue.split(',');
                         break;
                     case "WKST":
                         event["repeat_wkst"] = raValue;

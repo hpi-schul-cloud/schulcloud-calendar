@@ -24,18 +24,17 @@ const handleDeleteRequest = require("./utils/handleDeleteRequest");
 const authorize = require("../authorization/index");
 const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
 
-router.post('/', authorize, function (req, res) {
+router.post('/', authorize, icsToJson, function (req, res) {
     handleInsertRequest(req, res, uuidV4());
 
     //TODO: only, if created successful
     const scopeIds = req.body.scopeIds;
     const title = "Neuer Termin erstellt";
     const body = "Es wurde ein neuer Termin für Sie erstellt!";
-    const token = "";   //TODO
-    newNotificationForScopeIds(title, body, token, scopeIds);
+    newNotificationForScopeIds(title, body, req.token, scopeIds);
 });
 
-router.put('/:eventId', authorize, function (req, res) {
+router.put('/:eventId', authorize, icsToJson, function (req, res) {
     // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
     handleDeleteRequest(req, null);
     handleInsertRequest(req, res, req.params.eventId);
@@ -44,32 +43,19 @@ router.put('/:eventId', authorize, function (req, res) {
     const scopeIds = req.body.scopeIds;
     const title = "Ein Termin wurde verändert";
     const body = "Einer Ihrer Termine wurde verändert!";
-    const token = "";   //TODO
-    newNotificationForScopeIds(title, body, token, scopeIds);
+    newNotificationForScopeIds(title, body, req.token, scopeIds);
 });
 
 function handleInsertRequest(req, res, externalEventId) {
-    const scopeIds = req.body.scopeIds;
-    if (!Array.isArray(scopeIds) || scopeIds.length === 0) {
-        consoleError("Got invalid 'scopeIds' array!");
-        handleError(res);
-        return;
-    }
-    const separateUsers = req.body.separateUsers;
-    const ics = req.body.ics;
-    const json = icsToJson(ics);
-    if (!json) {
-        handleError(res);
-        return;
-    }
-
-    if (Array.isArray(json)) {
-        json.forEach(function(event) {
-            handleJson(event, separateUsers, scopeIds, externalEventId, req, res);
-        });
-    } else {
-        handleJson(json, separateUsers, scopeIds, externalEventId, req, res);
-    }
+    req.events.forEach(function(event) {
+        // TODO: Move to validation
+        if (!Array.isArray(event.scopeIds) || event.scopeIds.length === 0) {
+            consoleError("Got invalid 'scopeIds' array!");
+            handleError(res);
+        } else {
+            handleJson(event, event.separateUsers, event.scopeIds, externalEventId, req, res);
+        }
+    });
 }
 
 function handleJson(json, separateUsers, scopeIds, externalEventId, req, res) {

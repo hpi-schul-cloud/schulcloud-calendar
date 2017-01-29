@@ -901,11 +901,11 @@ definitions:
       freq:
         type: string
         enum:
-          - daily
-          - weekly
-          - monthly
-          - yearly
-        example: weekly
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - YEARLY
+        example: WEEKLY
       until:
         type: string
         format: date-time
@@ -944,14 +944,14 @@ definitions:
         items:
           type: string
           enum:
-            - mo
-            - tu
-            - we
-            - th
-            - fr
-            - sa
-            - su
-          example: su
+            - MO
+            - TU
+            - WE
+            - TH
+            - FR
+            - SA
+            - SU
+          example: SU
       bymonthday:
         type: array
         items:
@@ -990,14 +990,14 @@ definitions:
       wkst:
         type: string
         enum:
-          - mo
-          - tu
-          - we
-          - th
-          - fr
-          - sa
-          - su
-        example: su
+          - MO
+          - TU
+          - WE
+          - TH
+          - FR
+          - SA
+          - SU
+        example: MO
 
   ExDatesJSONattributes:
     type: object
@@ -1023,10 +1023,10 @@ definitions:
       action:
         type: string
         enum:
-          - display
-          - audio
-          - email
-        example: display
+          - DISPLAY
+          - AUDIO
+          - EMAIL
+        example: DISPLAY
       attach:
         type: string
         example: ';FMTTYPE=audio/basic:ftp://example.com/pub/sounds/bell-01.aud'

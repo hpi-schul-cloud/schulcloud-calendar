@@ -8,6 +8,7 @@ function authentication(req, res, next) {
     const token = req.get('Authorization');
 
     if (token) {
+        req.token = token;
         Promise.resolve(getAllScopesForToken(token)).then(function (value) {
             value = JSON.parse(value);
 
