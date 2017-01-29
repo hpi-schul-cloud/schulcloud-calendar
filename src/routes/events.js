@@ -70,9 +70,13 @@ router.get('/', authorize, function (req, res) {
 });
 
 // POST /events/
-router.post('/', authorize, function (req, res) {
-    // TODO: implement
-    returnError(res);
+router.post('/', authorize, jsonApiToJson, function (req, res) {
+
+    const externalEventId = uuidV4();
+
+    req.events.forEach(function(event) {
+        handleJson(event, event.separateUsers, event.scopeIds, externalEventId, req, res);
+    });
 
     // Promise.resolve(/*TODO*/).then(
     //     function (result) {
