@@ -1,9 +1,11 @@
 
 const newNotificationForScopeIds = require('../../http-requests/newNotificationForScopeIds');
 
-function forNewEvent(scopeIds) {
-    const title = "Neuer Termin erstellt";
-    const body = "Es wurde ein neuer Termin für Sie erstellt!";
+function forNewEvent(scopeIds, summary, start, end) {
+    const title = "Neuer Termin \"" + summary + "\" erstellt";
+    const body = "Es wurde ein neuer Termin für Sie erstellt!\n" + title + " von " + start + " bis " + end;
+    console.log("Title: " + title);
+    console.log("Body: " + body);
     newNotificationForScopeIds(title, body, scopeIds);
 }
 

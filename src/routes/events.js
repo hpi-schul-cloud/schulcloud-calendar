@@ -74,20 +74,23 @@ router.get('/', authorize, function (req, res) {
 
 // POST /events/
 router.post('/', authorize, jsonApiToJson, function (req, res) {
-
-    const externalEventId = uuidV4();
-
-    req.events.forEach(function(event) {
-        handleJson(event, event.separateUsers, event.scopeIds, externalEventId, req, res);
-    });
-
-    // Promise.resolve(/*TODO*/).then(
-    //     function (result) {
-    //         res.status(200).send(/*TODO*/);
-    //         createAndSendNotification.forNewEvent(req.body.scopeIds);
-    //     },
-    //     returnError.bind(null, res)
-    // );
+    const events = req.events;
+    if (!events || !Array.isArray(events))
+        returnError(res);
+    Promise.resolve(storeEventsInDb(events)).then(
+        function (responses) {
+            /**
+             * response = [{eventId, scopeIds, summary, start, end}]
+             */
+            returnSuccessWithoutContent(res); //TODO: return events
+            if (Array.isArray(responses)) {
+                responses.forEach(function (response) {
+                    createAndSendNotification.forNewEvent(response.scopeIds, response.summary, response.start, response.end);
+                });
+            }
+        },
+        returnError.bind(null, res)
+    );
 });
 
 // PUT /events/:eventId
