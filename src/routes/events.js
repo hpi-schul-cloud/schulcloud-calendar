@@ -2,6 +2,7 @@
 const getEvents = require('../services/events/getEvents');
 const getScopesForToken = require('../services/scopes/getScopesForToken');
 const createAndSendNotification = require('../services/notifications/createAndSendNotification');
+const storeEventsInDb = require('../services/events/storeEventsInDb');
 
 // Parsers
 const jsonApiToJson = require('../parsers/jsonApiToJson');
@@ -19,11 +20,9 @@ const authorize = require("../authorization/index");
 const config = require('../config');
 
 // Event Handler
-const returnSuccess = require('./utils/returnSuccess');
 const returnError = require('./utils/returnError');
 const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
 const returnJSONResponse = require('./utils/returnJSONResponse');
-const handleDeleteRequest = require("./utils/handleDeleteRequest");
 
 // Imports
 const express = require('express');
@@ -82,7 +81,7 @@ router.post('/', authorize, jsonApiToJson, function (req, res) {
             /**
              * response = [{eventId, scopeIds, summary, start, end}]
              */
-            returnSuccessWithoutContent(res); //TODO: return events
+            returnSuccessWithoutContent(res); //TODO: return (complete) events?
             if (Array.isArray(responses)) {
                 responses.forEach(function (response) {
                     createAndSendNotification.forNewEvent(response.scopeIds, response.summary, response.start, response.end);

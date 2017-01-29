@@ -1,8 +1,11 @@
+// Services
+const handleJson = require('../json/handleJson');
 
+// Imports
+const uuidV4 = require('uuid/v4');
 
 function storeEventsInDb(events) {
     return new Promise(function (resolve, reject) {
-        // const externalEventId = uuidV4();
         const uidEventIdMap = {};
         const jsonHandlerPromises = [];
 
@@ -18,3 +21,5 @@ function storeEventsInDb(events) {
         );
     });
 }
+
+module.exports = storeEventsInDb;
