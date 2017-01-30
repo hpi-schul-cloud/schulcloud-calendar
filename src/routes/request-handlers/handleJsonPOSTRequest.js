@@ -1,10 +1,10 @@
 // Services
-const createAndSendNotification = require('../services/notifications/createAndSendNotification');
-const storeEventsInDb = require('../services/events/storeEventsInDb');
+const createAndSendNotification = require('../../services/notifications/createAndSendNotification');
+const storeEventsInDb = require('../../services/events/storeEventsInDb');
 
 // Event Handler
-const returnError = require('./utils/returnError');
-const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
+const returnError = require('../utils/returnError');
+const returnSuccessWithoutContent = require('../utils/returnSuccessWithoutContent');
 
 function handleJsonPOSTRequest(req, res) {
     Promise.resolve(storeEventsInDb(req.events)).then(
