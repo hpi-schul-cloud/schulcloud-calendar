@@ -41,18 +41,6 @@ router.options('/:eventId', cors(corsOptions));
 
 // Routes
 
-// DELETE /events/:eventId
-router.delete('/:eventId', authorize, function (req, res) {
-    const eventId = req.params.eventId;
-    Promise.resolve(deleteEvent([eventId])).then(
-        function (result) {
-            returnSuccessWithoutContent(res);
-            createAndSendNotification.forDeletedEvent(req.body.scopeIds);
-        },
-        returnError.bind(null, res)
-    );
-});
-
 // GET /events/
 router.get('/', authorize, function (req, res) {
     const filter = {
@@ -74,7 +62,7 @@ router.get('/', authorize, function (req, res) {
 // POST /events/
 router.post('/', authorize, jsonApiToJson, function (req, res) {
     const events = req.events;
-    if (!events || !Array.isArray(events))
+    if (!events || !Array.isArray(events) /*|| events.length != 1*/)
         returnError(res);
     Promise.resolve(storeEventsInDb(events)).then(
         function (responses) {
@@ -93,17 +81,42 @@ router.post('/', authorize, jsonApiToJson, function (req, res) {
 });
 
 // PUT /events/:eventId
-router.put('/:eventId', authorize, function (req, res) {
-    // TODO: implement
-    returnError(res);
+router.put('/:eventId', authorize, jsonApiToJson, function (req, res) {
+    const eventId = req.params.eventId;
+    const updatedEvents = req.events;
+    if (!updatedEvents || !Array.isArray(updatedEvents) || updatedEvents.length != 1)
+        returnError(res);
+    Promise.resolve(deleteEvent([eventId])).then(
+        function () {
+            Promise.resolve(storeEventsInDb(updatedEvents)).then(
+                function (responses) {
+                    /**
+                     * response = [{eventId, scopeIds, summary, start, end}]
+                     */
+                    returnSuccessWithoutContent(res); //TODO: return (complete) events?
+                    if (Array.isArray(responses)) {
+                        responses.forEach(function (response) {
+                            createAndSendNotification.forModifiedEvent(response.scopeIds, response.summary, response.start, response.end);
+                        });
+                    }
+                },
+                returnError.bind(null, res)
+            );
+        },
+        returnError.bind(null, res)
+    );
+});
 
-    // Promise.resolve(/*TODO*/).then(
-    //     function (result) {
-    //         res.status(200).send(/*TODO*/);
-    //         createAndSendNotification.forModifiedEvent(req.body.scopeIds);
-    //     },
-    //     returnError.bind(null, res)
-    // );
+// DELETE /events/:eventId
+router.delete('/:eventId', authorize, function (req, res) {
+    const eventId = req.params.eventId;
+    Promise.resolve(deleteEvent([eventId])).then(
+        function (result) {
+            returnSuccessWithoutContent(res);
+            createAndSendNotification.forDeletedEvent(req.body.scopeIds);
+        },
+        returnError.bind(null, res)
+    );
 });
 
 module.exports = router;
