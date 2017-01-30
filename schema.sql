@@ -19,6 +19,9 @@ DROP TYPE IF EXISTS alarm_action;
 -- ######################################
 
 CREATE TYPE repeat_type AS ENUM (
+  'SECONDLY',
+  'MINUTELY',
+  'HOURLY',
   'DAILY',
   'WEEKLY',
   'MONTHLY',
