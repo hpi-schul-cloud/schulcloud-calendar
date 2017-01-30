@@ -7,10 +7,7 @@ const returnError = require('./utils/returnError');
 const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
 
 function handleJsonPOSTRequest(req, res) {
-    const events = req.events;
-    if (!events || !Array.isArray(events) /*|| events.length != 1*/)
-        returnError(res);
-    Promise.resolve(storeEventsInDb(events)).then(
+    Promise.resolve(storeEventsInDb(req.events)).then(
         function (responses) {
             /**
              * response = [{eventId, scopeIds, summary, start, end}]

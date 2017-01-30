@@ -10,15 +10,11 @@ const returnError = require('../utils/returnError');
 const returnSuccessWithoutContent = require('../utils/returnSuccessWithoutContent');
 
 function handleJsonPUTRequest(req, res) {
-    const eventId = req.params.eventId;
-    const updatedEvents = req.events;
-    if (!updatedEvents || !Array.isArray(updatedEvents) || updatedEvents.length != 1)
-        returnError(res);
-    Promise.resolve(deleteEvent([eventId])).then(
+    Promise.resolve(deleteEvent([req.params.eventId])).then(
         function (result) {
             // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
             // validate result if at least one row has been deleted...
-            Promise.resolve(storeEventsInDb(updatedEvents)).then(
+            Promise.resolve(storeEventsInDb(req.events)).then(
                 function (responses) {
                     /**
                      * response = [{eventId, scopeIds, summary, start, end}]
