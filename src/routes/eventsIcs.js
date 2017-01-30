@@ -13,12 +13,17 @@ const icsToJson = require('../parsers/icsToJson');
 
 // Queries
 const addAlarmToEvent = require('../queries/addAlarmToEvent');
+const deleteEvent = require('../queries/deleteEvent');
 
 // HTTP Requests
 const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
 
 // Authorization
 const authorize = require("../authorization/index");
+
+// Request Handlers
+const handleJsonPUTRequest = require('./request-handlers/handleJsonPUTRequest');
+const handleJsonPOSTRequest = require('./request-handlers/handleJsonPOSTRequest');
 
 // Project Configuration
 const config = require('../config');
@@ -40,40 +45,11 @@ router.use(bodyParser.urlencoded({ extended: false }));
 //Routes
 
 router.post('/', authorize, icsToJson, function (req, res) {
-    const events = req.events;
-    if (!events || !Array.isArray(events))
-        returnError(res);
-    Promise.resolve(storeEventsInDb(events)).then(
-        function (responses) {
-            /**
-             * response = [{eventId, scopeIds, summary, start, end}]
-             */
-            returnSuccessWithoutContent(res); //TODO: return (complete) events?
-            if (Array.isArray(responses)) {
-                responses.forEach(function (response) {
-                    createAndSendNotification.forNewEvent(response.scopeIds, response.summary, response.start, response.end);
-                });
-            }
-        },
-        returnError.bind(null, res)
-    );
+    handleJsonPOSTRequest(req, res);
 });
 
 router.put('/:eventId', authorize, icsToJson, function (req, res) {
-    // TODO: implement
-    returnError(res);
-
-    // Promise.resolve(/*TODO*/).then(
-    //     function (result) {
-    //         res.status(200).send(/*TODO*/);
-    //         createAndSendNotification.forModifiedEvent(req.body.scopeIds);
-    //     },
-    //     returnError.bind(null, res)
-    // );
-
-    // // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
-    // handleDeleteRequest(req, null);
-    // handleInsertRequest(req, res, req.params.eventId);
+    handleJsonPUTRequest(req, res);
 });
 
 module.exports = router;
