@@ -1,5 +1,5 @@
 // Utilities
-const handleError = require('./utils/returnError');
+const returnError = require('./utils/returnError');
 
 // Authorization
 const authorize = require("../authorization/index");
@@ -27,31 +27,31 @@ router.options('/:shareToken', cors(corsOptions));
 // GET /share/list
 router.get('/list', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 // GET /share/calendar/:shareToken
 router.get('/calendar/:shareToken', function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 // POST /share/:scopeId
 router.post('/:scopeId', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 // DELETE /share/:shareToken
 router.delete('/:shareToken', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 // GET /share/:shareToken
 router.get('/:shareToken', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 module.exports = router;

@@ -2,8 +2,8 @@
 const getScopesForRequest = require('../services/scopes/getScopesForRequest');
 
 // Utilities
-const handleError = require('./utils/returnError');
-const handleSuccess = require('./utils/returnSuccess');
+const returnError = require('./utils/returnError');
+const returnSuccess = require('./utils/returnSuccess');
 
 // Authorization
 const authorize = require("../authorization/index");
@@ -30,7 +30,7 @@ router.options('/:feedId', cors(corsOptions));
 // GET /external-feed-subscription/list
 router.get('/list', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 // POST /external-feed-subscription
@@ -41,13 +41,13 @@ router.post('/', authorize, function (req, res) {
 // PUT /external-feed-subscription/:feedId
 router.put('/:feedId', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 // DELETE /external-feed-subscription/:feedId
 router.delete('/:feedId', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 function handleInsertFeedRequest(req, res) {
@@ -74,13 +74,13 @@ function handleInsertFeedRequest(req, res) {
 
             function handleEnd(index) {
                 if (index === scopeIds.length - 1) {
-                    handleSuccess(res, feedIds)
+                    returnSuccess(res, feedIds)
                 }
             }
 
         })
         .catch((error) => {
-            handleError(res, error)
+            returnError(res, error)
         })
 }
 

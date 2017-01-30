@@ -25,7 +25,7 @@ function getRepeatExceptionsIcsForEvent(eventId) {
                         resolve('');
                     }
 
-                    var ics = '';
+                    let ics = '';
                     exceptions.map(function (exception) {
                         ics += 'EXDATE:' + iCalendarDateFormat(exception.date) + '\n';
                     });

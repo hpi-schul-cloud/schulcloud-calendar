@@ -1,5 +1,5 @@
 const getAllScopesForToken = require('../http-requests').getAllScopesForToken;
-const handleError = require('../routes/utils/returnError');
+const returnError = require('../routes/utils/returnError');
 
 
 function authentication(req, res, next) {
@@ -24,7 +24,7 @@ function authentication(req, res, next) {
                     user.scope[scope.id].name = scope.attributes.name;
                     user.scope[scope.id].authorities = {};
                     scope.attributes.authorities.forEach(function (authority) {
-                        user.scope[scope.id].authorities[authority] = true
+                        user.scope[scope.id].authorities[authority] = true;
                     });
                 }
             });
@@ -32,10 +32,10 @@ function authentication(req, res, next) {
             req.user = user;
             next();
         }, function (value) {
-            handleError(res, 'Invalid Authorization token!', 401, 'Unauthorized')
+            returnError(res, 'Invalid Authorization token!', 401, 'Unauthorized');
         });
     } else {
-        handleError(res, 'Invalid Authorization token!', 401, 'Unauthorized')
+        returnError(res, 'Invalid Authorization token!', 401, 'Unauthorized');
     }
 }
 

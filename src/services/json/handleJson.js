@@ -11,7 +11,7 @@ function handleJson(json, separateUsers, scopeIds, externalEventId) {
          * reference_id, dtstamp, last-modified, repeat, repeat_interval, alarms Array
          */
         const params = [];
-        var referenceIds;
+        let referenceIds;
         params[0] = json["summary"];            //$1: summary
         params[1] = json["location"];           //$2: location
         params[2] = json["description"];        //$3: description

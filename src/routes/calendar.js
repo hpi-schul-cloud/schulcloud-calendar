@@ -4,8 +4,8 @@ const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForSc
 const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
 
 // Utilities
-const handleError = require('./utils/returnError');
-const handleSuccess = require('./utils/returnSuccess');
+const returnError = require('./utils/returnError');
+const returnSuccess = require('./utils/returnSuccess');
 const returnICalendar = require('./utils/returnICalendar');
 
 // Queries
@@ -39,14 +39,14 @@ router.get('/test', authorize, function (req, res) {
         function (finalIcsString) {
             returnICalendar(res, finalIcsString);
         },
-        handleError.bind(null, res)
+        returnError.bind(null, res)
     );
 });
 
 // GET /calendar
 router.get('/', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 // GET /calendar/list
@@ -55,12 +55,12 @@ router.get('/list', authorize, function (req, res) {
   Promise.resolve(getScopesForToken(req.token))
     .then(
       (scopes) => {
-        handleSuccess(res, getCalendarListOutput(scopes));
+        returnSuccess(res, getCalendarListOutput(scopes));
       }
     )
     .catch(
       (error) => {
-        handleError(res, error);
+        returnError(res, error);
       }
     );
 });

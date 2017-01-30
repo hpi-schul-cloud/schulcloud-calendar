@@ -115,7 +115,7 @@ function lineToJson(line, event) {
             break;
         case "RRULE":
             const repeatAttributes = fieldValue.split(';');
-            for (var i = 0; i < repeatAttributes.length; i++) {
+            for (let i = 0; i < repeatAttributes.length; i++) {
                 const raName = (repeatAttributes[i].split('='))[0];
                 const raValue = (repeatAttributes[i].split('='))[1];
                 switch (raName) {

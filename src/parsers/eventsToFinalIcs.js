@@ -1,7 +1,7 @@
 const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
 
 function queryToIcs(events, scope) {
-    var ics = 'BEGIN:VCALENDAR\n';
+    let ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
     ics += 'PRODID:https://schulcloud.org:3000/calendar/test/\n';
 

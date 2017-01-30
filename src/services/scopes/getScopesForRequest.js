@@ -12,7 +12,7 @@ function getScopesForRequest(data) {
             if (separateUsers) {
                 Promise.all(scopeIds.map(getAllUsersForUUID))
                     .then(merge)
-                    .catch(handleError)
+                    .catch(returnError)
             } else {
                 resolve(scopeIds);
             }
@@ -26,7 +26,7 @@ function getScopesForRequest(data) {
                 resolve(result);
             }
 
-            function handleError(error) {
+            function returnError(error) {
                 reject(error);
             }
         });

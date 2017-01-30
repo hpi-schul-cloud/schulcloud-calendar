@@ -1,5 +1,5 @@
 // Utilities
-const handleError = require('./utils/returnError');
+const returnError = require('./utils/returnError');
 
 // Authorization
 const authorize = require("../authorization/index");
@@ -27,13 +27,13 @@ router.options('/:toDoId', cors(corsOptions));
 // POST /to-dos/ics
 router.post('/', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 // PUT /to-dos/ics/:toDoId
 router.put('/:toDoId', authorize, function (req, res) {
     // TODO: implement
-    handleError(res);
+    returnError(res);
 });
 
 module.exports = router;
