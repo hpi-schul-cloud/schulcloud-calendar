@@ -1,12 +1,14 @@
-const validateIcs = require('./validate/validateIcs');
-const validateJson = require('./validate/validateJson');
+const validIcs = require('../validators/validateIcs');
+const validJson = require('../validators/validateJson');
 const consoleError = require('../utils/consoleError');
 const regularDateFormat = require('./utils/regularDateFormat');
+const returnError = require('../routes/utils/returnError');
+
 
 function icsToJson(req, res, next) {
-    const lines = req.body.ics.split("\n");
+    const lines = req.body.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split("\n");
 
-    if (!validateIcs(lines)) {
+    if (!validIcs(lines)) {
         consoleError('[icsToJson] Invalid ICS file');
         return;
     }
@@ -17,7 +19,6 @@ function icsToJson(req, res, next) {
     let alarm = {};
     let parseAlarm = false;
 
-    // TODO: Unfold lines first (see RFC 5545, section 3.1)
     lines.forEach(function(line) {
         switch (line) {
             case 'BEGIN:VCALENDAR':
@@ -30,7 +31,7 @@ function icsToJson(req, res, next) {
                 event.separateUsers = req.body.separateUsers;
                 break;
             case 'END:VEVENT':
-                if (validateJson(event) && !parseAlarm) {
+                if (!parseAlarm) {
                     events.push(event);
                 } else {
                     consoleError('[icsToJson] Created invalid JSON, are all required fields present?')
@@ -57,8 +58,12 @@ function icsToJson(req, res, next) {
         }
     });
 
-    req.events = events;
-    next();
+    if (validJson(events)) {
+        req.events = events;
+        next();
+    } else {
+        returnError(res, 'Invalid ICS or missing JSON field!', 400, 'Bad Request');
+    }
 }
 
 function lineToJson(line, event) {
@@ -101,6 +106,9 @@ function lineToJson(line, event) {
             break;
         case "DTSTAMP":
             event["dtstamp"] = regularDateFormat(fieldValue);
+            break;
+        case "DURATION":
+            event["duration"] = fieldValue;
             break;
         case "LAST-MODIFIED":
             event["last-modified"] = regularDateFormat(fieldValue);

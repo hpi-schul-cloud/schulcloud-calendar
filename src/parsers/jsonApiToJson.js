@@ -1,4 +1,7 @@
 const consoleError = require('../utils/consoleError');
+const validJson = require('../validators/validateJson');
+const returnError = require('../routes/utils/returnError');
+
 
 function jsonApiToJson(req, res, next) {
     const jsonApiData = req.body.data;
@@ -17,7 +20,7 @@ function jsonApiToJson(req, res, next) {
 
         for (let key in eventAttributes) {
             if (eventAttributes.hasOwnProperty(key)) {
-                json[key.toLocaleLowerCase()] = eventAttributes[key];
+                json[key] = eventAttributes[key];
             }
         }
 
@@ -43,14 +46,18 @@ function jsonApiToJson(req, res, next) {
         events.push(json);
     });
 
-    req.events = events;
-    next();
+    if (validJson(events)) {
+        req.events = events;
+        next();
+    } else {
+        returnError(res, 'Invalid JSON API definition!', 400, 'Bad Request');
+    }
 }
 
 function addRRuleToJson(json, rruleAttributes) {
     for (let key in rruleAttributes) {
         if (rruleAttributes.hasOwnProperty(key)) {
-            json['repeat_' + key.toLocaleLowerCase()] = rruleAttributes[key];
+            json['repeat_' + key] = rruleAttributes[key];
         }
     }
 }
