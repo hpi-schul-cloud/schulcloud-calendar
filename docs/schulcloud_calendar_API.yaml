@@ -141,7 +141,7 @@ paths:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
         service earlier (X).
-      description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details.
+      description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details. The data array may contain more than one event but only if the uid is equal for all events (occours if a single event is changed in a series of events).
       responses:
         '200':
           description: Successful
@@ -212,7 +212,7 @@ paths:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
         service earlier. Thereby the ics is transcribed.
-      description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details.
+      description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details.The data array may contain more than one event but only if the uid is equal for all events (occours if a single event is changed in a series of events).
       responses:
         '200':
           description: Successful
@@ -493,7 +493,7 @@ paths:
       summary: >-
         Modify a To Do for a list of UUIDs, which has been created by the same
         service earlier (X).
-      description: The calendar service will delete the old To Do completely (including all exdates, ...). Therefore, you MUST ensure to re-submit the To Do with all details.
+      description: The calendar service will delete the old To Do completely (including all exdates, ...). Therefore, you MUST ensure to re-submit the To Do with all details. The data array may contain more than one To Do but only if the uid is equal for all To Dos (occours if a single To Do is changed in a series of To Dos).
       responses:
         '200':
           description: Successful
@@ -564,7 +564,7 @@ paths:
       summary: >-
         Modify a To Do for a list of UUIDs, which has been created by the same
         service earlier. Thereby the ics is transcribed. (X).
-      description: The calendar service will delete the old To Do completely (including all exdates, ...). Therefore, you MUST ensure to re-submit the To Do with all details.
+      description: The calendar service will delete the old To Do completely (including all exdates, ...). Therefore, you MUST ensure to re-submit the To Do with all details. The data array may contain more than one To Do but only if the uid is equal for all To Dos (occours if a single To Do is changed in a series of To Dos).
       responses:
         '200':
           description: Successful
@@ -901,6 +901,9 @@ definitions:
       freq:
         type: string
         enum:
+          - SECONDLY
+          - MINUTELY
+          - HOURLY
           - DAILY
           - WEEKLY
           - MONTHLY
