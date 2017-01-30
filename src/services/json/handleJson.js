@@ -17,7 +17,7 @@ function handleJson(json, separateUsers, scopeIds, externalEventId) {
         params[2] = json["description"];        //$3: description
         params[3] = json["dtstart"];            //$4: dtstart
         params[4] = json["dtend"];              //$5: dtend
-        params[6] = new Date();                 //$7: dtstamp
+        params[6] = json["dtstamp"];            //$7: dtstamp
         params[7] = json["repeat_freq"];        //$8: repeat_freq
         params[8] = json["repeat_until"];       //$9: repeat_until
         params[9] = json["repeat_count"];       //$10: repeat_count
@@ -37,10 +37,10 @@ function handleJson(json, separateUsers, scopeIds, externalEventId) {
         const promises = [];
         if (separateUsers === true) {
             scopeIds.forEach(function(scopeId) {
-                promises.push(seperateEvents(scopeId, params));
+                promises.push(seperateEvents(json, scopeId, params));
             });
         } else {
-            promises.push(insertEventForScopeIds(params, scopeIds));
+            promises.push(insertEventForScopeIds(json, params, scopeIds));
         }
 
         Promise.all(promises).then(
@@ -50,7 +50,7 @@ function handleJson(json, separateUsers, scopeIds, externalEventId) {
     });
 }
 
-function seperateEvents(scopeId, params) {
+function seperateEvents(json, scopeId, params) {
     return new Promise(function (resolve, reject) {
         Promise.resolve(getAllUsersForUUID(scopeId)).then(
             function (usersResponse) {
@@ -64,17 +64,17 @@ function seperateEvents(scopeId, params) {
                     return user.id;
                 });
 
-                Promise.resolve(insertEventForScopeIds(params, referenceIds)).then(
+                Promise.resolve(insertEventForScopeIds(json, params, referenceIds)).then(
                     resolve.bind(null),
                     reject.bind(null)
                 );
             },
-            reject.bind(null, res)
+            reject.bind(null)
         );
     });
 }
 
-function insertEventForScopeIds(params, scopeIds) {
+function insertEventForScopeIds(json, params, scopeIds) {
     return new Promise(function (resolve, reject) {
         Promise.resolve(insertEvents(params, scopeIds)).then(
             function (results) {
