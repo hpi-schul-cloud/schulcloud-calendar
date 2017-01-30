@@ -111,7 +111,7 @@ paths:
       security:
         - user-token: []
     post:
-      summary: Create a new Event for a list of UUIDs (X).
+      summary: Create a new Event for a list of UUIDs.
       responses:
         '201':
           description: CreateEventResponse
