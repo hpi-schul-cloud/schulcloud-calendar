@@ -12,7 +12,7 @@ function storeEventsInDb(events) {
         events.forEach(function(event) {
             if (!uidEventIdMap[event.id])
                 uidEventIdMap[event.id] = uuidV4();
-            jsonHandlerPromises.push(handleJson(event, event.separateUsers, event.scopeIds, uidEventIdMap[event.id], req, res));
+            jsonHandlerPromises.push(handleJson(event, event.separateUsers, event.scopeIds, uidEventIdMap[event.id]));
         });
 
         Promise.all(jsonHandlerPromises).then(
