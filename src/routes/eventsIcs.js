@@ -1,18 +1,7 @@
-// Services
-const createAndSendNotification = require('../services/notifications/createAndSendNotification');
-const storeEventsInDb = require('../services/events/storeEventsInDb');
-
-// Utilities
-const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
-const returnError = require('./utils/returnError');
-const consoleError = require('../utils/consoleError');
-const handleDeleteRequest = require("./utils/handleDeleteRequest");
-
 // Parsers
 const icsToJson = require('../parsers/icsToJson');
 
 // Queries
-const addAlarmToEvent = require('../queries/addAlarmToEvent');
 const deleteEvent = require('../queries/deleteEvent');
 
 // HTTP Requests

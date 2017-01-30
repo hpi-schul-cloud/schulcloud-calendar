@@ -1,8 +1,6 @@
 // Services
 const getEvents = require('../services/events/getEvents');
-const getScopesForToken = require('../services/scopes/getScopesForToken');
 const createAndSendNotification = require('../services/notifications/createAndSendNotification');
-const storeEventsInDb = require('../services/events/storeEventsInDb');
 
 // Parsers
 const jsonApiToJson = require('../parsers/jsonApiToJson');
