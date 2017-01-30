@@ -19,7 +19,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-        res.render('index', {text: 'Welcome!'});
+        res.send({"message": "Welcome!"});
 });
 
 router.get('/system-info/haproxy', function (req, res) {
