@@ -18,7 +18,7 @@ function getEvents(eventJson) {
             last: ''
         },
         data: eventJson.map(eventToJsonApi)
-    }
+    };
 }
 
 function eventToJsonApi(event) {

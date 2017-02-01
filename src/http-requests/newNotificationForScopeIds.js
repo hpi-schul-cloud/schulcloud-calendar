@@ -1,5 +1,4 @@
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-const consoleError = require('../utils/consoleError');
 const config = require('./../config');
 
 function newNotificationForScopeIds(title, body, scopeIds) {
@@ -19,7 +18,7 @@ function newNotificationForScopeIds(title, body, scopeIds) {
             if (httpStatus == 201) {
                 resolve();
             } else {
-                consoleError('Error status ' + httpStatus + ' while creating notification for scopeIds ' + JSON.stringify(scopeIds) + ': ' + JSON.parse(request.responseText).message);
+                // TODO handle rejection
                 reject(httpStatus);
             }
         };

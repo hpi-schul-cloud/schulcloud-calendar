@@ -2,24 +2,18 @@ const getAllScopesForToken = require('../../http-requests/index').getAllScopesFo
 
 function getScopesForToken(token) {
     return new Promise((resolve, reject) => {
-        getAllScopesForToken(token)
-        .then((response) => {
+        getAllScopesForToken(token).then((response) => {
             let scopes;
             try {
-              scopes = JSON.parse(response);
-            }
-            catch(error) {
-              reject(error);
+                scopes = JSON.parse(response);
+            } catch (error) {
+                reject(error);
             }
             scopes = scopes.data.map((scope) => {
-                return {
-                  id: scope.id,
-                  name: scope.attributes.name
-                };
+                return {id: scope.id, name: scope.attributes.name};
             });
             resolve(scopes);
-        })
-        .catch((error) => {
+        }).catch((error) => {
             reject(error);
         });
     });

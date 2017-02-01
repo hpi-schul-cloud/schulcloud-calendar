@@ -31,7 +31,7 @@ function authentication(req, res, next) {
 
             req.user = user;
             next();
-        }, function (value) {
+        }, function () {
             returnError(res, 'Invalid Authorization token!', 401, 'Unauthorized');
         });
     } else {

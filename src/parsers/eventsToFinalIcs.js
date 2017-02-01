@@ -1,5 +1,3 @@
-const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
-
 function queryToIcs(events, scope) {
     let ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
@@ -7,7 +5,7 @@ function queryToIcs(events, scope) {
 
     const name = scope && scope.attributes.name;
     if (name) {
-        ics += 'X-WR-CALNAME:' + name + '\n'
+        ics += `X-WR-CALNAME:${name}\n`;
     }
 
     if (events.length === 0) {

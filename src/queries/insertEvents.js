@@ -1,4 +1,3 @@
-const client = require('../models/database');
 const insertEvent = require('./_insertEvent');
 
 function insertEvents(params, referenceIds) {
@@ -10,8 +9,8 @@ function insertEvents(params, referenceIds) {
             promisesForReferenceIds.push(insertEvent(paramsClone));
         }
 
-        Promise.all(promisesForReferenceIds).then(function (results) {
-                console.log('Successfully inserted events.');
+        Promise.all(promisesForReferenceIds).then(
+            function (results) {
                 resolve(results);
             },
             function(error) {

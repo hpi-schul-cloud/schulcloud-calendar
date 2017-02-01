@@ -19,7 +19,7 @@ function createIcsFromEvents(events) {
             },
             reject.bind(null)
         );
-    })
+    });
 }
 
 module.exports = createIcsFromEvents;

@@ -6,6 +6,7 @@
     "start": "node ./src/bin/www",
     "watch": "nodemon ./src/bin/www",
     "debug": "node debug ./src/bin/www",
+    "linter": "eslint src",
     "test": "cross-env NODE_ENV=test mocha --recursive --reporter nyan",
     "coverage": "cross-env NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha test/*/*.js"
   },
@@ -26,6 +27,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "database-cleaner": "^1.2.0",
+    "eslint": "^3.14.1",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",

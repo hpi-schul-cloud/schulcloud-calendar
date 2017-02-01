@@ -8,11 +8,8 @@ const returnError = require('./utils/returnError');
 const returnSuccess = require('./utils/returnSuccess');
 const returnICalendar = require('./utils/returnICalendar');
 
-// Queries
-const getRepeatExceptionsIcsForEvent = require('../queries/getRepeatExceptionForEvent').getRepeatExceptionsIcsForEvent;
-
 // Authorization
-const authorize = require("../authorization/index");
+const authorize = require('../authorization/index');
 
 // Project Configuration
 const config = require('../config');
@@ -52,17 +49,17 @@ router.get('/', authorize, function (req, res) {
 // GET /calendar/list
 router.get('/list', authorize, function (req, res) {
     // TODO: Reuse req.user
-  Promise.resolve(getScopesForToken(req.token))
-    .then(
-      (scopes) => {
-        returnSuccess(res, getCalendarListOutput(scopes));
-      }
-    )
-    .catch(
-      (error) => {
-        returnError(res, error);
-      }
-    );
+    Promise.resolve(getScopesForToken(req.token))
+        .then(
+            (scopes) => {
+                returnSuccess(res, getCalendarListOutput(scopes));
+            }
+        )
+        .catch(
+            (error) => {
+                returnError(res, error);
+            }
+        );
 });
 
 module.exports = router;

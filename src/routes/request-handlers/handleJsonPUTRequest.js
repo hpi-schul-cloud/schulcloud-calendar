@@ -11,7 +11,7 @@ const returnSuccessWithoutContent = require('../utils/returnSuccessWithoutConten
 
 function handleJsonPUTRequest(req, res) {
     Promise.resolve(deleteEvent([req.params.eventId])).then(
-        function (result) {
+        function () {
             // TODO: Validate operation (e.g. don't create event if id couldn't be find, ...)
             // validate result if at least one row has been deleted...
             Promise.resolve(storeEventsInDb(req.events)).then(

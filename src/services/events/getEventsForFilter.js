@@ -8,20 +8,19 @@ function getEventsForFilter(filter) {
             .then(appendAlarms)
             .then(appendExdates)
             .then(resolve)
-            .catch((error) => { reject(error) })
+            .catch((error) => { reject(error); });
     });
 }
 
 function appendAlarms(events) {
     return new Promise((resolve, reject) => {
         events.forEach((event, index) => {
-            allAlarmsForEvent(event["id"])
+            allAlarmsForEvent(event['id'])
                 .then((alarms) => {
-                    console.log(alarms);
                     event.alarms = alarms;
-                    if (index === events.length - 1) resolve(events)
+                    if (index === events.length - 1) resolve(events);
                 })
-                .catch((error) => { reject(error) })
+                .catch((error) => { reject(error); });
         });
     });
 }
@@ -29,13 +28,12 @@ function appendAlarms(events) {
 function appendExdates(events) {
     return new Promise((resolve, reject) => {
         events.forEach((event, index) => {
-            getRepeatExceptionForEvent(event["id"])
+            getRepeatExceptionForEvent(event['id'])
                 .then((exdates) => {
-                    console.log(exdates);
                     event.exdates = exdates;
-                    if (index === events.length - 1) resolve(events)
+                    if (index === events.length - 1) resolve(events);
                 })
-                .catch((error) => { reject(error) })
+                .catch((error) => { reject(error); });
         });
     });
 }

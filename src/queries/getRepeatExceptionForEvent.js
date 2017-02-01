@@ -35,7 +35,7 @@ function getRepeatExceptionsIcsForEvent(eventId) {
                 }
             },
             reject.bind(null)
-        )
+        );
     });
 }
 

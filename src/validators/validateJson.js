@@ -160,12 +160,11 @@ function validateJson(json) {
                     if (!(alarm.attendee && Array.isArray(alarm.attendee) && alarm.attendee.length > 0))
                         return false;
                 }
-            })
+            });
         }
     });
 
-    // All checks passed, JSON is valid
-    console.log('All checks passed, JSON is valid');
+    // all checks passed, JSON is valid
     return true;
 }
 

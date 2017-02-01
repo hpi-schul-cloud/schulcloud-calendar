@@ -8,11 +8,11 @@ function getIcsWithEventsForScopes(user) {
                 Promise.resolve(createIcsFromEvents(events)).then(
                     resolve.bind(null),
                     reject.bind(null)
-                )
+                );
             },
             reject.bind(null)
-        )
-    })
+        );
+    });
 }
 
 module.exports = getIcsWithEventsForScopes;

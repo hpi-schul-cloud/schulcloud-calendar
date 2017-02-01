@@ -1,14 +1,14 @@
 const errorMessage = {
-    "errors": [
+    errors: [
         {
-            "status": 500,
-            "title": "Internal Server Error",
-            "detail": ""
+            status: 500,
+            title: 'Internal Server Error',
+            detail: ''
         }
     ]
 };
 
-function returnError(res, error, statusCode = 500, errorTitle = "Internal Server Error") {
+function returnError(res, error, statusCode = 500, errorTitle = 'Internal Server Error') {
     if (error) {
         errorMessage.errors[0].detail = error;
         errorMessage.errors[0].title = errorTitle;
@@ -18,7 +18,7 @@ function returnError(res, error, statusCode = 500, errorTitle = "Internal Server
     if (res && !res.headersSent)
         res.contentType('application/json').status(statusCode).send(errorMessage);
     else
-        console.error("res unavailable or headers already sent");
+        console.error('res unavailable or headers already sent');
 }
 
 module.exports = returnError;

@@ -32,7 +32,7 @@ function getEventsForScopes(user) {
             },
             reject.bind(null)
         );
-    })
+    });
 }
 
 module.exports = getEventsForScopes;

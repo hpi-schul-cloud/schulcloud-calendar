@@ -13,7 +13,7 @@ function returnJSONResponse(res, results = '') {
         res.send(response);
     }
     else
-        console.error("res unavailable or headers already sent");
+        console.error('res unavailable or headers already sent');
 }
 
 module.exports = returnJSONResponse;

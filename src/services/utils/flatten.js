@@ -8,7 +8,7 @@ function flatten(collection) {
         return current.length > 0
             ? [...flattened, ...current]
             : flattened;
-    }, [])
+    }, []);
 }
 
 module.exports = flatten;

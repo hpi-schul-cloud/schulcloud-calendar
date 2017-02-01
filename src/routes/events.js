@@ -8,11 +8,8 @@ const jsonApiToJson = require('../parsers/jsonApiToJson');
 // Queries
 const deleteEvent = require('../queries/deleteEvent');
 
-// HTTP Requests
-const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
-
 // Authorization
-const authorize = require("../authorization/index");
+const authorize = require('../authorization/index');
 
 // Project Configuration
 const config = require('../config');
@@ -75,7 +72,7 @@ router.put('/:eventId', authorize, jsonApiToJson, function (req, res) {
 router.delete('/:eventId', authorize, function (req, res) {
     const eventId = req.params.eventId;
     Promise.resolve(deleteEvent([eventId])).then(
-        function (result) {
+        function () {
             returnSuccessWithoutContent(res);
             createAndSendNotification.forDeletedEvent(req.body.scopeIds);
         },

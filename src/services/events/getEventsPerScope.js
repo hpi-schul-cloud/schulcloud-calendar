@@ -1,4 +1,3 @@
-
 const getEventsForFilter = require('./getEventsForFilter');
 const flatten = require('../utils/flatten');
 
@@ -14,7 +13,7 @@ function getEventsPerScope(scopes, filter) {
             .then((eventsCollection) => {
                 resolve(flatten(eventsCollection));
             })
-            .catch((error) => { reject(res, error) })
+            .catch((error) => { reject(error); });
     });
 }
 

@@ -62,7 +62,7 @@ function getAlarmsIcsForEvent(eventId) {
                 resolve(ics);
             },
             reject.bind(null)
-        )
+        );
     });
 }
 

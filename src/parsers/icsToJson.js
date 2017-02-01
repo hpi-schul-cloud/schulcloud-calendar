@@ -6,7 +6,7 @@ const returnError = require('../routes/utils/returnError');
 
 
 function icsToJson(req, res, next) {
-    const lines = req.body.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split("\n");
+    const lines = req.body.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split('\n');
 
     if (!validIcs(lines)) {
         consoleError('[icsToJson] Invalid ICS file');
@@ -34,7 +34,7 @@ function icsToJson(req, res, next) {
                 if (!parseAlarm) {
                     events.push(event);
                 } else {
-                    consoleError('[icsToJson] Created invalid JSON, are all required fields present?')
+                    consoleError('[icsToJson] Created invalid JSON, are all required fields present?');
                 }
                 break;
             case 'BEGIN:VALARM':
@@ -43,10 +43,10 @@ function icsToJson(req, res, next) {
                 break;
             case 'END:VALARM':
                 parseAlarm = false;
-                if (event["alarms"] === undefined) {
-                    event["alarms"] = [];
+                if (event['alarms'] === undefined) {
+                    event['alarms'] = [];
                 }
-                event["alarms"].push(alarm);
+                event['alarms'].push(alarm);
                 break;
             default:
                 if (parseAlarm) {
@@ -78,133 +78,137 @@ function lineToJson(line, event) {
     const fieldValue = line.substr(splitPosition + 1, line.length);
 
     switch (fieldName) {
-        case "UID":
+        case 'UID': {
             const splittedUid = fieldValue.split('@');
             if (splittedUid.length === 2) {
                 event['id'] = splittedUid[0];
             } else if (splittedUid.length ===1) {
-                event['id'] = fieldValue
+                event['id'] = fieldValue;
             } else {
-                consoleError("[icsToJson] Invalid UID")
+                consoleError('[icsToJson] Invalid UID');
             }
+        }
             break;
-        case "LOCATION":
-            event["location"] = fieldValue;
+        case 'LOCATION':
+            event['location'] = fieldValue;
             break;
-        case "SUMMARY":
-            event["summary"] = fieldValue;
+        case 'SUMMARY':
+            event['summary'] = fieldValue;
             break;
-        case "DESCRIPTION":
+        case 'DESCRIPTION': {
             const field = fieldName.toLowerCase();
             event[field] = fieldValue;
             break;
-        case "DTSTART":
-            event["dtstart"] = regularDateFormat(fieldValue);
+        }
+        case 'DTSTART':
+            event['dtstart'] = regularDateFormat(fieldValue);
             break;
-        case "DTEND":
-            event["dtend"] = regularDateFormat(fieldValue);
+        case 'DTEND':
+            event['dtend'] = regularDateFormat(fieldValue);
             break;
-        case "DTSTAMP":
-            event["dtstamp"] = regularDateFormat(fieldValue);
+        case 'DTSTAMP':
+            event['dtstamp'] = regularDateFormat(fieldValue);
             break;
-        case "DURATION":
-            event["duration"] = fieldValue;
+        case 'DURATION':
+            event['duration'] = fieldValue;
             break;
-        case "LAST-MODIFIED":
-            event["last-modified"] = regularDateFormat(fieldValue);
+        case 'LAST-MODIFIED':
+            event['last-modified'] = regularDateFormat(fieldValue);
             break;
-        case "RRULE":
+        case 'RRULE': {
             const repeatAttributes = fieldValue.split(';');
             for (let i = 0; i < repeatAttributes.length; i++) {
                 const raName = (repeatAttributes[i].split('='))[0];
                 const raValue = (repeatAttributes[i].split('='))[1];
                 switch (raName) {
-                    case "FREQ":
-                        event["repeat_freq"] = raValue;
+                    case 'FREQ':
+                        event['repeat_freq'] = raValue;
                         break;
-                    case "UNTIL":
-                        event["repeat_until"] = regularDateFormat(raValue);
+                    case 'UNTIL':
+                        event['repeat_until'] = regularDateFormat(raValue);
                         break;
-                    case "COUNT":
-                        event["repeat_count"] = raValue;
+                    case 'COUNT':
+                        event['repeat_count'] = raValue;
                         break;
-                    case "INTERVAL":
-                        event["repeat_interval"] = raValue;
+                    case 'INTERVAL':
+                        event['repeat_interval'] = raValue;
                         break;
-                    case "BYSECOND":
-                        event["repeat_bysecond"] = raValue.split(',');
+                    case 'BYSECOND':
+                        event['repeat_bysecond'] = raValue.split(',');
                         break;
-                    case "BYMINUTE":
-                        event["repeat_byminute"] = raValue.split(',');
+                    case 'BYMINUTE':
+                        event['repeat_byminute'] = raValue.split(',');
                         break;
-                    case "BYHOUR":
-                        event["repeat_byhour"] = raValue.split(',');
+                    case 'BYHOUR':
+                        event['repeat_byhour'] = raValue.split(',');
                         break;
-                    case "BYDAY":
-                        event["repeat_byday"] = raValue.split(',');
+                    case 'BYDAY':
+                        event['repeat_byday'] = raValue.split(',');
                         break;
-                    case "BYMONTHDAY":
-                        event["repeat_bymonthday"] = raValue.split(',');
+                    case 'BYMONTHDAY':
+                        event['repeat_bymonthday'] = raValue.split(',');
                         break;
-                    case "BYYEARDAY":
-                        event["repeat_byyearday"] = raValue.split(',');
+                    case 'BYYEARDAY':
+                        event['repeat_byyearday'] = raValue.split(',');
                         break;
-                    case "BYWEEKNO":
-                        event["repeat_byweekno"] = raValue.split(',');
+                    case 'BYWEEKNO':
+                        event['repeat_byweekno'] = raValue.split(',');
                         break;
-                    case "BYMONTH":
-                        event["repeat_bymonth"] = raValue.split(',');
+                    case 'BYMONTH':
+                        event['repeat_bymonth'] = raValue.split(',');
                         break;
-                    case "BYSETPOS":
-                        event["repeat_bysetpos"] = raValue.split(',');
+                    case 'BYSETPOS':
+                        event['repeat_bysetpos'] = raValue.split(',');
                         break;
-                    case "WKST":
-                        event["repeat_wkst"] = raValue;
+                    case 'WKST':
+                        event['repeat_wkst'] = raValue;
                         break;
                     default:
-                        console.error("[icsToJson] Invalid repeat attribute: " + raName + ": " + raValue);
+                        console.error('[icsToJson] Invalid repeat attribute: ' + raName + ': ' + raValue);
                 }
             }
+        }
             break;
-        case "EXDATE":
-            if (!Array.isArray(event["exdate"]))
-                event["exdate"] = [];
-            event["exdate"].push(regularDateFormat(fieldValue));
+        case 'EXDATE':
+            if (!Array.isArray(event['exdate']))
+                event['exdate'] = [];
+            event['exdate'].push(regularDateFormat(fieldValue));
             break;
-        default:
+        default: {
             // temporary for timezone support...
             const splitPosition2 = fieldName.indexOf(';');
             if (splitPosition2 === -1) {
                 return;
             }
             const realFieldName = fieldName.substr(0, splitPosition2);
-            const timezone = fieldName.substr(splitPosition2 + 1, fieldName.length);
+            // const timezone = fieldName.substr(splitPosition2 + 1, fieldName.length);
 
             // TODO: handle timezone
 
             switch (realFieldName) {
-                case "DTSTART":
-                    event["dtstart"] = regularDateFormat(fieldValue);
+                case 'DTSTART':
+                    event['dtstart'] = regularDateFormat(fieldValue);
                     break;
-                case "DTEND":
-                    event["dtend"] = regularDateFormat(fieldValue);
+                case 'DTEND':
+                    event['dtend'] = regularDateFormat(fieldValue);
                     break;
-                case "DTSTAMP":
-                    event["dtstamp"] = regularDateFormat(fieldValue);
+                case 'DTSTAMP':
+                    event['dtstamp'] = regularDateFormat(fieldValue);
                     break;
-                case "LAST-MODIFIED":
-                    event["last-modified"] = regularDateFormat(fieldValue);
+                case 'LAST-MODIFIED':
+                    event['last-modified'] = regularDateFormat(fieldValue);
                     break;
-                case "EXDATE":
-                    if (!Array.isArray(event["exdate"])) {
-                        event["exdate"] = [];
+                case 'EXDATE':
+                    if (!Array.isArray(event['exdate'])) {
+                        event['exdate'] = [];
                     }
-                    event["exdate"].push(regularDateFormat(fieldValue));
+                    event['exdate'].push(regularDateFormat(fieldValue));
                     break;
                 default:
                     consoleError('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
                     break;
             }
+        }
     }
 }
 
@@ -239,29 +243,29 @@ function lineToAlarmJson(line, alarm) {
     const fieldValue = line.substr(splitPosition + includeSplitPosition, line.length);
 
     switch (fieldName) {
-        case "TRIGGER":
-            alarm["trigger"] = fieldValue;
+        case 'TRIGGER':
+            alarm['trigger'] = fieldValue;
             break;
-        case "REPEAT":
-            alarm["repeat"] = parseInt(fieldValue);
+        case 'REPEAT':
+            alarm['repeat'] = parseInt(fieldValue);
             break;
-        case "DURATION":
-            alarm["duration"] = fieldValue;
+        case 'DURATION':
+            alarm['duration'] = fieldValue;
             break;
-        case "ACTION":
-            alarm["action"] = fieldValue;
+        case 'ACTION':
+            alarm['action'] = fieldValue;
             break;
-        case "ATTACH":
-            alarm["attach"] = fieldValue;
+        case 'ATTACH':
+            alarm['attach'] = fieldValue;
             break;
-        case "DESCRIPTION":
-            alarm["description"] = fieldValue;
+        case 'DESCRIPTION':
+            alarm['description'] = fieldValue;
             break;
-        case "ATTENDEE":
-            alarm["attendee"] = fieldValue;
+        case 'ATTENDEE':
+            alarm['attendee'] = fieldValue;
             break;
-        case "SUMMARY":
-            alarm["summary"] = fieldValue;
+        case 'SUMMARY':
+            alarm['summary'] = fieldValue;
             break;
         default:
             console.error('[icsToJson] Got unknown ICS field for alarm. Implement ' + fieldName);

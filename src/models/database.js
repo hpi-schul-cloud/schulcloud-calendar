@@ -1,5 +1,5 @@
 const pg = require('pg');
-const express = require("express");
+const express = require('express');
 const app = express();
 const types = require('pg').types;
 const INTERVAL_OID = 1186;

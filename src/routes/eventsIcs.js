@@ -1,14 +1,8 @@
 // Parsers
 const icsToJson = require('../parsers/icsToJson');
 
-// Queries
-const deleteEvent = require('../queries/deleteEvent');
-
-// HTTP Requests
-const newNotificationForScopeIds = require('../http-requests/newNotificationForScopeIds');
-
 // Authorization
-const authorize = require("../authorization/index");
+const authorize = require('../authorization/index');
 
 // Request Handlers
 const handleJsonPUTRequest = require('./request-handlers/handleJsonPUTRequest');

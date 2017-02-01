@@ -6,7 +6,7 @@ const returnError = require('./utils/returnError');
 const returnSuccess = require('./utils/returnSuccess');
 
 // Authorization
-const authorize = require("../authorization/index");
+const authorize = require('../authorization/index');
 
 // Project Configuration
 const config = require('../config');
@@ -69,19 +69,19 @@ function handleInsertFeedRequest(req, res) {
                     .catch((error) => {
                         console.error(error);
                         handleEnd(index);
-                    })
+                    });
             });
 
             function handleEnd(index) {
                 if (index === scopeIds.length - 1) {
-                    returnSuccess(res, feedIds)
+                    returnSuccess(res, feedIds);
                 }
             }
 
         })
         .catch((error) => {
-            returnError(res, error)
-        })
+            returnError(res, error);
+        });
 }
 
 module.exports = router;
