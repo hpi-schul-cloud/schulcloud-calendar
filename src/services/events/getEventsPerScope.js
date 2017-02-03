@@ -6,7 +6,7 @@ function getEventsPerScope(scopes, filter) {
         const { from, until, all } = filter;
         const eventsPerScope = scopes.map((scope) => {
             filter = { scopeId: scope.id, from, until, all };
-            resolve(getEventsForFilter(filter));
+            return getEventsForFilter(filter);
         });
 
         Promise.all(eventsPerScope)
