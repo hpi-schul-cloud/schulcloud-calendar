@@ -5,7 +5,7 @@
  */
 function flatten(collection) {
     return collection.reduce((flattened, current) => {
-        return current.length > 0
+        return (current || []).length > 0
             ? [...flattened, ...current]
             : flattened;
     }, []);

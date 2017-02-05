@@ -10,7 +10,7 @@ function returnJSONResponse(res, results = '') {
             'Content-Type': 'application/json',
             'Content-Length': response.length
         });
-        res.send(response);
+        res.end(response);
     }
     else
         console.error('res unavailable or headers already sent');
