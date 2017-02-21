@@ -104,3 +104,8 @@ CREATE TABLE feeds (
   last_updated_status INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
   reference_id        UUID                     NOT NULL
 );
+
+CREATE TABLE eventid_originalreferenceid (
+  event_id              UUID NOT NULL  REFERENCES events (id),
+  original_reference_id UUID NOT NULL
+);
