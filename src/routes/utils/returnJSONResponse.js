@@ -1,3 +1,5 @@
+const logger = require('../../logging/logger');
+
 /**
  * Use for (GET) responses, for which JSON is expected
  * @param res
@@ -13,7 +15,7 @@ function returnJSONResponse(res, results = '') {
         res.end(response);
     }
     else
-        console.error('res unavailable or headers already sent');
+        logger.error('res unavailable or headers already sent');
 }
 
 module.exports = returnJSONResponse;

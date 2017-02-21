@@ -14,6 +14,9 @@ const config = require('../config');
 // Queries
 const insertFeedSubscription = require('../queries/insertFeedSubscription');
 
+// Logger
+const logger = require('../logging/logger');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
@@ -67,7 +70,7 @@ function handleInsertFeedRequest(req, res) {
                         handleEnd(index);
                     })
                     .catch((error) => {
-                        console.error(error);
+                        logger.error(error);
                         handleEnd(index);
                     });
             });

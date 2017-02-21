@@ -1,10 +1,11 @@
 const getAllUsersForUUID = require('../../http-requests').getAllUsersForUUID;
+const logger = require('../../logging/logger');
 
 function getScopesForRequest(data) {
     return new Promise((resolve, reject) => {
         let scopeIds = data.relationships['scope-ids'];
         if (!Array.isArray(scopeIds) || scopeIds.length === 0) {
-            console.error('Got invalid array of scopeIds!');
+            logger.error('Got invalid array of scopeIds!');
             return null;
         }
 

@@ -1,10 +1,10 @@
 const validJson = require('../../validators/validateJson');
-const consoleError = require('../../utils/consoleError');
+const logger = require('../../logging/logger');
 
 
 function getEvents(eventJson) {
     if (!validJson(eventJson)) {
-        consoleError('[jsonToJsonApi] Got invalid events JSON!');
+        logger.error('[jsonToJsonApi] Got invalid events JSON!');
         return;
     }
 

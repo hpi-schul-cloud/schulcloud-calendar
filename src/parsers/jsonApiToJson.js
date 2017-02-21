@@ -1,7 +1,6 @@
-const consoleError = require('../utils/consoleError');
 const validJson = require('../validators/validateJson');
 const returnError = require('../routes/utils/returnError');
-
+const logger = require('../logging/logger');
 
 function jsonApiToJson(req, res, next) {
     const jsonApiData = req.body.data;
@@ -36,7 +35,7 @@ function jsonApiToJson(req, res, next) {
                     addAlarmToJson(json, includedObject.attributes);
                     break;
                 default:
-                    consoleError('[jsonApiToJson] Got unknown included object.');
+                    logger.error('[jsonApiToJson] Got unknown included object.');
             }
         });
 

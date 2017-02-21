@@ -1,8 +1,7 @@
-const consoleError = require('../../utils/consoleError');
+const logger = require('../../logging/logger');
 
 function errorMessage(query, error) {
-    consoleError(`Error processing ${query}`);
-    consoleError(error);
+    logger.error('Error processing ' + query + '\n' + error);
 }
 
 module.exports = errorMessage;

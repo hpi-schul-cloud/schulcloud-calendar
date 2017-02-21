@@ -1,15 +1,14 @@
 const validIcs = require('../validators/validateIcs');
 const validJson = require('../validators/validateJson');
-const consoleError = require('../utils/consoleError');
 const regularDateFormat = require('./utils/regularDateFormat');
 const returnError = require('../routes/utils/returnError');
-
+const logger = require('../logging/logger');
 
 function icsToJson(req, res, next) {
     const lines = req.body.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split('\n');
 
     if (!validIcs(lines)) {
-        consoleError('[icsToJson] Invalid ICS file');
+        logger.error('[icsToJson] Invalid ICS file');
         return;
     }
 
@@ -34,7 +33,7 @@ function icsToJson(req, res, next) {
                 if (!parseAlarm) {
                     events.push(event);
                 } else {
-                    consoleError('[icsToJson] Created invalid JSON, are all required fields present?');
+                    logger.error('[icsToJson] Created invalid JSON, are all required fields present?');
                 }
                 break;
             case 'BEGIN:VALARM':
@@ -70,7 +69,7 @@ function lineToJson(line, event) {
     const splitPosition = line.indexOf(':');
 
     if (splitPosition === -1) {
-        consoleError('[icsToJson] Invalid line in ICS');
+        logger.error('[icsToJson] Invalid line in ICS');
         return;
     }
 
@@ -85,7 +84,7 @@ function lineToJson(line, event) {
             } else if (splittedUid.length ===1) {
                 event['id'] = fieldValue;
             } else {
-                consoleError('[icsToJson] Invalid UID');
+                logger.error('[icsToJson] Invalid UID');
             }
         }
             break;
@@ -164,7 +163,7 @@ function lineToJson(line, event) {
                         event['repeat_wkst'] = raValue;
                         break;
                     default:
-                        console.error('[icsToJson] Invalid repeat attribute: ' + raName + ': ' + raValue);
+                        logger.error('[icsToJson] Invalid repeat attribute: ' + raName + ': ' + raValue);
                 }
             }
         }
@@ -205,7 +204,7 @@ function lineToJson(line, event) {
                     event['exdate'].push(regularDateFormat(fieldValue));
                     break;
                 default:
-                    consoleError('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
+                    logger.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
                     break;
             }
         }
@@ -235,7 +234,7 @@ function lineToAlarmJson(line, alarm) {
     }
 
     if (splitPosition === -1) {
-        console.error('[icsToJson] Invalid line in ICS (parsing alarm): ' + line);
+        logger.error('[icsToJson] Invalid line in ICS (parsing alarm): ' + line);
         return;
     }
 
@@ -268,7 +267,7 @@ function lineToAlarmJson(line, alarm) {
             alarm['summary'] = fieldValue;
             break;
         default:
-            console.error('[icsToJson] Got unknown ICS field for alarm. Implement ' + fieldName);
+            logger.error('[icsToJson] Got unknown ICS field for alarm. Implement ' + fieldName);
             break;
     }
 }
