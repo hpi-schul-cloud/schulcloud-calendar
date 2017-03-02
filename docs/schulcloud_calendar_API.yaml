@@ -53,7 +53,7 @@ paths:
     parameters:
       - name: scope-id
         in: query
-        required: false
+        required: true
         type: string
     get:
       summary: Get an ICS feed  (*).

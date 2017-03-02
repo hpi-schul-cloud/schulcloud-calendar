@@ -1,5 +1,5 @@
 const getEventsForFilter = require('./getEventsForFilter');
-const flatten = require('../utils/flatten');
+const flatten = require('../../utils/flatten');
 
 function getEventsPerScope(scopes, filter) {
     return new Promise(function (resolve, reject) {

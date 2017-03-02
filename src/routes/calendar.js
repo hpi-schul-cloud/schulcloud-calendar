@@ -20,6 +20,9 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 const cors = require('cors');
 
+//Handlers
+const getCalendar = require('./handlers/getCalendar');
+
 // Configuration
 let corsOptions = {
     origin: config.CORS_ORIGIN
@@ -42,8 +45,41 @@ router.get('/test', authorize, function (req, res) {
 
 // GET /calendar
 router.get('/', authorize, function (req, res) {
-    // TODO: implement
-    returnError(res);
+    Promise.resolve(getScopeIds(req))
+        .then(
+            (scopeIds) => {
+                getCalendar(scopeIds);
+            }
+        )
+        .catch(
+            (error) => {
+                returnError(res, error);
+            }
+        );
+
+    function getScopeIds(req) {
+        return new Promise((resolve, reject) => {
+            const scopeId = req.get('scope-id');
+            if(scopeId) {
+                resolve([scopeId]);
+            }
+            Promise.resolve(getScopesForToken(req.token))
+                .then(
+                    (scopes) => {
+                        const scopeIds = scopes.map((scope) => {
+                            return scope.id;
+                        });
+                        resolve(scopeIds);
+                    }
+                )
+                .catch(
+                    (error) => {
+                        returnError(res, error);
+                    }
+                );
+        })
+    }
+
 });
 
 // GET /calendar/list

@@ -1,24 +1,20 @@
 const logger = require('../../logging/logger');
 
-const errorMessage = {
-    errors: [
-        {
-            status: 500,
-            title: 'Internal Server Error',
-            detail: ''
-        }
-    ]
-};
-
-function returnError(res, error, statusCode = 500, errorTitle = 'Internal Server Error') {
+function returnError(res, error, status = 500, title = 'Internal Server Error') {
+    let errorMessage;
     if (error) {
-        errorMessage.errors[0].detail = error;
-        errorMessage.errors[0].title = errorTitle;
-        errorMessage.errors[0].status = statusCode;
+        console.log('DEBUG: ' + error);
+        errorMessage = {
+            errors: [{
+                detail: error,
+                title,
+                status
+            }]
+        }
         logger.error(error);
     }
     if (res && !res.headersSent)
-        res.contentType('application/json').status(statusCode).send(errorMessage);
+        res.contentType('application/json').status(status).send(errorMessage);
     else
         logger.error('res unavailable or headers already sent');
 }
