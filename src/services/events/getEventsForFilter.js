@@ -1,10 +1,10 @@
-const selectEvents = require('../../queries/selectEvents');
+const getEvents = require('../../queries/getEvents');
 const allAlarmsForEvent = require('../../queries/allAlarmsForEvent').allAlarmsForEvent;
 const getRepeatExceptionForEvent = require('../../queries/getRepeatExceptionForEvent').getRepeatExceptionForEvent;
 
 function getEventsForFilter(filter) {
     return new Promise((resolve, reject) => {
-        selectEvents(filter)
+        getEvents(filter)
             .then(appendAlarms)
             .then(appendExdates)
             .then(resolve)

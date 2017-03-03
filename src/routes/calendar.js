@@ -46,21 +46,16 @@ router.get('/test', authorize, function (req, res) {
 // GET /calendar
 router.get('/', authorize, function (req, res) {
     Promise.resolve(getScopeIds(req))
-        .then(
-            (scopeIds) => {
-                getCalendar(scopeIds);
-            }
-        )
-        .catch(
-            (error) => {
-                returnError(res, error);
-            }
-        );
+        .then((scopeIds) => {
+            return Promise.resolve(getCalendar(scopeIds));
+        })
+        .then((icsString) => { returnICalendar(res, icsString); })
+        .catch((error) => { returnError(res, error); });
 
     function getScopeIds(req) {
         return new Promise((resolve, reject) => {
             const scopeId = req.get('scope-id');
-            if(scopeId) {
+            if (scopeId) {
                 resolve([scopeId]);
             }
             Promise.resolve(getScopesForToken(req.token))
@@ -72,12 +67,8 @@ router.get('/', authorize, function (req, res) {
                         resolve(scopeIds);
                     }
                 )
-                .catch(
-                    (error) => {
-                        returnError(res, error);
-                    }
-                );
-        })
+                .catch((error) => { reject(error); });
+        });
     }
 
 });
