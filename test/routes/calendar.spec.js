@@ -1,4 +1,3 @@
-const expect = require('chai').expect;
 const request = require('supertest');
 const app = require('../../src/app');
 const dbClient = require('../../src/models/database');
@@ -16,7 +15,7 @@ describe('routes/calendar', function() {
         databaseCleaner.clean(dbClient, done);
     });
 
-    describe('GET calendar/test', function() {
+    describe('GET calendar/', function() {
 
         it('gets a calendar', function(done) {
             // needs to be set because we have to wait for promises
@@ -31,7 +30,7 @@ describe('routes/calendar', function() {
 
             function hasCalendarEntry(res) {
                 const lines = res.text.split('\n');
-                if (lines.lenth < 5) throw new Error("No event entry");
+                if (lines.lenth < 5) throw new Error('No event entry');
             }
         });
 

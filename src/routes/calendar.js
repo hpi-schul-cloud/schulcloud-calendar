@@ -1,6 +1,5 @@
 // Services
 const getScopesForToken = require('../services/scopes/getScopesForToken');
-const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForScopes');
 const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
 const getCalendar = require('../services/calendar/getCalendar');
 
