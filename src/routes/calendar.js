@@ -2,6 +2,7 @@
 const getScopesForToken = require('../services/scopes/getScopesForToken');
 const getIcsWithEventsForScopes = require('../services/ics/getIcsWithEventsForScopes');
 const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
+const getCalendar = require('../services/calendar/getCalendar');
 
 // Utilities
 const returnError = require('./utils/returnError');
@@ -20,9 +21,6 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 const cors = require('cors');
 
-//Handlers
-const getCalendar = require('./handlers/getCalendar');
-
 // Configuration
 let corsOptions = {
     origin: config.CORS_ORIGIN
@@ -30,18 +28,6 @@ let corsOptions = {
 router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: false}));
-
-// Routes
-
-// GET /calendar/test
-router.get('/test', authorize, function (req, res) {
-    Promise.resolve(getIcsWithEventsForScopes(req.user)).then(
-        function (finalIcsString) {
-            returnICalendar(res, finalIcsString);
-        },
-        returnError.bind(null, res)
-    );
-});
 
 // GET /calendar
 router.get('/', authorize, function (req, res) {
@@ -61,9 +47,7 @@ router.get('/', authorize, function (req, res) {
             Promise.resolve(getScopesForToken(req.token))
                 .then(
                     (scopes) => {
-                        const scopeIds = scopes.map((scope) => {
-                            return scope.id;
-                        });
+                        const scopeIds = scopes.map(({id}) => id);
                         resolve(scopeIds);
                     }
                 )
