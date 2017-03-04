@@ -1,5 +1,5 @@
-const getAllUsersForUUID = require('../../http-requests').getAllUsersForUUID;
-const logger = require('../../logging/logger');
+const getAllUsersForUUID = require('../../http').getAllUsersForUUID;
+const logger = require('../../infrastructure/logger');
 
 function getScopesForRequest(data) {
     return new Promise((resolve, reject) => {

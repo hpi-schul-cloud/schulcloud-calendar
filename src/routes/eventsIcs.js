@@ -2,7 +2,7 @@
 const icsToJson = require('../parsers/icsToJson');
 
 // Authorization
-const authorize = require('../authorization/index');
+const authorize = require('../infrastructure/authorization');
 
 // Request Handlers
 const handleJsonPUTRequest = require('./request-handlers/handleJsonPUTRequest');

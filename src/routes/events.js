@@ -9,7 +9,7 @@ const jsonApiToJson = require('../parsers/jsonApiToJson');
 const deleteEvent = require('../queries/deleteEvent');
 
 // Authorization
-const authorize = require('../authorization/index');
+const authorize = require('../infrastructure/authorization');
 
 // Project Configuration
 const config = require('../config');

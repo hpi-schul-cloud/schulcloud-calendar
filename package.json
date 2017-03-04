@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node ./src/bin/www",
-    "watch": "nodemon ./src/bin/www",
-    "debug": "node debug ./src/bin/www",
+    "start": "node ./src/infrastructure/server",
+    "watch": "nodemon ./src/infrastructure/server",
+    "debug": "node debug ./src/infrastructure/server",
     "linter": "eslint src",
     "test": "cross-env NODE_ENV=test mocha --recursive --reporter nyan",
     "coverage": "cross-env NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha test/*/*.js"

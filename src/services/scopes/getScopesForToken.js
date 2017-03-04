@@ -1,4 +1,4 @@
-const getAllScopesForToken = require('../../http-requests/index').getAllScopesForToken;
+const getAllScopesForToken = require('../../http/index').getAllScopesForToken;
 
 function getScopesForToken(token) {
     return new Promise((resolve, reject) => {

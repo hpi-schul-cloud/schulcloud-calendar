@@ -6,7 +6,7 @@ const returnError = require('./utils/returnError');
 const returnSuccess = require('./utils/returnSuccess');
 
 // Authorization
-const authorize = require('../authorization/index');
+const authorize = require('../infrastructure/authorization');
 
 // Project Configuration
 const config = require('../config');
@@ -15,7 +15,7 @@ const config = require('../config');
 const insertFeedSubscription = require('../queries/insertFeedSubscription');
 
 // Logger
-const logger = require('../logging/logger');
+const logger = require('../infrastructure/logger');
 
 const express = require('express');
 const bodyParser = require('body-parser');

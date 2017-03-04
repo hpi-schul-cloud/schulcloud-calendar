@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../../src/app');
-const dbClient = require('../../src/models/database');
+const dbClient = require('../../src/infrastructure/database');
 const fillDatabase = require('../_testutils/fillDatabase');
 const DatabaseCleaner = require('database-cleaner');
 const databaseCleaner = new DatabaseCleaner('postgresql');

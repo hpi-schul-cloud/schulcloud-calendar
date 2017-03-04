@@ -1,5 +1,5 @@
 
-const newNotificationForScopeIds = require('../../http-requests/newNotificationForScopeIds');
+const newNotificationForScopeIds = require('../../http/newNotificationForScopeIds');
 
 function forNewEvent(scopeIds, summary, start, end) {
     const title = `Neuer Termin "${summary}"erstellt`;

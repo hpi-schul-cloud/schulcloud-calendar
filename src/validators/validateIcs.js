@@ -1,4 +1,4 @@
-const logger = require('../logging/logger');
+const logger = require('../infrastructure/logger');
 
 const acceptedICalVersions = [
     '2.0'

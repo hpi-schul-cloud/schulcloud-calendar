@@ -1,4 +1,4 @@
-const getAllUsersForUUID = require('../../http-requests/index.js').getAllUsersForUUID;
+const getAllUsersForUUID = require('../../http/index.js').getAllUsersForUUID;
 const addRepeatExceptionToEvent = require('../../queries/addRepeatExceptionToEvent');
 const addAlarmToEvent = require('../../queries/addAlarmToEvent');
 const insertEvents = require('../../queries/insertEvents');

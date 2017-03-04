@@ -1,4 +1,4 @@
-const logger = require('../../logging/logger');
+const logger = require('../../infrastructure/logger');
 
 /**
  * Use for (GET) responses, for which JSON is expected

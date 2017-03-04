@@ -2,7 +2,7 @@
 const returnError = require('./utils/returnError');
 
 // Authorization
-const authorize = require('../authorization/index');
+const authorize = require('../infrastructure/authorization');
 
 // Project Configuration
 const config = require('../config');
