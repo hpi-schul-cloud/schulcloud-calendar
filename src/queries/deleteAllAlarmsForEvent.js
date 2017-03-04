@@ -1,4 +1,4 @@
-const client = require('../models/database');
+const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
 
 function deleteAllAlarmsForEvent(params) {

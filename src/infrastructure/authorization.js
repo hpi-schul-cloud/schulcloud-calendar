@@ -1,4 +1,4 @@
-const getAllScopesForToken = require('../http-requests').getAllScopesForToken;
+const getAllScopesForToken = require('../http').getAllScopesForToken;
 const returnError = require('../routes/utils/returnError');
 
 

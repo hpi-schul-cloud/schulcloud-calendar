@@ -1,4 +1,4 @@
-const logger = require('../../logging/logger');
+const logger = require('../../infrastructure/logger');
 
 function returnError(res, error, status = 500, title = 'Internal Server Error') {
     let errorMessage;

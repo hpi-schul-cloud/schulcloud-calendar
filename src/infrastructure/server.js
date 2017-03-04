@@ -7,7 +7,7 @@
 const app = require('../app');
 const debug = require('debug')('schulcloud-calendar:server');
 const http = require('http');
-const logger = require('../logging/logger');
+const logger = require('../infrastructure/logger');
 
 /**
  * Get port from environment and store in Express.

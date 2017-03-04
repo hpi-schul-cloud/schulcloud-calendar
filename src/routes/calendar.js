@@ -9,7 +9,7 @@ const returnSuccess = require('./utils/returnSuccess');
 const returnICalendar = require('./utils/returnICalendar');
 
 // Authorization
-const authorize = require('../authorization/index');
+const authorize = require('../infrastructure/authorization');
 
 // Project Configuration
 const config = require('../config');
