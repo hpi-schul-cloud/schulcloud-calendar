@@ -31,9 +31,7 @@ router.use(bodyParser.urlencoded({extended: false}));
 // GET /calendar
 router.get('/', authorize, function (req, res) {
     Promise.resolve(getScopeIds(req))
-        .then((scopeIds) => {
-            return Promise.resolve(getCalendar(scopeIds));
-        })
+        .then(getCalendar)
         .then((icsString) => { returnICalendar(res, icsString); })
         .catch((error) => { returnError(res, error); });
 

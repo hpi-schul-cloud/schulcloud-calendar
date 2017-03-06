@@ -1,4 +1,4 @@
-const getEvents = require('../../queries/getEvents');
+const getEvents = require('../events/getEvents');
 const flatten = require('../../utils/flatten');
 const queryToEventIcs = require('../../parsers/queryToEventIcs');
 const queryToIcs = require('../../parsers/eventsToFinalIcs');
@@ -11,8 +11,8 @@ function getCalendar(scopeIds) {
     return new Promise((resolve, reject) => {
         Promise.all(scopeIds.map(queryEvents))
             .then((events) => {
-                const eventIcs = flatten(events).map(queryToEventIcs);
-                resolve(queryToIcs(eventIcs));
+                const eventsIcs = flatten(events).map(queryToEventIcs);
+                resolve(queryToIcs(eventsIcs));
             })
             .catch(reject);
     });
@@ -20,7 +20,6 @@ function getCalendar(scopeIds) {
 
 function queryEvents(scopeId) {
     const filter = { scopeId, all: true };
-    // TODO also get alarms etc.
     return getEvents(filter);
 }
 
