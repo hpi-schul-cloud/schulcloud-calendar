@@ -1,6 +1,6 @@
 const getEvents = require('../../queries/getEvents');
-const allAlarmsForEvent = require('../../queries/allAlarmsForEvent').allAlarmsForEvent;
-const getRepeatExceptionForEvent = require('../../queries/getRepeatExceptionForEvent').getRepeatExceptionForEvent;
+const allAlarmsForEvent = require('../../queries/allAlarmsForEvent');
+const getRepeatExceptionForEvent = require('../../queries/getRepeatExceptionForEvent');
 
 function getEventsForFilter(filter) {
     return new Promise((resolve, reject) => {

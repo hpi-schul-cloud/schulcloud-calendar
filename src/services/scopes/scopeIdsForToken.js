@@ -1,4 +1,4 @@
-const getScopesForToken = require('./getScopesForToken');
+const scopesForToken = require('./scopesForToken');
 
 /**
  * returns an array of scopeIds
@@ -10,7 +10,7 @@ function scopeIdsForToken(scopeId, token) {
         if (scopeId) {
             resolve([scopeId]);
         }
-        Promise.resolve(getScopesForToken(token))
+        Promise.resolve(scopesForToken(token))
             .then((scopes) => { resolve(scopes.map(({id}) => id)); })
             .catch(reject);
     });

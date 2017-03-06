@@ -1,6 +1,6 @@
 const getAllScopesForToken = require('../../http/index').getAllScopesForToken;
 
-function getScopesForToken(token) {
+function scopesForToken(token) {
     return new Promise((resolve, reject) => {
         getAllScopesForToken(token).then((response) => {
             let scopes;
@@ -19,4 +19,4 @@ function getScopesForToken(token) {
     });
 }
 
-module.exports = getScopesForToken;
+module.exports = scopesForToken;

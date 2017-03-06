@@ -1,6 +1,6 @@
 
 const getEventsForFilter = require('./getEventsForFilter');
-const getScopesForToken = require('../scopes/getScopesForToken');
+const scopesForToken = require('../scopes/scopesForToken');
 const getEventsPerScope = require('./getEventsPerScope');
 
 function getEvents(filter, token) {
@@ -10,7 +10,7 @@ function getEvents(filter, token) {
                 .then((events) => { resolve(events); })
                 .catch((error) => { reject(error); });
         } else {
-            getScopesForToken(token)
+            scopesForToken(token)
                 .then((scopes) => { resolve(getEventsPerScope(scopes, filter)); })
                 .catch((error) => { reject(error); });
         }

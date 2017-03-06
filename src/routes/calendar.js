@@ -19,20 +19,19 @@ const returnSuccess = require('./utils/returnSuccess');
 const returnICalendar = require('./utils/returnICalendar');
 
 // content
-const getScopesForToken = require('../services/scopes/getScopesForToken');
-const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
+const scopesForToken = require('../services/scopes/scopesForToken');
+const scopesToCalendarList = require('../formatter/scopesToCalendarList');
 const scopeIdsForToken = require('../services/scopes/scopeIdsForToken');
 const getEvents = require('../services/events/getEvents');
 const flatten = require('../utils/flatten');
-const queryToEventIcs = require('../parsers/queryToEventIcs');
-const queryToIcs = require('../parsers/eventsToFinalIcs');
+const eventsToIcs = require('../formatter/eventsToIcs');
 
 /* routes */
 
 router.get('/calendar/list', authorize, function (req, res) {
     const token = req.get('Authorization');
-    Promise.resolve(getScopesForToken(token))
-        .then(getCalendarListOutput)
+    Promise.resolve(scopesForToken(token))
+        .then(scopesToCalendarList)
         .then((calendarList) => { returnSuccess(res, calendarList); })
         .catch((error) => { returnError(res, error); });
 });
@@ -53,8 +52,7 @@ function getIcs(scopeIds) {
             return getEvents(filter);
         }))
             .then((events) => {
-                const eventsIcs = flatten(events).map(queryToEventIcs);
-                resolve(queryToIcs(eventsIcs));
+                resolve(eventsToIcs(flatten(events)));
             })
             .catch(reject);
     });
