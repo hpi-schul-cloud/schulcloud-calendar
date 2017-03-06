@@ -10,7 +10,6 @@ function returnError(res, error, status = 500, title = 'Internal Server Error') 
     };
 
     if (error) {
-        console.error('DEBUG: ' + error);
         logger.error(error);
     }
 
