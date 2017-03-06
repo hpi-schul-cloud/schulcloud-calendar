@@ -1,5 +1,6 @@
 const iCalendarDateFormat = require('../parsers/iCalendarDateFormat');
 
+// TODO REFACTOR TO PARSE ALARMS AND EXDATES HERE!!!
 function queryToEventIcs(event, exdates, alarms) {
     let ics = 'BEGIN:VEVENT\n';
     ics += 'UID:' + event.event_id + '@schulcloud.org\n';

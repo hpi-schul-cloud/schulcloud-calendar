@@ -1,18 +1,19 @@
 const logger = require('../../infrastructure/logger');
 
 function returnError(res, error, status = 500, title = 'Internal Server Error') {
-    let errorMessage;
+    const errorMessage = {
+        errors: [{
+            detail: error || '',
+            title,
+            status
+        }]
+    };
+
     if (error) {
-        console.log('DEBUG: ' + error);
-        errorMessage = {
-            errors: [{
-                detail: error,
-                title,
-                status
-            }]
-        }
+        console.error('DEBUG: ' + error);
         logger.error(error);
     }
+
     if (res && !res.headersSent)
         res.contentType('application/json').status(status).send(errorMessage);
     else

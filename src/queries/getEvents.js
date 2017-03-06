@@ -6,8 +6,8 @@ const THREE_WEEKS = 1000 * 60 * 60 * 24 * 21;
 const FROM = new Date(new Date().getTime() - THREE_WEEKS);
 const UNTIL = new Date(new Date().getTime() + THREE_WEEKS);
 
-function selectEvents(filter) {
-    return new Promise(function(resolve, reject) {
+function getEvents(filter) {
+    return new Promise((resolve, reject) => {
         const { scopeId, eventId } = filter;
 
         if (!scopeId && !eventId) {
@@ -50,4 +50,4 @@ function buildQuery(filter) {
     return `${query} ORDER BY id ASC;`;
 }
 
-module.exports = selectEvents;
+module.exports = getEvents;
