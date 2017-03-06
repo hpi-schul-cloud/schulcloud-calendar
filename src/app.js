@@ -4,7 +4,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-const calendar = require('./routes/calendar');
+const index = require('./routes');
 const eventsIcs = require('./routes/eventsIcs');
 const events = require('./routes/events');
 const share = require('./routes/share');
@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/calendar', calendar);
+app.use('/', index);
 app.use('/events/ics', eventsIcs);
 app.use('/events', events);
 app.use('/share', share);
