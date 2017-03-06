@@ -4,8 +4,6 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const index = require('./routes');
-const eventsIcs = require('./routes/eventsIcs');
-const events = require('./routes/events');
 const externalFeed = require('./routes/externalFeed');
 const returnError = require('./routes/utils/returnError');
 
@@ -20,8 +18,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/events/ics', eventsIcs);
-app.use('/events', events);
 app.use('/external-feed-subscription', externalFeed);
 
 // catch 404 and forward to error handler

@@ -5,6 +5,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Delete old Table and Type definitions
 -- ######################################
 
+DROP TABLE IF EXISTS eventid_originalreferenceid;
+
 DROP TABLE IF EXISTS repetition_exception_dates;
 DROP TABLE IF EXISTS alarms;
 DROP TABLE IF EXISTS events;

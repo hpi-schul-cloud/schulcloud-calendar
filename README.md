@@ -19,6 +19,3 @@
 1. Create a database named `schulcloud_calendar_test` and setup as described above
 2. Create tables with `psql -U node -d schulcloud_calendar_test -a -f schema.sql`
 3. Run `npm test`
-
-__[TODO]__ _It would be nice if tests wouldn't always request data from the real Schulcloud-API.
-Maybe set it up locally and set local path for test environment in http&#95;requests/config._
