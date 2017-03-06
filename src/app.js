@@ -3,8 +3,14 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+
 const index = require('./routes');
+const calendar = require('./routes/calendar');
+const events = require('./routes/events');
 const externalFeed = require('./routes/externalFeed');
+const share = require('./routes/share');
+const toDos = require('./routes/toDos');
+
 const returnError = require('./routes/utils/returnError');
 
 const app = express();
@@ -18,7 +24,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/', calendar);
+app.use('/', events);
 app.use('/external-feed-subscription', externalFeed);
+app.use('/', share);
+app.use('/', toDos);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
