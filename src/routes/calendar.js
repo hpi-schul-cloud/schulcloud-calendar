@@ -14,9 +14,9 @@ router.use(bodyParser.urlencoded({ extended: false }));
 const authorize = require('../infrastructure/authorization');
 
 // response
-const returnError = require('./utils/returnError');
-const returnSuccess = require('./utils/returnSuccess');
-const returnICalendar = require('./utils/returnICalendar');
+const returnError = require('../utils/response/returnError');
+const returnSuccess = require('../utils/response/returnSuccess');
+const returnIcs = require('../utils/response/returnIcs');
 
 // content
 const scopesForToken = require('../services/scopes/scopesForToken');
@@ -41,7 +41,7 @@ router.get('/calendar', authorize, function (req, res) {
     const token = req.get('Authorization');
     Promise.resolve(scopeIdsForToken(scopeId, token))
         .then(getIcs)
-        .then((icsString) => { returnICalendar(res, icsString); })
+        .then((icsString) => { returnIcs(res, icsString); })
         .catch((error) => { returnError(res, error); });
 });
 

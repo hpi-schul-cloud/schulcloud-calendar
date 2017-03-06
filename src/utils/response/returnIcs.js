@@ -6,7 +6,7 @@ const Readable = require('stream').Readable;
  * @param res
  * @param icsString
  */
-function returnICalendar(res, icsString) {
+function returnIcs(res, icsString) {
     const finalIcs = new Readable();
     finalIcs.push(icsString);
     finalIcs.push(null);
@@ -18,4 +18,4 @@ function returnICalendar(res, icsString) {
     finalIcs.pipe(res);
 }
 
-module.exports = returnICalendar;
+module.exports = returnIcs;

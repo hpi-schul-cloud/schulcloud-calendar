@@ -15,8 +15,8 @@ const authorize = require('../infrastructure/authorization');
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
-const returnError = require('./utils/returnError');
-const returnSuccess = require('./utils/returnSuccess');
+const returnError = require('../utils/response/returnError');
+const returnSuccess = require('../utils/response/returnSuccess');
 
 // content
 const insertSubscription = require('../queries/insertSubscription');

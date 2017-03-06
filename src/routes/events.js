@@ -16,8 +16,8 @@ const jsonApiToJson = require('../parsers/jsonApiToJson');
 const icsToJson = require('../parsers/icsToJson');
 
 // response
-const returnError = require('./utils/returnError');
-const returnSuccess = require('./utils/returnSuccess');
+const returnError = require('../utils/response/returnError');
+const returnSuccess = require('../utils/response/returnSuccess');
 const sendNotification = require('../services/sendNotification');
 
 // content

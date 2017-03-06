@@ -1,5 +1,5 @@
 const getAllScopesForToken = require('../http').getAllScopesForToken;
-const returnError = require('../routes/utils/returnError');
+const returnError = require('../utils/response/returnError');
 
 
 function authentication(req, res, next) {

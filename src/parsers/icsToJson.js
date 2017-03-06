@@ -1,7 +1,7 @@
 const validIcs = require('../validators/validateIcs');
 const validJson = require('../validators/validateJson');
 const regularDateFormat = require('./utils/regularDateFormat');
-const returnError = require('../routes/utils/returnError');
+const returnError = require('../utils/response/returnError');
 const logger = require('../infrastructure/logger');
 
 function icsToJson(req, res, next) {
