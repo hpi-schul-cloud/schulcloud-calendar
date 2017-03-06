@@ -92,6 +92,7 @@ function updateEvents(req, res) {
 
 router.delete('/events/:eventId', authorize, function (req, res) {
     // TODO works but there are funny errors, investigate
+    // TODO delete only for scopeIds
     const eventId = req.params.eventId;
     const scopeIds = req.body.scopeIds;
     Promise.resolve(deleteEvent(eventId))

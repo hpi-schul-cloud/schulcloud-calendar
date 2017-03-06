@@ -5,7 +5,7 @@ const dbClient = require('../../src/infrastructure/database');
 const DatabaseCleaner = require('database-cleaner');
 const databaseCleaner = new DatabaseCleaner('postgresql');
 
-describe('routes/external-feed-subscription', function() {
+describe('routes/subscription', function() {
 
     afterEach(function(done) {
         databaseCleaner.clean(dbClient, done);
@@ -16,7 +16,7 @@ describe('routes/external-feed-subscription', function() {
         it('subscribes to a feed with one scopeId', function(done) {
             this.timeout(10000);
             request(app)
-                .post('/external-feed-subscription')
+                .post('/subscription')
                 .set('Authorization', 'student1_1')
                 .send(withSingleScopeId)
                 .expect(200, done);

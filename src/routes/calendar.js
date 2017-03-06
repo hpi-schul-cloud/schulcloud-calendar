@@ -21,7 +21,7 @@ const returnICalendar = require('./utils/returnICalendar');
 // content
 const getScopesForToken = require('../services/scopes/getScopesForToken');
 const getCalendarListOutput = require('../services/to-json-api/getCalendarList');
-const getScopeIds = require('../services/getScopeIds');
+const scopeIdsForToken = require('../services/scopes/scopeIdsForToken');
 const getEvents = require('../services/events/getEvents');
 const flatten = require('../utils/flatten');
 const queryToEventIcs = require('../parsers/queryToEventIcs');
@@ -40,7 +40,7 @@ router.get('/calendar/list', authorize, function (req, res) {
 router.get('/calendar', authorize, function (req, res) {
     const scopeId = req.get('scope-id');
     const token = req.get('Authorization');
-    Promise.resolve(getScopeIds(scopeId, token))
+    Promise.resolve(scopeIdsForToken(scopeId, token))
         .then(getIcs)
         .then((icsString) => { returnICalendar(res, icsString); })
         .catch((error) => { returnError(res, error); });

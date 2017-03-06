@@ -1,11 +1,11 @@
-const getScopesForToken = require('./scopes/getScopesForToken');
+const getScopesForToken = require('./getScopesForToken');
 
 /**
  * returns an array of scopeIds
  * @param scopeId
  * @param token
  */
-function getScopeIds(scopeId, token) {
+function scopeIdsForToken(scopeId, token) {
     return new Promise((resolve, reject) => {
         if (scopeId) {
             resolve([scopeId]);
@@ -16,4 +16,4 @@ function getScopeIds(scopeId, token) {
     });
 }
 
-module.exports = getScopeIds;
+module.exports = scopeIdsForToken;
