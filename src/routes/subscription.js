@@ -36,7 +36,7 @@ router.post('/subscription', authorize, jsonApiToJson, function (req, res) {
         .then((scopeIds) => {
             return insertSubscriptions(scopeIds, icsUrl, description);
         })
-        .then((subscriptionIds) => { returnSuccess(res, subscriptionIds); })
+        .then((subscriptionIds) => { returnSuccess(res, 200, subscriptionIds); })
         .catch((error) => returnError(error));
 
     function insertSubscriptions(scopeIds, icsUrl, description) {

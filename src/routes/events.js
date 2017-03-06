@@ -18,7 +18,6 @@ const icsToJson = require('../parsers/icsToJson');
 // response
 const returnError = require('./utils/returnError');
 const returnSuccess = require('./utils/returnSuccess');
-const returnSuccessWithoutContent = require('./utils/returnSuccessWithoutContent');
 const sendNotification = require('../services/sendNotification');
 
 // content
@@ -38,7 +37,7 @@ router.get('/events', authorize, function (req, res) {
     };
     const token = req.get('Authorization');
     Promise.resolve(getEvents(filter, token))
-        .then((result) => { returnSuccess(res, result); })
+        .then((result) => { returnSuccess(res, 200, result); })
         .catch((error) => { returnError(res, error); });
 });
 
@@ -57,7 +56,7 @@ function insertEvents(req, res) {
     Promise.resolve(storeEventsInDb(events))
         .then((result) => {
             // TODO: return eventId and maybe complete events
-            returnSuccessWithoutContent(res);
+            returnSuccess(res, 204);
             // TODO: always return array
             if (Array.isArray(result)) {
                 result.forEach((response) => {
@@ -95,7 +94,7 @@ router.delete('/events/:eventId', authorize, function (req, res) {
     const scopeIds = req.body.scopeIds;
     Promise.resolve(deleteEvent(eventId))
         .then(() => {
-            returnSuccessWithoutContent(res);
+            returnSuccess(res, 204);
             sendNotification.forDeletedEvent(scopeIds);
         })
         .catch((error) => { returnError(res, error); });

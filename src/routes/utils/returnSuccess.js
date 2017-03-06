@@ -5,9 +5,13 @@ const logger = require('../../infrastructure/logger');
  * @param res
  * @param results
  */
-function returnSuccess(res, results = '') {
-    if (res && !res.headersSent)
-        res.status(200).send(`Success: ${JSON.stringify(results)}`);
+function returnSuccess(res, code, content) {
+    if (res && !res.headersSent) {
+        const message = content
+            ? `Success: ${JSON.stringify(content)}`
+            : 'Success';
+        res.status(code).send(message);
+    }
     else
         logger.error('res unavailable or headers already sent');
 }

@@ -32,7 +32,7 @@ router.get('/calendar/list', authorize, function (req, res) {
     const token = req.get('Authorization');
     Promise.resolve(scopesForToken(token))
         .then(scopesToCalendarList)
-        .then((calendarList) => { returnSuccess(res, calendarList); })
+        .then((calendarList) => { returnSuccess(res, 200, calendarList); })
         .catch((error) => { returnError(res, error); });
 });
 
