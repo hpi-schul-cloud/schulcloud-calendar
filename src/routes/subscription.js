@@ -32,7 +32,7 @@ router.get('/subscription/list', authorize, function (req, res) {
 router.post('/subscription', authorize, jsonApiToJson, function (req, res) {
     // We only allow one subscribtion per request
     const { icsUrl, description, scopeIds, separateUsers } = req.subscription;
-    Promise.resolve(getScopeIdsForSeparateUsers(scopeIds, separateUsers))
+    getScopeIdsForSeparateUsers(scopeIds, separateUsers)
         .then((scopeIds) => {
             return insertSubscriptions(scopeIds, icsUrl, description);
         })

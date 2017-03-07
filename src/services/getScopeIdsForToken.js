@@ -10,7 +10,7 @@ function getScopeIdsForToken(token, scopeId) {
         if (scopeId) {
             resolve([scopeId]);
         }
-        Promise.resolve(getScopesForToken(token))
+        getScopesForToken(token)
             .then((scopes) => { resolve(scopes.map(({id}) => id)); })
             .catch(reject);
     });

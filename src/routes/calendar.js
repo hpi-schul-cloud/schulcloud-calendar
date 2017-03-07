@@ -30,7 +30,7 @@ const eventsToIcs = require('../formatter/eventsToIcs');
 
 router.get('/calendar/list', authorize, function (req, res) {
     const token = req.get('Authorization');
-    Promise.resolve(getScopesForToken(token))
+    getScopesForToken(token)
         .then(scopesToCalendarList)
         .then((calendarList) => { returnSuccess(res, 200, calendarList); })
         .catch((error) => { returnError(res, error); });
@@ -39,7 +39,7 @@ router.get('/calendar/list', authorize, function (req, res) {
 router.get('/calendar', authorize, function (req, res) {
     const scopeId = req.get('scope-id');
     const token = req.get('Authorization');
-    Promise.resolve(getScopeIdsForToken(token, scopeId))
+    getScopeIdsForToken(token, scopeId)
         .then(getIcs)
         .then((icsString) => { returnIcs(res, icsString); })
         .catch((error) => { returnError(res, error); });

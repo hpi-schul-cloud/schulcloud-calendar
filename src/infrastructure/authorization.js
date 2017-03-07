@@ -9,7 +9,7 @@ function authentication(req, res, next) {
 
     if (token) {
         req.token = token;
-        Promise.resolve(getAllScopesForToken(token)).then(
+        getAllScopesForToken(token).then(
             function (value) {
                 value = JSON.parse(value);
 

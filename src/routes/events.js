@@ -36,7 +36,7 @@ router.get('/events', authorize, function (req, res) {
         all: req.get('all')
     };
     const token = req.get('Authorization');
-    Promise.resolve(getEvents(filter, token))
+    getEvents(filter, token)
         .then((result) => { returnSuccess(res, 200, result); })
         .catch((error) => { returnError(res, error); });
 });
@@ -74,7 +74,7 @@ router.put('/events/ics/:eventId', authorize, icsToJson, function (req, res) {
 
 function updateEvents(req, res) {
     const eventId = req.params.eventId;
-    Promise.resolve(deleteEvent(eventId))
+    deleteEvent(eventId)
         .then(() => {
             // TODO validate operation (e.g. don't create event if id couldn't be found, ...)
             // TODO validate result if at least one row has been deleted...
@@ -88,7 +88,7 @@ router.delete('/events/:eventId', authorize, function (req, res) {
     // TODO delete only for scopeIds
     const eventId = req.params.eventId;
     const scopeIds = req.body.scopeIds;
-    Promise.resolve(deleteEvent(eventId))
+    deleteEvent(eventId)
         .then(() => {
             returnSuccess(res, 204);
             sendNotification.forDeletedEvent(scopeIds);
