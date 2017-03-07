@@ -22,7 +22,7 @@ const sendNotification = require('../services/sendNotification');
 
 // content
 const getEvents = require('../services/getEvents');
-const storeEventsInDb = require('../services/events/storeEventsInDb');
+const storeEvents = require('../services/storeEvents');
 const deleteEvent = require('../queries/deleteEvent');
 
 /* routes */
@@ -42,28 +42,24 @@ router.get('/events', authorize, function (req, res) {
 });
 
 router.post('/events', authorize, jsonApiToJson, function (req, res) {
-    // TODO works but there are funny errors, investigate
     insertEvents(req, res);
 });
 
 router.post('/events/ics', authorize, icsToJson, function (req, res) {
-    // TODO works but there are funny errors, investigate
     insertEvents(req, res);
 });
 
+// TODO works but there are funny errors, investigate
 function insertEvents(req, res) {
     const events = req.events;
-    Promise.resolve(storeEventsInDb(events))
+    storeEvents(events)
         .then((result) => {
             // TODO: return eventId and maybe complete events
+            result.forEach((response) => {
+                const { scopeIds, summary, start, end } = response;
+                sendNotification.forNewEvent(scopeIds, summary, start, end);
+            });
             returnSuccess(res, 204);
-            // TODO: always return array
-            if (Array.isArray(result)) {
-                result.forEach((response) => {
-                    const { scopeIds, summary, start, end } = response;
-                    sendNotification.forNewEvent(scopeIds, summary, start, end);
-                });
-            }
         })
         .catch((error) => { returnError(res, error); });
 }

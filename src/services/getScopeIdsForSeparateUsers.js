@@ -9,9 +9,13 @@ function getScopeIdsForSeparateUsers(scopeIds, separateUsers) {
                     const users = flatten(responses.map((response) => {
                         return JSON.parse(response).data;
                     }));
-                    resolve(users.map(({id}) => id));
+                    resolve(users.reduce((uniqueUsers, user) => {
+                        return uniqueUsers.indexOf(user.id) === -1
+                            ? [ ...uniqueUsers, user.id ]
+                            : uniqueUsers;
+                    }, []));
                 })
-                .catch(reject);
+                .catch((error) => { reject(`${error}, invalid scopeIds`); });
         } else {
             resolve(scopeIds);
         }
