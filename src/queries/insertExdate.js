@@ -1,9 +1,11 @@
 const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
 
-function addAlarmToEvent(params) {
+function insertExdate(params) {
     return new Promise(function(resolve, reject) {
-        const query = 'INSERT INTO alarms (event_id, trigger, repeat, duration, action, attach, description, attendee, summary) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+        // TODO: check if event exists
+        // TODO: check if exception exists already
+        const query = 'INSERT INTO repetition_exception_dates (event_id, date) VALUES ($1, $2)';
         client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
@@ -15,4 +17,4 @@ function addAlarmToEvent(params) {
     });
 }
 
-module.exports = addAlarmToEvent;
+module.exports = insertExdate;

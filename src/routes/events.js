@@ -21,7 +21,7 @@ const returnSuccess = require('../utils/response/returnSuccess');
 const sendNotification = require('../services/sendNotification');
 
 // content
-const getEvents = require('../services/events/getEvents');
+const getEvents = require('../services/getEvents');
 const storeEventsInDb = require('../services/events/storeEventsInDb');
 const deleteEvent = require('../queries/deleteEvent');
 

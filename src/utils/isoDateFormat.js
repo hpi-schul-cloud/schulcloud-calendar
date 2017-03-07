@@ -1,7 +1,7 @@
 const ISO8601_DATE = /(\d{4})-(\d{2})-(\d{2})/;
 const ISO8601_DATE_LENGTH = 10;
 
-function ensureISODate(timestamp) {
+function isoDateFormat(timestamp) {
     if (typeof timestamp === 'string') {
         if(!timestamp.match(ISO8601_DATE)) {
             throw new Error('Given timestamp has to be in ISO8601-Format');
@@ -13,4 +13,4 @@ function ensureISODate(timestamp) {
     }
 }
 
-module.exports = ensureISODate;
+module.exports = isoDateFormat;

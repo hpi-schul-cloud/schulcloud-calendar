@@ -1,12 +1,12 @@
 const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
-const ensureISODate = require('../utils/ensureISODate');
+const isoDateFormat = require('../utils/isoDateFormat');
 
 const THREE_WEEKS = 1000 * 60 * 60 * 24 * 21;
 const FROM = new Date(new Date().getTime() - THREE_WEEKS);
 const UNTIL = new Date(new Date().getTime() + THREE_WEEKS);
 
-function getEvents(filter) {
+function getRawEvents(filter) {
     return new Promise((resolve, reject) => {
         const { scopeId, eventId } = filter;
 
@@ -32,8 +32,8 @@ function buildQuery(filter) {
     let query;
 
     // ensure common date format
-    from = ensureISODate(from);
-    until = ensureISODate(until);
+    from = isoDateFormat(from);
+    until = isoDateFormat(until);
 
     // filter either by scopeId or eventId
     if (scopeId) {
@@ -50,4 +50,4 @@ function buildQuery(filter) {
     return `${query} ORDER BY id ASC;`;
 }
 
-module.exports = getEvents;
+module.exports = getRawEvents;

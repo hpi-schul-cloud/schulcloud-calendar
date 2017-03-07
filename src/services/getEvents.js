@@ -1,8 +1,8 @@
-const scopesForToken = require('../scopes/scopesForToken');
-const flatten = require('../../utils/flatten');
-const allAlarmsForEvent = require('../../queries/allAlarmsForEvent');
-const getRepeatExceptionForEvent = require('../../queries/getRepeatExceptionForEvent');
-const getRawEvents = require('../../queries/getRawEvents');
+const getScopeIdsForToken = require('./getScopeIdsForToken');
+const flatten = require('../utils/flatten');
+const getAlarms = require('../queries/getAlarms');
+const getExdates = require('../queries/getExdates');
+const getRawEvents = require('../queries/getRawEvents');
 
 function getEvents(filter, token) {
     return new Promise(function (resolve, reject) {
@@ -11,18 +11,18 @@ function getEvents(filter, token) {
                 .then(resolve)
                 .catch(reject);
         } else {
-            scopesForToken(token)
-                .then((scopes) => { return eventsPerScope(scopes, filter); })
+            getScopeIdsForToken(token)
+                .then((scopeIds) => { return eventsPerScope(scopeIds, filter); })
                 .then((events) => { resolve(flatten(events)); })
                 .catch(reject);
         }
     });
 }
 
-function eventsPerScope(scopes, filter) {
+function eventsPerScope(scopeIds, filter) {
     return new Promise((resolve, reject) => {
-        Promise.all(scopes.map(({id}) => {
-            filter.scopeId = id;
+        Promise.all(scopeIds.map((scopeId) => {
+            filter.scopeId = scopeId;
             return completeEvents(filter);
         })).then(resolve).catch(reject);
     });
@@ -42,7 +42,7 @@ function appendAlarms(events) {
     return new Promise((resolve, reject) => {
         if (events.length === 0) resolve(events);
         events.forEach((event, index) => {
-            allAlarmsForEvent(event['id'])
+            getAlarms(event['id'])
                 .then((alarms) => {
                     event.alarms = alarms;
                     if (index === events.length - 1) resolve(events);
@@ -56,7 +56,7 @@ function appendExdates(events) {
     return new Promise((resolve, reject) => {
         if (events.length === 0) resolve(events);
         events.forEach((event, index) => {
-            getRepeatExceptionForEvent(event['id'])
+            getExdates(event['id'])
                 .then((exdates) => {
                     event.exdates = exdates;
                     if (index === events.length - 1) resolve(events);

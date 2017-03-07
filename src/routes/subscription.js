@@ -20,7 +20,7 @@ const returnSuccess = require('../utils/response/returnSuccess');
 
 // content
 const insertSubscription = require('../queries/insertSubscription');
-const scopeIdsForSeparateUsers = require('../services/scopes/scopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../services/getScopeIdsForSeparateUsers');
 
 /* routes */
 
@@ -32,7 +32,7 @@ router.get('/subscription/list', authorize, function (req, res) {
 router.post('/subscription', authorize, jsonApiToJson, function (req, res) {
     // We only allow one subscribtion per request
     const { icsUrl, description, scopeIds, separateUsers } = req.subscription;
-    Promise.resolve(scopeIdsForSeparateUsers(scopeIds, separateUsers))
+    Promise.resolve(getScopeIdsForSeparateUsers(scopeIds, separateUsers))
         .then((scopeIds) => {
             return insertSubscriptions(scopeIds, icsUrl, description);
         })

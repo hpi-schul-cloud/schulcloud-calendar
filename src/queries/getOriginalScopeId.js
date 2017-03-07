@@ -1,7 +1,7 @@
 const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
 
-function getOriginalReferenceIdsForEvent(eventId) {
+function getOriginalScopeId(eventId) {
     return new Promise(function (resolve, reject) {
         const query = 'SELECT original_reference_id FROM eventid_originalreferenceid WHERE event_id = $1';
         client.query(query, [eventId], function (error, result) {
@@ -15,4 +15,4 @@ function getOriginalReferenceIdsForEvent(eventId) {
     });
 }
 
-module.exports = getOriginalReferenceIdsForEvent;
+module.exports = getOriginalScopeId;

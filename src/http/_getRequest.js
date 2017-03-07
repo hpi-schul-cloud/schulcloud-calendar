@@ -1,6 +1,6 @@
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 
-function getRequest(url) {
+function _getRequest(url) {
     return new Promise(function(resolve, reject) {
         const request = new XMLHttpRequest();
         request.open('GET', url, true);
@@ -17,4 +17,4 @@ function getRequest(url) {
     });
 }
 
-module.exports = getRequest;
+module.exports = _getRequest;

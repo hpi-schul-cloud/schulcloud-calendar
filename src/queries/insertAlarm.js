@@ -1,10 +1,10 @@
 const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
 
-function deleteAllAlarmsForEvent(params) {
+function insertAlarm(params) {
     return new Promise(function(resolve, reject) {
-        const query = 'DELETE FROM alarms WHERE event_id = $1';
-        client.query(query, [params], function (error, result) {
+        const query = 'INSERT INTO alarms (event_id, trigger, repeat, duration, action, attach, description, attendee, summary) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+        client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
@@ -15,4 +15,4 @@ function deleteAllAlarmsForEvent(params) {
     });
 }
 
-module.exports = deleteAllAlarmsForEvent;
+module.exports = insertAlarm;

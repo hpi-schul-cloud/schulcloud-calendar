@@ -19,10 +19,10 @@ const returnSuccess = require('../utils/response/returnSuccess');
 const returnIcs = require('../utils/response/returnIcs');
 
 // content
-const scopesForToken = require('../services/scopes/scopesForToken');
+const getScopesForToken = require('../services/getScopesForToken');
 const scopesToCalendarList = require('../formatter/scopesToCalendarList');
-const scopeIdsForToken = require('../services/scopes/scopeIdsForToken');
-const getEvents = require('../services/events/getEvents');
+const getScopeIdsForToken = require('../services/getScopeIdsForToken');
+const getEvents = require('../services/getEvents');
 const flatten = require('../utils/flatten');
 const eventsToIcs = require('../formatter/eventsToIcs');
 
@@ -30,7 +30,7 @@ const eventsToIcs = require('../formatter/eventsToIcs');
 
 router.get('/calendar/list', authorize, function (req, res) {
     const token = req.get('Authorization');
-    Promise.resolve(scopesForToken(token))
+    Promise.resolve(getScopesForToken(token))
         .then(scopesToCalendarList)
         .then((calendarList) => { returnSuccess(res, 200, calendarList); })
         .catch((error) => { returnError(res, error); });
@@ -39,7 +39,7 @@ router.get('/calendar/list', authorize, function (req, res) {
 router.get('/calendar', authorize, function (req, res) {
     const scopeId = req.get('scope-id');
     const token = req.get('Authorization');
-    Promise.resolve(scopeIdsForToken(scopeId, token))
+    Promise.resolve(getScopeIdsForToken(token, scopeId))
         .then(getIcs)
         .then((icsString) => { returnIcs(res, icsString); })
         .catch((error) => { returnError(res, error); });

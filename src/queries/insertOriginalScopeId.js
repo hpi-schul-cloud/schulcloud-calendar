@@ -1,7 +1,7 @@
 const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
 
-function storeOriginalReferenceIdForEvent(eventId, originalReferenceId) {
+function insertOriginalScopeId(eventId, originalReferenceId) {
     return new Promise(function (resolve, reject) {
         const query = 'INSERT INTO eventid_originalreferenceid (event_id, original_reference_id) VALUES ($1, $2)';
         client.query(query, [eventId, originalReferenceId], function (error, result) {
@@ -15,4 +15,4 @@ function storeOriginalReferenceIdForEvent(eventId, originalReferenceId) {
     });
 }
 
-module.exports = storeOriginalReferenceIdForEvent;
+module.exports = insertOriginalScopeId;

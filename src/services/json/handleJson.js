@@ -1,11 +1,10 @@
-const getAllUsersForUUID = require('../../http/index.js').getAllUsersForUUID;
-const addRepeatExceptionToEvent = require('../../queries/addRepeatExceptionToEvent');
-const addAlarmToEvent = require('../../queries/addAlarmToEvent');
+const getAllUsersForScopeId = require('../../http/getAllUsersForScopeId');
+const insertExdate = require('../../queries/insertExdate');
+const insertAlarm = require('../../queries/insertAlarm');
 const insertEvents = require('../../queries/insertEvents');
-const storeOriginalReferenceIdForEvent = require('../../queries/storeOriginalReferenceIdForEvent');
+const insertOriginalScopeId = require('../../queries/insertOriginalScopeId');
 
 function handleJson(json, separateUsers, scopeIds, externalEventId) {
-
     return new Promise(function (resolve, reject) {
         /*
          * json contains id, summary, location, description, dtstart, dtend
@@ -52,8 +51,9 @@ function handleJson(json, separateUsers, scopeIds, externalEventId) {
 
 function seperateEvents(json, scopeId, params) {
     return new Promise(function (resolve, reject) {
-        Promise.resolve(getAllUsersForUUID(scopeId)).then(
+        Promise.resolve(getAllUsersForScopeId(scopeId)).then(
             function (usersResponse) {
+                console.log("HERE");
                 const usersJson = JSON.parse(usersResponse);
                 const users = usersJson.data;
 
@@ -66,7 +66,7 @@ function seperateEvents(json, scopeId, params) {
 
                 Promise.resolve(insertEventForScopeIds(json, params, referenceIds)).then(
                     function (insertedEvent) {
-                        storeOriginalReferenceIdForEvent(insertedEvent.eventId, scopeId);
+                        insertOriginalScopeId(insertedEvent.eventId, scopeId);
                         resolve(insertedEvent);
                     },
                     reject.bind(null)
@@ -83,8 +83,8 @@ function insertEventForScopeIds(json, params, scopeIds) {
             function (results) {
                 // TODO: check if result is uuid
                 if (Array.isArray(results)) {
-                    addExdates(json, results);
-                    addAlarms(json, results);
+                    insertExdates(json, results);
+                    insertAlarms(json, results);
                     resolve({eventId: results[0].event_id, scopeIds: scopeIds, summary: params[0], start: params[3], end: params[4]});
                 } else {
                     reject();
@@ -95,7 +95,7 @@ function insertEventForScopeIds(json, params, scopeIds) {
     });
 }
 
-function addExdates(json, results) {
+function insertExdates(json, results) {
     // check if exception dates for possible repeat exist
     // TODO: if so, check if repeat is set because of consistency reasons...
     if (Array.isArray(json['exdate'])) {
@@ -105,13 +105,13 @@ function addExdates(json, results) {
                 const params = [];
                 params[0] = results[j].id;
                 params[1] = exdates[i];
-                addRepeatExceptionToEvent(params);
+                insertExdate(params);
             }
         }
     }
 }
 
-function addAlarms(json, results) {
+function insertAlarms(json, results) {
     if (Array.isArray(json['alarms'])) {
         json['alarms'].forEach(function(alarm) {
             results.forEach(function(createdEvent) {
@@ -125,7 +125,7 @@ function addAlarms(json, results) {
                 params[6] = alarm['description'];
                 params[7] = alarm['attendee'];
                 params[8] = alarm['summary'];
-                addAlarmToEvent(params);
+                insertAlarm(params);
             });
         });
     }

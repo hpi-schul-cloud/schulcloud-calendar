@@ -1,10 +1,10 @@
-const getAllUsersForUUID = require('../../http').getAllUsersForUUID;
-const flatten = require('../../utils/flatten');
+const getAllUsersForScopeId = require('../http/getAllUsersForScopeId');
+const flatten = require('../utils/flatten');
 
-function scopeIdsForSeparateUsers(scopeIds, separateUsers) {
+function getScopeIdsForSeparateUsers(scopeIds, separateUsers) {
     return new Promise((resolve, reject) => {
         if (separateUsers) {
-            Promise.all(scopeIds.map(getAllUsersForUUID))
+            Promise.all(scopeIds.map(getAllUsersForScopeId))
                 .then((responses) => {
                     const users = flatten(responses.map((response) => {
                         return JSON.parse(response).data;
@@ -18,4 +18,4 @@ function scopeIdsForSeparateUsers(scopeIds, separateUsers) {
     });
 }
 
-module.exports = scopeIdsForSeparateUsers;
+module.exports = getScopeIdsForSeparateUsers;
