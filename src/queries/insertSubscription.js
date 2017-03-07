@@ -1,7 +1,7 @@
 const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
 
-function insertFeedSubscription(params) {
+function insertSubscription(params) {
     return new Promise(function(resolve, reject) {
         const query = 'INSERT INTO feeds (ics_url, description, reference_id) VALUES ($1, $2, $3) RETURNING id';
         client.query(query, params, function (error, result) {
@@ -15,4 +15,4 @@ function insertFeedSubscription(params) {
     });
 }
 
-module.exports = insertFeedSubscription;
+module.exports = insertSubscription;

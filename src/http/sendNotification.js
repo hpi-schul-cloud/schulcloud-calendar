@@ -1,7 +1,7 @@
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const config = require('./../config');
 
-function newNotificationForScopeIds(title, body, scopeIds) {
+function sendNotification(title, body, scopeIds) {
     return new Promise(function(resolve, reject) {
         const request = new XMLHttpRequest();
         request.open('POST', config.NOTIFICATION_SERVICE_NEW_NOTIFICATION, true);
@@ -26,4 +26,4 @@ function newNotificationForScopeIds(title, body, scopeIds) {
     });
 }
 
-module.exports = newNotificationForScopeIds;
+module.exports = sendNotification;
