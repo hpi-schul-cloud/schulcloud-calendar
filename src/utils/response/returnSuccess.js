@@ -3,7 +3,8 @@ const logger = require('../../infrastructure/logger');
 /**
  * Use for 'Success' status response with content for verification purposes
  * @param res
- * @param results
+ * @param code
+ * @param content
  */
 function returnSuccess(res, code, content) {
     if (res && !res.headersSent) {

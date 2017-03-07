@@ -1,5 +1,12 @@
 const logger = require('../../infrastructure/logger');
 
+/**
+ * Use for 'Error' status response with an error message
+ * @param res
+ * @param error
+ * @param status
+ * @param title
+ */
 function returnError(res, error, status = 500, title = 'Internal Server Error') {
     const errorMessage = {
         errors: [{
