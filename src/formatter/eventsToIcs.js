@@ -26,6 +26,7 @@ function eventToIcs(event) {
         ics += 'DESCRIPTION:' + event.description + '\n';
     }
     if (event.repeat_freq) {
+        // TODO: Refactor event repetition to add support for other repeat types
         if (event.repeat_byday)
             ics += 'RRULE:FREQ=' + event.repeat_freq + ';INTERVAL=' + event.repeat_interval + ';BYDAY=' + event.repeat_byday + '\n';
         else
