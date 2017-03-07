@@ -2,8 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
 const cors = require('cors');
-
-// configuration
 const config = require('../config');
 const corsOptions = {
     origin: config.CORS_ORIGIN
