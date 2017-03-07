@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS feeds;
 
 DROP TYPE IF EXISTS repeat_type;
+DROP TYPE IF EXISTS weekday_type;
 DROP TYPE IF EXISTS alarm_action;
 
 -- ######################################
