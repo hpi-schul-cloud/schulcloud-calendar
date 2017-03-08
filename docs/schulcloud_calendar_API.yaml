@@ -25,7 +25,7 @@ tags:
     description: Work with one or multiple events as ICS string
   - name: share
     description: Access an ICS feed from an external endpoint
-  - name: subscription
+  - name: subscriptions
     description: Manage subscribed ICS feeds
   - name: to-dos
     description: Work with one or multiple To Dos as JSON
@@ -328,7 +328,7 @@ paths:
       security:
         - user-token: []
 
-  '/subscription/list':
+  '/subscriptions':
     get:
       summary: Get a list of subscribed feeds for the scopes you have write access to (X).
       parameters:
@@ -354,11 +354,11 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - subscription
+        - subscriptions
       security:
         - user-token: []
 
-  '/subscription':
+  '/subscriptions':
     post:
       parameters:
         - name: body
@@ -377,19 +377,19 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - subscription
+        - subscriptions
       security:
         - user-token: []
 
-  '/subscription/{feed-id}':
+  '/subscriptions/{subscription-id}':
     parameters:
-      - name: feed-id
+      - name: subscription-id
         in: path
         required: true
         type: string
     put:
       summary: Update synchronisation settings for a subscribed feed (X).
-      description: The calendar service will delete the old external feed subscription completely. Therefore, you MUST ensure to re-submit the subscription with all details.
+      description: The calendar service will delete the old external feed subscriptions completely. Therefore, you MUST ensure to re-submit the subscriptions with all details.
       responses:
         '200':
           description: FeedUrlList
@@ -406,7 +406,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyExternalFeedRequest'
       tags:
-        - subscription
+        - subscriptions
       security:
         - user-token: []
     delete:
@@ -419,7 +419,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - subscription
+        - subscriptions
       security:
         - user-token: []
 
@@ -1294,7 +1294,7 @@ definitions:
         properties:
           self:
             type: string
-            example: "https://schul-cloud.org:3000/subscription"
+            example: "https://schul-cloud.org:3000/subscriptions"
       data:
         type: array
         items:
@@ -1310,7 +1310,7 @@ definitions:
           properties:
             type:
               type: string
-              example: "subscription"
+              example: "subscriptions"
             attributes:
               $ref: '#/definitions/ExternalFeedAttributesRequest'
             relationships:
@@ -1324,7 +1324,7 @@ definitions:
         properties:
           self:
             type: string
-            example: "https://schul-cloud.org:3000/subscription/8ad5a293-8ed8-45d9-8a20-2e353051af1c"
+            example: "https://schul-cloud.org:3000/subscriptions/8ad5a293-8ed8-45d9-8a20-2e353051af1c"
       data:
         type: array
         items:
@@ -1335,7 +1335,7 @@ definitions:
     properties:
       type:
         type: string
-        example: "subscription"
+        example: "subscriptions"
       id:
         type: string
         example: "8ad5a293-8ed8-45d9-8a20-2e353051af1c"

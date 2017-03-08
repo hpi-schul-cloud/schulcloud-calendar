@@ -25,7 +25,7 @@ const getSubscriptions = require('../services/getSubscriptions');
 
 /* routes */
 
-router.get('/subscription/list', authorize, function (req, res) {
+router.get('/subscriptions', authorize, function (req, res) {
     const token = req.get('Authorization');
     const scopeId = req.get('scope-id');
     const subscriptionId = req.get('subscription-id');
@@ -36,7 +36,7 @@ router.get('/subscription/list', authorize, function (req, res) {
         .catch((error) => { returnError(res, error); });
 });
 
-router.post('/subscription', authorize, jsonApiToJson, function (req, res) {
+router.post('/subscriptions', authorize, jsonApiToJson, function (req, res) {
     // We only allow one subscribtion per request
     const { icsUrl, description, scopeIds, separateUsers } = req.subscription;
     getScopeIdsForSeparateUsers(scopeIds, separateUsers)
@@ -53,12 +53,12 @@ router.post('/subscription', authorize, jsonApiToJson, function (req, res) {
     }
 });
 
-router.put('/subscription/:feedId', authorize, function (req, res) {
+router.put('/subscriptions/:subscriptionId', authorize, function (req, res) {
     // TODO: implement
     returnError(res);
 });
 
-router.delete('/subscription/:feedId', authorize, function (req, res) {
+router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
     // TODO: implement
     returnError(res);
 });
