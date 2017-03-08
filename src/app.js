@@ -11,7 +11,7 @@ const subscription = require('./routes/subscription');
 const share = require('./routes/share');
 const toDos = require('./routes/toDos');
 
-const returnError = require('./routes/utils/returnError');
+const returnError = require('./utils/response/returnError');
 
 const app = express();
 
@@ -43,7 +43,6 @@ app.use(function (err, req, res, next) { // eslint-disable-line no-unused-vars
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // render the error page
     returnError(res, err.message, err.status);
 });
 

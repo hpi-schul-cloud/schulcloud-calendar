@@ -15,12 +15,12 @@ const authorize = require('../infrastructure/authorization');
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
-const returnError = require('./utils/returnError');
-const returnSuccess = require('./utils/returnSuccess');
+const returnError = require('../utils/response/returnError');
+const returnSuccess = require('../utils/response/returnSuccess');
 
 // content
 const insertSubscription = require('../queries/insertSubscription');
-const scopeIdsForSeparateUsers = require('../services/scopes/scopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../services/getScopeIdsForSeparateUsers');
 
 /* routes */
 
@@ -32,11 +32,11 @@ router.get('/subscription/list', authorize, function (req, res) {
 router.post('/subscription', authorize, jsonApiToJson, function (req, res) {
     // We only allow one subscribtion per request
     const { icsUrl, description, scopeIds, separateUsers } = req.subscription;
-    Promise.resolve(scopeIdsForSeparateUsers(scopeIds, separateUsers))
+    getScopeIdsForSeparateUsers(scopeIds, separateUsers)
         .then((scopeIds) => {
             return insertSubscriptions(scopeIds, icsUrl, description);
         })
-        .then((subscriptionIds) => { returnSuccess(res, subscriptionIds); })
+        .then((subscriptionIds) => { returnSuccess(res, 200, subscriptionIds); })
         .catch((error) => returnError(error));
 
     function insertSubscriptions(scopeIds, icsUrl, description) {

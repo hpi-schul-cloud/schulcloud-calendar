@@ -1,5 +1,5 @@
-const getAllScopesForToken = require('../http').getAllScopesForToken;
-const returnError = require('../routes/utils/returnError');
+const getAllScopesForToken = require('../http/getAllScopesForToken');
+const returnError = require('../utils/response/returnError');
 
 
 function authentication(req, res, next) {
@@ -9,7 +9,7 @@ function authentication(req, res, next) {
 
     if (token) {
         req.token = token;
-        Promise.resolve(getAllScopesForToken(token)).then(
+        getAllScopesForToken(token).then(
             function (value) {
                 value = JSON.parse(value);
 

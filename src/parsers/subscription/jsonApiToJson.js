@@ -1,4 +1,4 @@
-const returnError = require('../../routes/utils/returnError');
+const returnError = require('../../utils/response/returnError');
 
 function jsonApiToJson(req, res, next) {
     if (req.body.data.length !== 1) {

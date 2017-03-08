@@ -1,5 +1,5 @@
 const validJson = require('../validators/validateJson');
-const returnError = require('../routes/utils/returnError');
+const returnError = require('../utils/response/returnError');
 const logger = require('../infrastructure/logger');
 
 function jsonApiToJson(req, res, next) {

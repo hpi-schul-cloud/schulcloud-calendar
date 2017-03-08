@@ -21,7 +21,7 @@ app.set('port', port);
  * - print request to console log
  */
 
-const requestHandler = (request, response) => {
+const requestHandler = (request, response) => { // eslint-disable-line no-unused-vars
     logger.log(request.url);
 };
 

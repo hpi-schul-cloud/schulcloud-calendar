@@ -56,7 +56,7 @@ paths:
         required: true
         type: string
     get:
-      summary: Get an ICS feed (* no JSON API returned).
+      summary: Get an ICS feed (*: no JSON API returned and no alarms or exdates joined).
       responses:
         '200':
           description: ICS calendar feed
@@ -111,7 +111,7 @@ paths:
       security:
         - user-token: []
     post:
-      summary: Create new events for a list of UUIDs (* no JSON API returned).
+      summary: Create new events for a list of UUIDs (*: no JSON API returned).
       responses:
         '201':
           description: CreateEventResponse
