@@ -11,7 +11,7 @@ function getRawEvents(filter) {
         const { scopeId, eventId } = filter;
 
         if (!scopeId && !eventId) {
-            reject(new Error('No scopeId or eventId for event selection given'));
+            reject('No scopeId or eventId for event selection given');
         }
 
         const { query, params } = buildQuery(filter);

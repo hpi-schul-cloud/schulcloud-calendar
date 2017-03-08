@@ -21,12 +21,19 @@ const returnSuccess = require('../utils/response/returnSuccess');
 // content
 const insertSubscription = require('../queries/insertSubscription');
 const getScopeIdsForSeparateUsers = require('../services/getScopeIdsForSeparateUsers');
+const getSubscriptions = require('../services/getSubscriptions');
 
 /* routes */
 
 router.get('/subscription/list', authorize, function (req, res) {
-    // TODO: implement
-    returnError(res);
+    const token = req.get('Authorization');
+    const scopeId = req.get('scope-id');
+    const subscriptionId = req.get('subscription-id');
+    const lastUpdateFailed = req.get('last-update-failed');
+    const filter = { scopeId, subscriptionId, lastUpdateFailed };
+    getSubscriptions(filter, token)
+        .then((subscriptions) => { returnSuccess(res, 200, subscriptions); })
+        .catch((error) => { returnError(res, error); });
 });
 
 router.post('/subscription', authorize, jsonApiToJson, function (req, res) {

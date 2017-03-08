@@ -336,7 +336,7 @@ paths:
         in: query
         required: false
         type: string
-      - name: external-feed-id
+      - name: subscription-id
         in: query
         required: false
         type: string
@@ -354,7 +354,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - external-feed
+        - subscription
       security:
         - user-token: []
 
@@ -377,7 +377,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - external-feed
+        - subscription
       security:
         - user-token: []
 
@@ -406,7 +406,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyExternalFeedRequest'
       tags:
-        - external-feed
+        - subscription
       security:
         - user-token: []
     delete:
@@ -419,7 +419,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       tags:
-        - external-feed
+        - subscription
       security:
         - user-token: []
 
@@ -1310,7 +1310,7 @@ definitions:
           properties:
             type:
               type: string
-              example: "external-feed"
+              example: "subscription"
             attributes:
               $ref: '#/definitions/ExternalFeedAttributesRequest'
             relationships:
@@ -1335,7 +1335,7 @@ definitions:
     properties:
       type:
         type: string
-        example: "external-feed"
+        example: "subscription"
       id:
         type: string
         example: "8ad5a293-8ed8-45d9-8a20-2e353051af1c"
