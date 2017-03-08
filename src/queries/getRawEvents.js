@@ -14,9 +14,9 @@ function getRawEvents(filter) {
             reject(new Error('No scopeId or eventId for event selection given'));
         }
 
-        const query = buildQuery(filter);
+        const { query, params } = buildQuery(filter);
 
-        client.query(query, (error, result) => {
+        client.query(query, params, (error, result) => {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
@@ -30,6 +30,7 @@ function getRawEvents(filter) {
 function buildQuery(filter) {
     let { scopeId, eventId, from = FROM, until = UNTIL, all } = filter;
     let query;
+    let params;
 
     // ensure common date format
     from = isoDateFormat(from);
@@ -37,17 +38,21 @@ function buildQuery(filter) {
 
     // filter either by scopeId or eventId
     if (scopeId) {
-        query = `SELECT * FROM events WHERE reference_id = '${scopeId}'`;
+        query = 'SELECT * FROM events WHERE reference_id = $1';
+        params = [ scopeId ];
     } else {
-        query = `SELECT * FROM events WHERE event_id = '${eventId}'`;
+        query = 'SELECT * FROM events WHERE event_id = $1';
+        params = [ eventId ];
     }
 
     // if all is not set, filter by timespan
-    query = all
-        ? query
-        : `${query} AND dtstart > '${from}' AND dtstart < '${until}'`;
+    if (!all) {
+        query = `${query} AND dtstart > $2 AND dtstart < $3`;
+        params = [ ...params, from, until ];
+    }
 
-    return `${query} ORDER BY id ASC;`;
+    query = `${query} ORDER BY id ASC;`;
+    return { query, params };
 }
 
 module.exports = getRawEvents;
