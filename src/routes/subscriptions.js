@@ -21,6 +21,7 @@ const returnSuccess = require('../utils/response/returnSuccess');
 // content
 const getSubscriptions = require('../services/getSubscriptions');
 const storeSubscriptions = require('../services/storeSubscriptions');
+const deleteSubscription = require('../queries/deleteSubscription');
 
 /* routes */
 
@@ -44,14 +45,20 @@ router.post('/subscriptions', authorize, jsonApiToJson, function (req, res) {
         .catch((error) => returnError(error));
 });
 
-router.put('/subscriptions/:subscriptionId', authorize, function (req, res) {
-    // TODO: implement
-    returnError(res);
+router.put('/subscriptions/:subscriptionId', authorize, jsonApiToJson, function (req, res) {
+    const subscriptionId = req.params.subscriptionId;
+    const { subscriptions } = req;
+    deleteSubscription(subscriptionId)
+        .then(() => { return storeSubscriptions(subscriptions); })
+        .then(() => { returnSuccess(res, 204); })
+        .catch((error) => { returnError(res, error); });
 });
 
 router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
-    // TODO: implement
-    returnError(res);
+    const subscriptionId = req.params.subscriptionId;
+    deleteSubscription(subscriptionId)
+        .then(() => { returnSuccess(res, 204); })
+        .catch((error) => { returnError(res, error); });
 });
 
 module.exports = router;
