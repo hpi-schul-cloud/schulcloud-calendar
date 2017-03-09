@@ -18,8 +18,10 @@ const icsToJson = require('../parsers/event/icsToJson');
 // response
 const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
+const returnIcs = require('../utils/response/returnIcs');
 const sendNotification = require('../services/sendNotification');
 const eventsToJsonApi = require('../formatter/eventsToJsonApi');
+const eventsToIcs = require('../formatter/eventsToIcs');
 
 // content
 const getEvents = require('../services/getEvents');
@@ -44,46 +46,68 @@ router.get('/events', authorize, function (req, res) {
 });
 
 router.post('/events', authorize, jsonApiToJson, function (req, res) {
-    insertEvents(req, res);
+    const events = req.events;
+    insertEvents(events)
+        .then(eventsToJsonApi)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+        .catch((error) => { returnError(res, error); });
 });
 
 router.post('/events/ics', authorize, icsToJson, function (req, res) {
-    insertEvents(req, res);
+    const events = req.events;
+    insertEvents(events)
+        .then(eventsToIcs)
+        .then((icsString) => { returnIcs(res, icsString); })
+        .catch((error) => { returnError(res, error); });
 });
 
 // TODO works but there are funny errors, investigate
-function insertEvents(req, res) {
-    const events = req.events;
-    storeEvents(events)
-        .then((result) => {
-            // TODO: return eventId and maybe complete events
-            result.forEach((response) => {
-                const { scopeIds, summary, start, end } = response;
-                sendNotification.forNewEvent(scopeIds, summary, start, end);
-            });
-            returnSuccess(res, 204);
-        })
-        .catch((error) => { returnError(res, error); });
+function insertEvents(events) {
+    return new Promise(function (resolve, reject) {
+        storeEvents(events)
+            .then((result) => {
+                // TODO: return eventId and maybe complete events
+                result.forEach((response) => {
+                    const {reference_id, summary, dtstart, dtend} = response;
+                    sendNotification.forNewEvent(reference_id, summary, dtstart, dtend);
+                });
+                return result;
+            }).then(resolve)
+            .catch(reject);
+    });
 }
 
 router.put('/events/:eventId', authorize, jsonApiToJson, function (req, res) {
-    updateEvents(req, res);
+    const eventId = req.params.eventId;
+    const event = req.events;
+    updateEvents(eventId, event)
+        .then(eventsToJsonApi)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+        .catch((error) => { returnError(res, error); });
 });
 
 router.put('/events/ics/:eventId', authorize, icsToJson, function (req, res) {
-    updateEvents(req, res);
+    const eventId = req.params.eventId;
+    const event = req.events;
+    updateEvents(eventId, event)
+        .then(eventsToIcs)
+        .then((icsString) => { returnIcs(res, icsString); })
+        .catch((error) => { returnError(res, error); });
 });
 
-function updateEvents(req, res) {
-    const eventId = req.params.eventId;
-    deleteEvent(eventId)
-        .then(() => {
-            // TODO validate operation (e.g. don't create event if id couldn't be found, ...)
-            // TODO validate result if at least one row has been deleted...
-            // TODO eventId should not change
-            // TODO notification for changed, not for inserted event
-            insertEvents(req, res); })
-        .catch((error) => { returnError(res, error); });
+function updateEvents(eventId, event) {
+    return new Promise(function (resolve, reject) {
+        deleteEvent(eventId)
+            .then(() => {
+                // TODO validate operation (e.g. don't create event if id couldn't be found, ...)
+                // TODO validate result if at least one row has been deleted...
+                // TODO eventId should not change
+                // TODO notification for changed, not for inserted event
+                return insertEvents(event);
+            })
+            .then(resolve)
+            .catch(reject);
+    });
 }
 
 router.delete('/events/:eventId', authorize, function (req, res) {
