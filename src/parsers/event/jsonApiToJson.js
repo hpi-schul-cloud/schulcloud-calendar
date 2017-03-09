@@ -26,24 +26,28 @@ function jsonApiToJson(req, res, next) {
             }
         }
 
-        eventIncluded.forEach(function (includedObject) {
-            switch (includedObject.type) {
-                case 'rrule':
-                    addRRuleToJson(json, includedObject.attributes);
-                    break;
-                case 'exdate':
-                    addExDateToJson(json, includedObject.attributes);
-                    break;
-                case 'alarm':
-                    addAlarmToJson(json, includedObject.attributes);
-                    break;
-                default:
-                    logger.error('[jsonApiToJson] Got unknown included object.');
-            }
-        });
+        if (eventIncluded) {
+            eventIncluded.forEach(function (includedObject) {
+                switch (includedObject.type) {
+                    case 'rrule':
+                        addRRuleToJson(json, includedObject.attributes);
+                        break;
+                    case 'exdate':
+                        addExDateToJson(json, includedObject.attributes);
+                        break;
+                    case 'alarm':
+                        addAlarmToJson(json, includedObject.attributes);
+                        break;
+                    default:
+                        logger.error('[jsonApiToJson] Got unknown included object.');
+                }
+            });
+        }
 
-        json.separateUsers = eventRelationships['separate-users'];
-        json.scopeIds = eventRelationships['scope-ids'];
+        if (eventRelationships) {
+            json.separateUsers = eventRelationships['separate-users'];
+            json.scopeIds = eventRelationships['scope-ids'];
+        }
 
         events.push(json);
     });

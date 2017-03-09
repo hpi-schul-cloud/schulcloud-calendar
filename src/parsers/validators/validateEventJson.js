@@ -20,13 +20,13 @@ function validateJson(json, scopeIDsRequired = true, onlyOneEvent = false) {
 
     json.every(function (event) {
         // Fields are required by our implementation
-        if (scopeIDsRequired && !event.separateUsers) {
-            error_message = "The attribute 'relationship'.'separate-users' is required for every event.";
+        if (scopeIDsRequired && event.separateUsers === undefined) {
+            error_message = "The attribute 'relationships'.'separate-users' is required for every event.";
             return false;
         }
 
         if (scopeIDsRequired && !(event.scopeIds && Array.isArray(event.scopeIds) && event.scopeIds.length > 0)) {
-            error_message = "The attribute 'relationship'.'scope-ids' must be an array with one or more scope IDs.";
+            error_message = "The attribute 'relationships'.'scope-ids' must be an array with one or more scope IDs.";
             return false;
         }
 
