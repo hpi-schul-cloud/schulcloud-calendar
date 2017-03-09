@@ -1,11 +1,10 @@
 const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
 
-function insertSubscription(params) {
+function deleteSubscription(subscriptionId) {
     return new Promise(function(resolve, reject) {
-        const query = `INSERT INTO feeds (ics_url, description, reference_id)
-            VALUES ($1, $2, $3) RETURNING *`;
-        client.query(query, params, function (error, result) {
+        const query = 'DELETE FROM feeds WHERE id = $1 RETURNING *';
+        client.query(query, [subscriptionId], function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
@@ -16,4 +15,4 @@ function insertSubscription(params) {
     });
 }
 
-module.exports = insertSubscription;
+module.exports = deleteSubscription;

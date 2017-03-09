@@ -1,11 +1,18 @@
 const sendNotification = require('../http/sendNotification');
 
+function _sendNotification(title, body, scopeIds) {
+    if (!(scopeIds instanceof Array)) {
+        scopeIds = [scopeIds];
+    }
+    sendNotification(title, body, scopeIds);
+}
+
 function forNewEvent(scopeIds, summary, start, end) {
-    const title = `Neuer Termin "${summary}"erstellt`;
+    const title = `Neuer Termin "${summary}" erstellt`;
     const body =
         `Es wurde ein neuer Termin für Sie erstellt!\n
         ${summary} von ${start} bis ${end}`;
-    sendNotification(title, body, scopeIds);
+    _sendNotification(title, body, scopeIds);
 }
 
 function forModifiedEvent(scopeIds, summary, start, end) {
@@ -13,7 +20,7 @@ function forModifiedEvent(scopeIds, summary, start, end) {
     const body =
         `Ein Termin wurde verändert!\n
         ${summary} von ${start} bis ${end}`;
-    sendNotification(title, body, scopeIds);
+    _sendNotification(title, body, scopeIds);
 }
 
 function forDeletedEvent(scopeIds, summary, start, end) {
@@ -21,7 +28,38 @@ function forDeletedEvent(scopeIds, summary, start, end) {
     const body =
         `Ein Termin wurde gelöscht!\n
         ${summary} von ${start} bis ${end}`;
-    sendNotification(title, body, scopeIds);
+    _sendNotification(title, body, scopeIds);
 }
 
-module.exports = { forNewEvent, forModifiedEvent, forDeletedEvent };
+function forNewSubscription(scopeId, description, icsUrl) {
+    const title = `Neuer Feed "${description}" abonniert`;
+    const body =
+        `Es wurde ein neuer Feed für Sie abonniert!\n
+        ${description}, ${icsUrl}`;
+    _sendNotification(title, body, scopeId);
+}
+
+function forModifiedSubscription(scopeId, description, icsUrl) {
+    const title = `Das Abonnement des Feeds "${description}" wurde verändert`;
+    const body =
+        `Das Abonnement eines Feeds wurde verändert!\n
+        ${description}, ${icsUrl}`;
+    _sendNotification(title, body, scopeId);
+}
+
+function forDeletedSubscription(scopeId, description, icsUrl) {
+    const title = `Das Abonnement des Feeds "${description}" wurde gelöscht`;
+    const body =
+        `Das Abonnement eines Feeds wurde gelöscht!\n
+        ${description}, ${icsUrl}`;
+    _sendNotification(title, body, scopeId);
+}
+
+module.exports = {
+    forNewEvent,
+    forModifiedEvent,
+    forDeletedEvent,
+    forNewSubscription,
+    forModifiedSubscription,
+    forDeletedSubscription
+};

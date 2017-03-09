@@ -24,4 +24,10 @@ BEGIN
 
   INSERT INTO repetition_exception_dates VALUES
     (uuid_generate_v4(), new_event_id, '2016-11-21 09:00:00.000000');
+
+  INSERT INTO feeds VALUES
+    (uuid_generate_v4(), 'https://calendars.icloud.com/holidays/de_de.ics', 'Public Holidays in Germany',
+        '2017-01-23T10:00:00Z', 200, 'e22753f6-4cb5-4009-a9e0-dbcc3ac0993b'),
+    (uuid_generate_v4(), 'invalid-url', 'Calendar That Cannot be Fetched', '2017-01-23T10:00:00Z', 500,
+        '874a9be4-ea6a-4364-852d-1a46b0d155f3');
 END $$;
