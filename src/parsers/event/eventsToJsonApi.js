@@ -43,12 +43,12 @@ function eventToJsonApi(event) {
                 case 'repeat':
                     rrule[key.split('_')[1]] = event[key];
                     break;
-                case 'alarm':
+                case 'alarms':
                     event[key].forEach(function (alarm) {
                         addAlarmToJsonApi(jsonApiEvent.included, alarm);
                     });
                     break;
-                case 'exdate':
+                case 'exdates':
                     event[key].forEach(function (exdate) {
                         addExDateToJsonApi(jsonApiEvent.included, exdate);
                     });
@@ -103,11 +103,11 @@ function addAlarmToJsonApi(includedArray, alarm) {
 }
 
 function removeEmptyRelationshipAndInclude(jsonApiEvent) {
-    if (Object.keys(jsonApiEvent.relationships === 0)) {
+    if (Object.keys(jsonApiEvent.relationships).length === 0) {
         delete jsonApiEvent.relationships;
     }
 
-    if (jsonApiEvent.included === 0) {
+    if (jsonApiEvent.included.length === 0) {
         delete jsonApiEvent.included;
     }
 }
