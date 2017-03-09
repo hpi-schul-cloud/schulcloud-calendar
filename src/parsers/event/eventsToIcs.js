@@ -18,13 +18,17 @@ function eventsToIcs(events) {
 function eventToIcs(event) {
     let ics = 'BEGIN:VEVENT\n';
     ics += 'UID:' + event.event_id + '@schulcloud.org\n';
+
     if (event.location) {
         ics += 'LOCATION:' + event.location + '\n';
     }
+
     ics += 'SUMMARY:' + event.summary + '\n';
+
     if (event.description) {
         ics += 'DESCRIPTION:' + event.description + '\n';
     }
+
     if (event.repeat_freq) {
         // TODO: Refactor event repetition to add support for other repeat types
         if (event.repeat_byday)
@@ -35,9 +39,19 @@ function eventToIcs(event) {
     ics += 'DTSTART:' + iCalendarDateFormat(event.dtstart) + '\n';
     ics += 'DTEND:' + iCalendarDateFormat(event.dtend) + '\n';
     ics += 'DTSTAMP:' + iCalendarDateFormat(event.dtstamp) + '\n';
-    ics += 'LAST-MODIFIED:' + iCalendarDateFormat(event['last-modified']) + '\n';
-    ics = formatExdates(ics, event.exdates);
-    ics = formatAlarms(ics, event.alarms);
+
+    if (event['last-modified']) {
+        ics += 'LAST-MODIFIED:' + iCalendarDateFormat(event['last-modified']) + '\n';
+    }
+
+    if (event.exdates) {
+        ics = formatExdates(ics, event.exdates);
+    }
+
+    if (event.alarms) {
+        ics = formatAlarms(ics, event.alarms);
+    }
+
     ics += 'END:VEVENT\n';
 
     return ics;

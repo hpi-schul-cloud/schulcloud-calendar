@@ -5,10 +5,15 @@ const returnError = require('../../utils/response/returnError');
 const logger = require('../../infrastructure/logger');
 
 function icsToJson(req, res, next) {
+    if (req.body.ics === undefined) {
+        returnError(res, 'ics attribute missing in JSON', 400, 'Bad Request');
+        return;
+    }
+
     const lines = req.body.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split('\n');
 
     if (!validIcs(lines)) {
-        logger.error('[icsToJson] Invalid ICS file');
+        returnError(res, 'Invalid ICS file', 400, 'Bad Request');
         return;
     }
 
