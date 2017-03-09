@@ -16,6 +16,7 @@ const authorize = require('../infrastructure/authorization');
 // response
 const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
+const returnIcs = require('../utils/response/returnIcs');
 
 // content
 const getScopesForToken = require('../services/getScopesForToken');
@@ -23,7 +24,7 @@ const scopesToCalendarList = require('../parsers/calendar/scopesToCalendarList')
 const getScopeIdsForToken = require('../services/getScopeIdsForToken');
 const getEvents = require('../services/getEvents');
 const flatten = require('../utils/flatten');
-const eventsToJsonApi = require('../parsers/event/eventsToJsonApi');
+const eventsToIcs = require('../parsers/event/eventsToIcs');
 
 /* routes */
 
@@ -39,19 +40,19 @@ router.get('/calendar', authorize, function (req, res) {
     const scopeId = req.query['scope-id'];
     const token = req.get('Authorization');
     getScopeIdsForToken(token, scopeId)
-        .then(getJsonApi)
-        .then((jsonApiString) => { returnSuccess(res, 200, jsonApiString); })
+        .then(getIcs)
+        .then((icsString) => { returnIcs(res, icsString); })
         .catch((error) => { returnError(res, error); });
 });
 
-function getJsonApi(scopeIds) {
+function getIcs(scopeIds) {
     return new Promise((resolve, reject) => {
         Promise.all(scopeIds.map((scopeId) => {
             const filter = { scopeId, all: true };
             return getEvents(filter);
         }))
             .then((events) => {
-                resolve(eventsToJsonApi(flatten(events)));
+                resolve(eventsToIcs(flatten(events)));
             })
             .catch(reject);
     });
