@@ -175,9 +175,9 @@ function lineToJson(line, event) {
         }
             break;
         case 'EXDATE':
-            if (!Array.isArray(event['exdate']))
-                event['exdate'] = [];
-            event['exdate'].push(regularDateFormat(fieldValue));
+            if (!Array.isArray(event['exdates']))
+                event['exdates'] = [];
+            event['exdates'].push(regularDateFormat(fieldValue));
             break;
         default: {
             // temporary for timezone support...
@@ -204,10 +204,10 @@ function lineToJson(line, event) {
                     event['last-modified'] = regularDateFormat(fieldValue);
                     break;
                 case 'EXDATE':
-                    if (!Array.isArray(event['exdate'])) {
-                        event['exdate'] = [];
+                    if (!Array.isArray(event['exdates'])) {
+                        event['exdates'] = [];
                     }
-                    event['exdate'].push(regularDateFormat(fieldValue));
+                    event['exdates'].push(regularDateFormat(fieldValue));
                     break;
                 default:
                     logger.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);

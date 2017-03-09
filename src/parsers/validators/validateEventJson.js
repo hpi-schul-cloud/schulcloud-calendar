@@ -65,14 +65,14 @@ function validateJson(json, scopeIDsRequired = true, onlyOneEvent = false) {
         }
 
         // Optional, but if exdate is set, a RRule is required
-        if (event.exdate) {
-            if (!(Array.isArray(event.exdate) && event.exdate.length > 0)) {
-                error_message = "The attribute 'exdate' must be an array with one or more entries.";
+        if (event.exdates) {
+            if (!(Array.isArray(event.exdates) && event.exdates.length > 0)) {
+                error_message = "The attribute 'exdates' must be an array with one or more entries.";
                 return false;
             }
 
             if (!event.repeat_freq) {
-                error_message = "The attribute 'exdate' requires an 'rrule' with a given 'freq'.";
+                error_message = "The attribute 'exdates' requires an 'rrule' with a given 'freq'.";
                 return false;
             }
         }

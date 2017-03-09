@@ -74,20 +74,20 @@ function addExDateToJson(json, exDateAttributes) {
         return;
     }
 
-    if (!json.hasOwnProperty('exdate')) {
-        json.exdate = [];
+    if (!json.hasOwnProperty('exdates')) {
+        json.exdates = [];
     }
 
-    json.exdate.push(exDateAttributes.timestamp);
+    json.exdates.push(exDateAttributes.timestamp);
 }
 
 
 function addAlarmToJson(json, alarmAttributes) {
-    if (!json.hasOwnProperty('alarm')) {
-        json.alarm = [];
+    if (!json.hasOwnProperty('alarms')) {
+        json.alarms = [];
     }
 
-    json.alarm.push(alarmAttributes);
+    json.alarms.push(alarmAttributes);
 }
 
 module.exports = jsonApiToJson;

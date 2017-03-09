@@ -88,10 +88,10 @@ function insertExdates(event, insertedEvent) {
     return new Promise((resolve, reject) => {
         // check if exception dates for possible repeat exists
         // TODO: if so, check if repeat is set because of consistency reasons...
-        if (!event.exdate) {
+        if (!event.exdates) {
             return resolve(insertedEvent);
         }
-        const exdates = event.exdate;
+        const exdates = event.exdates;
         const uniqueId = insertedEvent.id;
         Promise.all(exdates.map((exdate) => {
             return insertExdate([uniqueId, exdate]);
@@ -104,10 +104,10 @@ function insertExdates(event, insertedEvent) {
 
 function insertAlarms(event, insertedEvent) {
     return new Promise((resolve, reject) => {
-        if (!event.alarm) {
+        if (!event.alarms) {
             return resolve(insertedEvent);
         }
-        const alarms = event.alarm;
+        const alarms = event.alarms;
         const uniqueId = insertedEvent.id;
         Promise.all(alarms.map((alarm) => {
             const params = [
