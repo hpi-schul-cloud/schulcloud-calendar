@@ -56,7 +56,7 @@ paths:
         required: true
         type: string
     get:
-      summary: Get an ICS feed (* no JSON API returned and no alarms or exdates joined).
+      summary: Get an ICS feed (* no JSON API returned).
       responses:
         '200':
           description: ICS calendar feed
@@ -140,7 +140,7 @@ paths:
     put:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
-        service earlier (* does not accept JSON API).
+        service earlier (* no JSON API returned).
       description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details. The data array may contain more than one event but only if the uid is equal for all events (occours if a single event is changed in a series of events).
       responses:
         '200':
@@ -182,7 +182,7 @@ paths:
         - user-token: []
   /events/ics:
     post:
-      summary: Create a new Event for a list of UUIDs where the ics is given (* does not accept JSON API).
+      summary: Create a new Event for a list of UUIDs where the ics is given (* does not accept JSON API, no JSON API returned).
       responses:
         '201':
           description: CreateEventResponse
@@ -211,7 +211,7 @@ paths:
     put:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
-        service earlier. Thereby the ics is transcribed (* does not accept JSON API).
+        service earlier. Thereby the ics is transcribed (* does not accept JSON API, no JSON API returned).
       description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details.The data array may contain more than one event but only if the uid is equal for all events (occours if a single event is changed in a series of events).
       responses:
         '200':
@@ -330,7 +330,7 @@ paths:
 
   '/subscriptions':
     get:
-      summary: Get a list of subscribed feeds for the scopes you have write access to (X).
+      summary: Get a list of subscribed feeds for the scopes you have write access to.
       parameters:
       - name: scope-id
         in: query
@@ -386,8 +386,8 @@ paths:
         required: true
         type: string
     put:
-      summary: Update synchronisation settings for a subscribed feed (X).
-      description: The calendar service will delete the old external feed subscriptions completely. Therefore, you MUST ensure to re-submit the subscriptions with all details.
+      summary: Update synchronisation settings for a subscribed feed.
+      description: The calendar service will delete the old external feed subscription completely. Therefore, you MUST ensure to re-submit the subscription with all details.
       responses:
         '200':
           description: FeedUrlList
@@ -408,7 +408,7 @@ paths:
       security:
         - user-token: []
     delete:
-      summary: Unsubscribe the external feed and stop syncing (X).
+      summary: Unsubscribe the external feed and stop syncing.
       responses:
         '204':
           description: Successful

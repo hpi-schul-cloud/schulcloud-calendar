@@ -55,8 +55,9 @@ function noParamsGiven(filter) {
     const { scopeId, subscriptionId, lastUpdateFailed } = filter;
     return !scopeId
         && !subscriptionId
-        // the check when lastUpdateFailed is false fails intentionally since
-        // we assume that it is not a useful query
+        // Actually we should check for undefined here since lastUpdateFailed
+        // is a boolean. However, we don't assume a query valid where only
+        // lastUpdateFailed is set to false.
         && !lastUpdateFailed;
 }
 
