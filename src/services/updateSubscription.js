@@ -5,14 +5,14 @@ function updateSubscription(subscriptions, subscriptionId) {
     return new Promise((resolve, reject) => {
         // We only allow one subscription (belonging to the given id) to be edited
         if (subscriptions.length !== 1) {
-            reject('Only one subscription allowed in request');
+            reject({error: 'Only one subscription allowed in request'});
         }
         const subscription = subscriptions[0];
         const { icsUrl, description, scopeIds } = subscription;
         // Since per posted scopeId one subscription is returned, given the id
         // the scopeId id needs to be unambiguous
         if (scopeIds.length !== 1) {
-            reject('Only one scopeId allowed in request');
+            reject({error: 'Only one scopeId allowed in request'});
         }
         const scopeId = scopeIds[0];
         deleteSubscription(subscriptionId)
