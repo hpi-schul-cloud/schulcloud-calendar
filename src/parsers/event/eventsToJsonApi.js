@@ -66,7 +66,7 @@ function eventToJsonApi(event) {
         }
     }
 
-    addRRuleToJsonApi(jsonApiEvent.included, rrule);
+    addRRuleToJsonApi(jsonApiEvent.included, rrule, jsonApiEvent.id);
 
     removeEmptyRelationshipAndInclude(jsonApiEvent);
 
@@ -74,13 +74,13 @@ function eventToJsonApi(event) {
 }
 
 
-function addRRuleToJsonApi(includedArray, rrule) {
+function addRRuleToJsonApi(includedArray, rrule, eventID) {
     if (Object.keys(rrule).length === 0) {
         return;
     }
     let rRuleJsonApi = {};
     rRuleJsonApi.type = 'rrule';
-    rRuleJsonApi.id = ''; // TODO: Insert ID
+    rRuleJsonApi.id = `${eventID}-rrule`;
     rRuleJsonApi.attributes = rrule;
     includedArray.push(rRuleJsonApi);
 }
@@ -88,16 +88,17 @@ function addRRuleToJsonApi(includedArray, rrule) {
 function addExDateToJsonApi(includedArray, exdate) {
     let exDateJsonApi = {};
     exDateJsonApi.type = 'exdate';
-    exDateJsonApi.id = ''; // TODO: Insert ID
+    exDateJsonApi.id = exdate.id;
     exDateJsonApi.attributes = {};
-    exDateJsonApi.attributes.timestamp = exdate;
+    exDateJsonApi.attributes.timestamp = exdate.date;
     includedArray.push(exDateJsonApi);
 }
 
 function addAlarmToJsonApi(includedArray, alarm) {
     let alarmJsonApi = {};
     alarmJsonApi.type = 'alarm';
-    alarmJsonApi.id = ''; // TODO: Insert ID
+    alarmJsonApi.id = alarm.id;
+    delete alarm.id;
     alarmJsonApi.attributes = alarm;
     includedArray.push(alarmJsonApi);
 }
