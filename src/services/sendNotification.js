@@ -4,7 +4,6 @@ function _sendNotification(title, body, scopeIds) {
     if (!(scopeIds instanceof Array)) {
         scopeIds = [scopeIds];
     }
-    // TODO return Promise
     sendNotification(title, body, scopeIds);
 }
 

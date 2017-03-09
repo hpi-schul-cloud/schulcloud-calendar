@@ -6,6 +6,15 @@ function sendNotification(title, body, scopeIds) {
         const request = new XMLHttpRequest();
         request.open('POST', config.NOTIFICATION_SERVICE_NEW_NOTIFICATION, true);
         request.setRequestHeader('Content-Type', 'application/json');
+        request.onload = function() {
+            const httpStatus = request.status;
+            if (httpStatus == 201) {
+                resolve();
+            } else {
+                // TODO handle rejection, causes UnhandledPromiseRejection errors
+                resolve(httpStatus);
+            }
+        };
         request.send(JSON.stringify({
             schulcloudId: config.NOTIFICATION_SCHULCLOUD_ID,
             title: title,
@@ -13,16 +22,6 @@ function sendNotification(title, body, scopeIds) {
             token: config.NOTIFICATION_SERVICE_TOKEN,
             scopeIds: scopeIds
         }));
-        request.onload = function() {
-            const httpStatus = request.status;
-            if (httpStatus == 201) {
-                resolve();
-            } else {
-                // TODO handle rejection
-                reject(httpStatus);
-            }
-        };
-        request.send();
     });
 }
 
