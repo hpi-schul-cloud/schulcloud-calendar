@@ -19,6 +19,7 @@ const icsToJson = require('../parsers/event/icsToJson');
 const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
 const sendNotification = require('../services/sendNotification');
+const eventsToJsonApi = require('../formatter/eventsToJsonApi');
 
 // content
 const getEvents = require('../services/getEvents');
@@ -29,15 +30,16 @@ const deleteEvent = require('../queries/deleteEvent');
 
 router.get('/events', authorize, function (req, res) {
     const filter = {
-        scopeId: req.get('scope-id'),
-        eventId: req.get('event-id'),
-        from: req.get('from'),
-        until: req.get('until'),
-        all: req.get('all')
+        scopeId: req.query['scope-id'],
+        eventId: req.query['event-id'],
+        from: req.query['from'],
+        until: req.query['until'],
+        all: req.query['all']
     };
     const token = req.get('Authorization');
     getEvents(filter, token)
-        .then((result) => { returnSuccess(res, 200, result); })
+        .then(eventsToJsonApi)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch((error) => { returnError(res, error); });
 });
 
