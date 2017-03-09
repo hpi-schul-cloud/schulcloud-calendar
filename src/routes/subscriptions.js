@@ -49,10 +49,15 @@ router.post('/subscriptions', authorize, jsonApiToJson, function (req, res) {
 router.put('/subscriptions/:subscriptionId', authorize, jsonApiToJson, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
     // we only allow the subscription belonging to the id to be edited
-    const subscription = req.subscriptions[0];
-    updateSubscription(subscription, subscriptionId)
-        .then(() => { returnSuccess(res, 204); })
-        .catch((error) => { returnError(res, error); });
+    if (req.subscriptions.length !== 1) {
+        const error = 'Only one subscription allowed in request';
+        returnError(res, error);
+    } else {
+        const subscription = req.subscriptions[0];
+        updateSubscription(subscription, subscriptionId)
+            .then(() => { returnSuccess(res, 204); })
+            .catch((error) => { returnError(res, error); });
+    }
 });
 
 router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {

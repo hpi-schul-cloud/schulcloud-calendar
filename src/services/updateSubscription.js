@@ -4,8 +4,10 @@ const deleteSubscription = require('../queries/deleteSubscription');
 function updateSubscription(subscription, subscriptionId) {
     return new Promise((resolve, reject) => {
         const { icsUrl, description, scopeIds } = subscription;
+        // since per posted scopeId one event is returned, given the id the
+        // scopeId id needs to be unambiguous
         if (scopeIds.length !== 1) {
-            reject('ScopeId needs to be unambiguous.');
+            reject('Only one scopeId allowed in request');
         }
         deleteSubscription(subscriptionId)
             .then(() => {
