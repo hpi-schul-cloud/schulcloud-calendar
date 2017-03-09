@@ -1,7 +1,9 @@
+// TODO: Is this file still in use?
+
 const insertEvent = require('./_insertEvent');
 
 function insertEvents(params, referenceIds) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         let promisesForReferenceIds = [];
         for (let i = 0; i < referenceIds.length; i++) {
             const paramsClone = params.slice(0);
@@ -13,7 +15,7 @@ function insertEvents(params, referenceIds) {
             function (results) {
                 resolve(results);
             },
-            function(error) {
+            function (error) {
                 reject(error);
             }
         );
