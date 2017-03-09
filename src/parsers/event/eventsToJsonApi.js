@@ -3,8 +3,9 @@ const logger = require('../../infrastructure/logger');
 
 
 function eventsToJsonApi(eventJson) {
-    if (!validJson(eventJson)) {
-        logger.error('[jsonToJsonApi] Got invalid events JSON!');
+    let validationResult = validJson(eventJson);
+    if (validationResult !== true) {
+        logger.error(`[jsonToJsonApi] Got invalid events JSON: ${validationResult}`);
         return;
     }
 

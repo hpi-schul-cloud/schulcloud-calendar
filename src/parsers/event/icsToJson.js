@@ -57,11 +57,12 @@ function icsToJson(req, res, next) {
         }
     });
 
-    if (validJson(events)) {
+    let validationResult = validJson(events);
+    if (validationResult === true) {
         req.events = events;
         next();
     } else {
-        returnError(res, 'Invalid ICS or missing JSON field!', 400, 'Bad Request');
+        returnError(res, `Invalid ICS or missing JSON field: ${validationResult}`, 400, 'Bad Request');
     }
 }
 

@@ -45,11 +45,12 @@ function jsonApiToJson(req, res, next) {
         events.push(json);
     });
 
-    if (validJson(events)) {
+    let validationResult = validJson(events);
+    if (validationResult === true) {
         req.events = events;
         next();
     } else {
-        returnError(res, 'Invalid JSON API definition!', 400, 'Bad Request');
+        returnError(res, `Invalid JSON API definition: ${validationResult}`, 400, 'Bad Request');
     }
 }
 
