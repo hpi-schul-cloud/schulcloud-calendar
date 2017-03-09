@@ -17,6 +17,7 @@ const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 // response
 const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
+const sendNotification = require('../services/sendNotification');
 
 // content
 const getSubscriptions = require('../services/getSubscriptions');
@@ -41,6 +42,13 @@ router.post('/subscriptions', authorize, jsonApiToJson, function (req, res) {
     const { subscriptions } = req;
     storeSubscriptions(subscriptions)
         .then((insertedSubscriptions) => {
+            insertedSubscriptions.forEach((insertedSubscription) => {
+                sendNotification.forNewSubscription(
+                    insertedSubscription['reference_id'],
+                    insertedSubscription['description'],
+                    insertedSubscription['ics_url']
+                );
+            });
             returnSuccess(res, 200, insertedSubscriptions);
         })
         .catch((error) => returnError(error));
@@ -55,7 +63,15 @@ router.put('/subscriptions/:subscriptionId', authorize, jsonApiToJson, function 
     } else {
         const subscription = req.subscriptions[0];
         updateSubscription(subscription, subscriptionId)
-            .then(() => { returnSuccess(res, 204); })
+            .then((insertedSubscription) => {
+                // TODO differentiate whether modified or created
+                sendNotification.forModifiedSubscription(
+                    insertedSubscription['reference_id'],
+                    insertedSubscription['description'],
+                    insertedSubscription['ics_url']
+                );
+                returnSuccess(res, 204);
+            })
             .catch((error) => { returnError(res, error); });
     }
 });
@@ -63,7 +79,16 @@ router.put('/subscriptions/:subscriptionId', authorize, jsonApiToJson, function 
 router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
     deleteSubscription(subscriptionId)
-        .then(() => { returnSuccess(res, 204); })
+        .then((deletedSubscription) => {
+            if (deletedSubscription) {
+                sendNotification.forDeletedSubscription(
+                    deletedSubscription['reference_id'],
+                    deletedSubscription['description'],
+                    deletedSubscription['ics_url']
+                );
+            }
+            returnSuccess(res, 204);
+        })
         .catch((error) => { returnError(res, error); });
 });
 

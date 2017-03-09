@@ -5,7 +5,7 @@ const errorMessage = require('./utils/errorMessage');
 function udpdateSubscription(params) {
     return new Promise(function(resolve, reject) {
         const query = `INSERT INTO feeds (id, ics_url, description, reference_id)
-            VALUES ($1, $2, $3, $4)`;
+            VALUES ($1, $2, $3, $4) RETURNING *`;
         client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);

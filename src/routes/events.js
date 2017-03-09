@@ -79,6 +79,7 @@ function updateEvents(req, res) {
             // TODO validate operation (e.g. don't create event if id couldn't be found, ...)
             // TODO validate result if at least one row has been deleted...
             // TODO eventId should not change
+            // TODO notification for changed, not for inserted event
             insertEvents(req, res); })
         .catch((error) => { returnError(res, error); });
 }
