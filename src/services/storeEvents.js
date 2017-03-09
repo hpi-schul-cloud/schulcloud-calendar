@@ -4,6 +4,7 @@ const insertRawEvent = require('../queries/insertRawEvent');
 const insertExdate = require('../queries/insertExdate');
 const insertAlarm = require('../queries/insertAlarm');
 const insertOriginalScopeId = require('../queries/insertOriginalScopeId');
+const flatten = require('../utils/flatten');
 
 function storeEvents(events) {
     return new Promise((resolve, reject) => {
@@ -17,14 +18,14 @@ function storeEvents(events) {
 
         Promise.all(events.map((event) => {
             return storeEvent(event, externalEventIds[event.uid]);
-        })).then(resolve).catch(reject);
+        })).then((events) => resolve(flatten(events))).catch(reject);
 
     });
 }
 
 function storeEvent(event, externalEventId) {
     return new Promise((resolve, reject) => {
-        const { separateUsers, scopeIds } = event;
+        const {separateUsers, scopeIds} = event;
         getScopeIdsForSeparateUsers(scopeIds, separateUsers)
             .then((allScopeIds) => {
                 return storeEventForScopes(event, allScopeIds, externalEventId);
@@ -72,14 +73,14 @@ function storeEventPerScope(event, scopeId, externalEventId) {
             externalEventId
         ];
         insertRawEvent(params)
-                .then((insertedEvent) => {
-                    return insertExdates(event, insertedEvent);
-                })
-                .then((insertedEvent) => {
-                    return insertAlarms(event, insertedEvent);
-                })
-                .then(resolve)
-                .catch(reject);
+            .then((insertedEvent) => {
+                return insertExdates(event, insertedEvent);
+            })
+            .then((insertedEvent) => {
+                return insertAlarms(event, insertedEvent);
+            })
+            .then(resolve)
+            .catch(reject);
     });
 }
 
@@ -93,8 +94,11 @@ function insertExdates(event, insertedEvent) {
         const exdates = event.exdate;
         const uniqueId = insertedEvent.id;
         Promise.all(exdates.map((exdate) => {
-            return insertExdate([ uniqueId, exdate ]);
-        })).then(() => { resolve(insertedEvent); }).catch(reject);
+            return insertExdate([uniqueId, exdate]);
+        })).then((insertedExdates) => {
+            insertedEvent.exdates = insertedExdates;
+            resolve(insertedEvent);
+        }).catch(reject);
     });
 }
 
@@ -118,7 +122,10 @@ function insertAlarms(event, insertedEvent) {
                 alarm['summary'],
             ];
             return insertAlarm(params);
-        })).then(() => { resolve(insertedEvent); }).catch(reject);
+        })).then((insertedAlarms) => {
+            insertedEvent.alarms = insertedAlarms;
+            resolve(insertedEvent);
+        }).catch(reject);
     });
 }
 
