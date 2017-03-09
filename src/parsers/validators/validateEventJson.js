@@ -5,7 +5,7 @@ const weekday_regex = new RegExp(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SO'].join
 const alarm_action_regex = new RegExp(['DISPLAY', 'AUDIO', 'EMAIL'].join('|'));
 
 
-function validateJson(json) {
+function validateJson(json, scopeIDsRequired = true, onlyOneEvent = false) {
     let error_message = null;
 
     if (!Array.isArray(json)) {
@@ -13,14 +13,19 @@ function validateJson(json) {
         return false;
     }
 
+    if (onlyOneEvent && json.length !== 1) {
+        error_message = "Only one event is allowed.";
+        return false;
+    }
+
     json.every(function (event) {
         // Fields are required by our implementation
-        if (!event.separateUsers) {
+        if (scopeIDsRequired && !event.separateUsers) {
             error_message = "The attribute 'relationship'.'separate-users' is required for every event.";
             return false;
         }
 
-        if (!(event.scopeIds && Array.isArray(event.scopeIds) && event.scopeIds.length > 0)) {
+        if (scopeIDsRequired && !(event.scopeIds && Array.isArray(event.scopeIds) && event.scopeIds.length > 0)) {
             error_message = "The attribute 'relationship'.'scope-ids' must be an array with one or more scope IDs.";
             return false;
         }
@@ -31,7 +36,7 @@ function validateJson(json) {
             return false;
         }
 
-        if (!event.uid) {
+        if (!event.id) {
             error_message = "The attribute 'uid' is required.";
             return false;
         }

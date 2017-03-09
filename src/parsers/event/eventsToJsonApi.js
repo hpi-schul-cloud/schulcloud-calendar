@@ -1,9 +1,9 @@
 const validJson = require('../validators/validateEventJson');
 const logger = require('../../infrastructure/logger');
-
+const removeNullValues = require('../../utils/removeNullValues');
 
 function eventsToJsonApi(eventJson) {
-    let validationResult = validJson(eventJson);
+    let validationResult = validJson(eventJson, false);
     if (validationResult !== true) {
         logger.error(`[jsonToJsonApi] Got invalid events JSON: ${validationResult}`);
         return;
@@ -23,15 +23,16 @@ function eventsToJsonApi(eventJson) {
 }
 
 function eventToJsonApi(event) {
+    removeNullValues(event);
     const jsonApiEvent = {};
     jsonApiEvent.type = 'event';
-    jsonApiEvent.id = ''; // TODO: Insert ID
+    jsonApiEvent.id = event.id;
     jsonApiEvent.attributes = {};
     jsonApiEvent.relationships = {};
     jsonApiEvent.included = [];
     let rrule = {};
 
-    // Rename event_id and delete both, id and event_di from object
+    // Rename event_id and delete both, id and event_id from object
     event.uid = event.event_id;
     delete event.event_id;
     delete event.id;
@@ -67,11 +68,16 @@ function eventToJsonApi(event) {
 
     addRRuleToJsonApi(jsonApiEvent.included, rrule);
 
+    removeEmptyRelationshipAndInclude(jsonApiEvent);
+
     return jsonApiEvent;
 }
 
 
 function addRRuleToJsonApi(includedArray, rrule) {
+    if (Object.keys(rrule).length === 0) {
+        return;
+    }
     let rRuleJsonApi = {};
     rRuleJsonApi.type = 'rrule';
     rRuleJsonApi.id = ''; // TODO: Insert ID
@@ -94,6 +100,16 @@ function addAlarmToJsonApi(includedArray, alarm) {
     alarmJsonApi.id = ''; // TODO: Insert ID
     alarmJsonApi.attributes = alarm;
     includedArray.push(alarmJsonApi);
+}
+
+function removeEmptyRelationshipAndInclude(jsonApiEvent) {
+    if (Object.keys(jsonApiEvent.relationships === 0)) {
+        delete jsonApiEvent.relationships;
+    }
+
+    if (jsonApiEvent.included === 0) {
+        delete jsonApiEvent.included;
+    }
 }
 
 module.exports = eventsToJsonApi;

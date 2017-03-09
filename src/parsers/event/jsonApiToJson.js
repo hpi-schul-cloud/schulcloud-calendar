@@ -17,6 +17,9 @@ function jsonApiToJson(req, res, next) {
 
         let json = {};
 
+        json.id = eventAttributes.uid;
+        delete eventAttributes.uid;
+
         for (let key in eventAttributes) {
             if (eventAttributes.hasOwnProperty(key)) {
                 json[key] = eventAttributes[key];
@@ -45,7 +48,7 @@ function jsonApiToJson(req, res, next) {
         events.push(json);
     });
 
-    let validationResult = validJson(events);
+    let validationResult = validJson(events, true, req.method === 'PUT');
     if (validationResult === true) {
         req.events = events;
         next();
