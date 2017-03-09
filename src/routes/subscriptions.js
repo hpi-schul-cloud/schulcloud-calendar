@@ -58,16 +58,17 @@ router.put('/subscriptions/:subscriptionId', authorize, jsonApiToJson, function 
     const subscriptionId = req.params.subscriptionId;
     const subscriptions = req.subscriptions;
     updateSubscription(subscriptions, subscriptionId)
-        .then((insertedSubscription) => {
-            // TODO differentiate whether modified or created
+        .then((updatedSubscription) => {
             sendNotification.forModifiedSubscription(
-                insertedSubscription['reference_id'],
-                insertedSubscription['description'],
-                insertedSubscription['ics_url']
+                updatedSubscription['reference_id'],
+                updatedSubscription['description'],
+                updatedSubscription['ics_url']
             );
             returnSuccess(res, 204);
         })
-        .catch((error) => { returnError(res, error); });
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
 router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
@@ -80,8 +81,13 @@ router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
                     deletedSubscription['description'],
                     deletedSubscription['ics_url']
                 );
+                returnSuccess(res, 204);
+            } else {
+                const error = 'Given subscriptionId not found';
+                const status = 404;
+                const title = 'Query Error';
+                returnError(res, error, status, title);
             }
-            returnSuccess(res, 204);
         })
         .catch((error) => { returnError(res, error); });
 });

@@ -16,9 +16,16 @@ function updateSubscription(subscriptions, subscriptionId) {
         }
         const scopeId = scopeIds[0];
         deleteSubscription(subscriptionId)
-            .then(() => {
-                const params = [subscriptionId, icsUrl, description, scopeId];
-                return updateSubscriptionInDb(params);
+            .then((deletedSubscription) => {
+                if (deletedSubscription) {
+                    const params = [subscriptionId, icsUrl, description, scopeId];
+                    return updateSubscriptionInDb(params);
+                } else {
+                    const error = 'Given subscriptionId not found';
+                    const status = 404;
+                    const title = 'Query Error';
+                    reject({error, status, title});
+                }
             })
             .then(resolve)
             .catch(reject);
