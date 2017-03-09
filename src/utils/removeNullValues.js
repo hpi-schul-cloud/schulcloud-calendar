@@ -12,7 +12,7 @@ function removeNullValues(json) {
             removeNullValues(value);
         } else if (Array.isArray(value)) {
             value.forEach(function (k) {
-                removeNullValues(value[k]);
+                removeNullValues(k);
             });
         }
     });
