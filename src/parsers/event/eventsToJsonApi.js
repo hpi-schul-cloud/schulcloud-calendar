@@ -21,12 +21,14 @@ function eventsToJsonApi(eventJson) {
 }
 
 function eventToJsonApi(event) {
-    const jsonApiEvent = {};
-    jsonApiEvent.type = 'event';
-    jsonApiEvent.id = event.id;
-    jsonApiEvent.attributes = {};
-    jsonApiEvent.relationships = {};
-    jsonApiEvent.included = [];
+    const jsonApiEvent = {
+        type: 'event',
+        id: event.id,
+        attributes: {},
+        relationships: {},
+        included: [],
+    };
+
     let rrule = {};
 
     // Rename event_id and delete both, id and event_id from object
