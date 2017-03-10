@@ -61,11 +61,15 @@ function validAccess(req) {
         return hasPermission(user, 'can-read', req.query['scope-id']);
     } else {
         let valid = true;
-        // TODO not all requests have events! We need something like a switch here,
-        // the if clause only is a quick fix
         if (req.events) {
-            req.events.forEach(function(event) {
-                event.scopeIds.forEach(function(scopeId) {
+            req.events.forEach(function (event) {
+                event.scopeIds.forEach(function (scopeId) {
+                    valid &= hasPermission(user, 'can-write', scopeId);
+                });
+            });
+        } else if (req.subscriptions) {
+            req.subscriptions.forEach(function (subscription) {
+                subscription.scopeIds.forEach(function (scopeId) {
                     valid &= hasPermission(user, 'can-write', scopeId);
                 });
             });
