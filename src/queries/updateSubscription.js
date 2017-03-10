@@ -4,7 +4,7 @@ const errorMessage = require('./utils/errorMessage');
 // NOTE: delete needs to be called before, otherwise the id won't be unique anymore
 function udpdateSubscription(params) {
     return new Promise(function(resolve, reject) {
-        const query = `INSERT INTO feeds (id, ics_url, description, reference_id)
+        const query = `INSERT INTO subscriptions (id, ics_url, description, scope_id)
             VALUES ($1, $2, $3, $4) RETURNING *`;
         client.query(query, params, function (error, result) {
             if (error) {

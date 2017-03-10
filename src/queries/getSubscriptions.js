@@ -20,12 +20,12 @@ function getSubscriptions(filter) {
 
 function buildQuery(filter) {
     const { scopeId, subscriptionId, lastUpdateFailed } = filter;
-    let query = 'SELECT * FROM feeds WHERE';
+    let query = 'SELECT * FROM subscriptions WHERE';
     let params = [];
     let paramCount = 1;
 
     if (scopeId) {
-        query = `${query} reference_id = $${paramCount}`;
+        query = `${query} scope_id = $${paramCount}`;
         params = [ ...params, scopeId ];
         paramCount += 1;
     }

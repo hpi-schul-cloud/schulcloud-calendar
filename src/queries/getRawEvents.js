@@ -38,7 +38,7 @@ function buildQuery(filter) {
 
     // filter either by scopeId or eventId
     if (scopeId) {
-        query = 'SELECT * FROM events WHERE reference_id = $1';
+        query = 'SELECT * FROM events WHERE scope_id = $1';
         params = [ scopeId ];
     } else {
         query = 'SELECT * FROM events WHERE event_id = $1';
