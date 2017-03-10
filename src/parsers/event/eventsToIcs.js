@@ -16,7 +16,6 @@ function eventsToIcs(events) {
     return ics += 'END:VCALENDAR\n';
 }
 
-// TODO REFACTOR TO PARSE ALARMS AND EXDATES HERE!!!
 function eventToIcs(event) {
     let ics = 'BEGIN:VEVENT\n';
     ics += 'UID:' + event.event_id + `@${config.DOMAIN_NAME}\n`;

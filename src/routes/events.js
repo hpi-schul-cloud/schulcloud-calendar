@@ -61,7 +61,6 @@ router.post('/events/ics', icsToJson, authorize, function (req, res) {
         .catch((error) => { returnError(res, error); });
 });
 
-// TODO works but there are funny errors, investigate
 function insertEvents(events) {
     return new Promise(function (resolve, reject) {
         storeEvents(events)
@@ -112,7 +111,6 @@ function updateEvents(eventId, event) {
 }
 
 router.delete('/events/:eventId', authorize, function (req, res) {
-    // TODO works but there are funny errors, investigate
     // TODO delete only for scopeIds and check for permission to delete for that scopeIds
     const eventId = req.params.eventId;
     const scopeIds = req.body.scopeIds;
