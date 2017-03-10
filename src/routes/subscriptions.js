@@ -72,7 +72,7 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authorize, function 
                 updatedSubscription['description'],
                 updatedSubscription['ics_url']
             );
-            return updatedSubscription;
+            return [updatedSubscription];
         })
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
