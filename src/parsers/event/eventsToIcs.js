@@ -1,3 +1,5 @@
+const config = require('./../config');
+
 const iCalendarDateFormat = (date) => {
     return date.toISOString().replace(/([:-]|(\..{3}))/g, '');
 };
@@ -5,7 +7,7 @@ const iCalendarDateFormat = (date) => {
 function eventsToIcs(events) {
     let ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
-    ics += 'PRODID:https://schulcloud.org:3000/calendar/\n';
+    ics += `PRODID:${config.ROOT_URL}/calendar/\n`;
 
     events.map(function (event) {
         ics += eventToIcs(event);
@@ -17,7 +19,7 @@ function eventsToIcs(events) {
 // TODO REFACTOR TO PARSE ALARMS AND EXDATES HERE!!!
 function eventToIcs(event) {
     let ics = 'BEGIN:VEVENT\n';
-    ics += 'UID:' + event.event_id + '@schulcloud.org\n';
+    ics += 'UID:' + event.event_id + `@${config.DOMAIN_NAME}\n`;
 
     if (event.location) {
         ics += 'LOCATION:' + event.location + '\n';

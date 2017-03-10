@@ -1,3 +1,4 @@
+const config = require('./../config');
 const validJson = require('../validators/validateEventJson');
 const logger = require('../../infrastructure/logger');
 const removeNullValues = require('../../utils/removeNullValues');
@@ -10,13 +11,9 @@ function eventsToJsonApi(eventJson) {
     }
 
     return {
-        // TODO: Handle pagination
+        // Enhancement: Handle pagination
         links: {
-            self: 'https://schul-cloud.org:3000/events',
-            next: '',
-            prev: '',
-            first: '',
-            last: ''
+            self: `${config.ROOT_URL}/events`
         },
         data: eventJson.map(eventToJsonApi)
     };
