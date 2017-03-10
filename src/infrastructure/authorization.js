@@ -60,22 +60,23 @@ function validAccess(req) {
     if (req.method === 'GET') {
         return hasPermission(user, 'can-read', req.query['scope-id']);
     } else {
-        let valid = true;
         if (req.events) {
-            req.events.forEach(function (event) {
-                event.scope_ids.forEach(function (scopeId) {
-                    valid &= hasPermission(user, 'can-write', scopeId);
-                });
-            });
+            return hasPermissionForAll(user, req.events)
         } else if (req.subscriptions) {
-            req.subscriptions.forEach(function (subscription) {
-                subscription.scope_ids.forEach(function (scopeId) {
-                    valid &= hasPermission(user, 'can-write', scopeId);
-                });
-            });
+            return hasPermissionForAll(user, req.subscriptions);
         }
-        return valid;
+        return true;
     }
+}
+
+function hasPermissionForAll(user, container) {
+    let valid = true;
+    container.forEach(function (subscription) {
+        subscription.scope_ids.forEach(function (scopeId) {
+            valid &= hasPermission(user, 'can-write', scopeId);
+        });
+    });
+    return valid;
 }
 
 function hasPermission(user, permission, scopeId) {
