@@ -38,8 +38,8 @@ function icsToJson(req, res, next) {
                     break;
                 case 'BEGIN:VEVENT':
                     parsedEvent = {};
-                    parsedEvent.scopeIds = event.relationships['scope-ids'];
-                    parsedEvent.separateUsers = event.relationships['separate-users'];
+                    parsedEvent.scope_ids = event.relationships['scope-ids'];
+                    parsedEvent.separate_users = event.relationships['separate-users'];
                     break;
                 case 'END:VEVENT':
                     if (!isParsingAlarm) {

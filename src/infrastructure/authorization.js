@@ -63,13 +63,13 @@ function validAccess(req) {
         let valid = true;
         if (req.events) {
             req.events.forEach(function (event) {
-                event.scopeIds.forEach(function (scopeId) {
+                event.scope_ids.forEach(function (scopeId) {
                     valid &= hasPermission(user, 'can-write', scopeId);
                 });
             });
         } else if (req.subscriptions) {
             req.subscriptions.forEach(function (subscription) {
-                subscription.scopeIds.forEach(function (scopeId) {
+                subscription.scope_ids.forEach(function (scopeId) {
                     valid &= hasPermission(user, 'can-write', scopeId);
                 });
             });

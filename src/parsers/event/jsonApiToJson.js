@@ -46,8 +46,8 @@ function jsonApiToJson(req, res, next) {
         }
 
         if (eventRelationships) {
-            json.separateUsers = eventRelationships['separate-users'];
-            json.scopeIds = eventRelationships['scope-ids'];
+            json.separate_users = eventRelationships['separate-users'];
+            json.scope_ids = eventRelationships['scope-ids'];
         }
 
         events.push(json);

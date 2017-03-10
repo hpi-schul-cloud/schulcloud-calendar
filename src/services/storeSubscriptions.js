@@ -14,17 +14,17 @@ function storeSubscriptions(subscriptions) {
 
 function storeSubscription(subscription) {
     return new Promise((resolve, reject) => {
-        const { icsUrl, description, scopeIds, separateUsers } = subscription;
-        getScopeIdsForSeparateUsers(scopeIds, separateUsers)
+        const { ics_url, description, scope_ids, separate_users } = subscription;
+        getScopeIdsForSeparateUsers(scope_ids, separate_users)
             .then((scopeIds) => {
-                return insertSubscriptions(scopeIds, icsUrl, description);
+                return insertSubscriptions(scopeIds, ics_url, description);
             })
             .then(resolve)
             .catch(reject);
 
-        function insertSubscriptions(scopeIds, icsUrl, description) {
-            return Promise.all(scopeIds.map((scopeId) => {
-                return insertSubscription([icsUrl, description, scopeId]);
+        function insertSubscriptions(scope_ids, ics_url, description) {
+            return Promise.all(scope_ids.map((scopeId) => {
+                return insertSubscription([ics_url, description, scopeId]);
             }));
         }
     });

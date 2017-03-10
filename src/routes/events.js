@@ -93,7 +93,7 @@ router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
 router.delete('/events/:eventId', authorize, function (req, res) {
     const eventId = req.params.eventId;
     // TODO delete only for scopeIds and check for alarms and exdates
-    const scopeIds = req.body.scopeIds;
+    const scopeIds = req.body.scope_ids;
     deleteEvent(eventId)
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {

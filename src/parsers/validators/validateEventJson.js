@@ -17,12 +17,12 @@ function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
 
     json.every((event) => {
         // Fields are required by our implementation
-        if (isIncoming && event.separateUsers === undefined) {
+        if (isIncoming && event.separate_users === undefined) {
             errorMessage = "The attribute 'relationships'.'separate-users' is required for every event.";
             return false;
         }
 
-        if (isIncoming && !(event.scopeIds && Array.isArray(event.scopeIds) && event.scopeIds.length > 0)) {
+        if (isIncoming && !(event.scope_ids && Array.isArray(event.scope_ids) && event.scope_ids.length > 0)) {
             errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with one or more scope IDs.";
             return false;
         }
