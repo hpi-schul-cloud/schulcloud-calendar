@@ -49,8 +49,13 @@ paths:
     parameters:
       - name: scope-id
         in: query
+        required: false
+        type: string
+      - name: authorization
+        in: query
         required: true
         type: string
+        description: Pass the user's token to authenticate
     get:
       summary: Get an ICS feed (* no JSON API returned).
       responses:
@@ -64,8 +69,6 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - calendar
-      security:
-        - user-token: []
 
   /events:
     get:
