@@ -1,7 +1,9 @@
+const config = require('../../config');
+
 function formatCalendarList(scopes) {
     return {
         links: {
-            self: 'https://schul-cloud.org:3000/calendar/list'
+            self: `${config.ROOT_URL}/calendar/list`
         },
         data: scopes.map(scopeToJsonApi)
     };
@@ -13,7 +15,7 @@ function scopeToJsonApi(scope) {
         id: scope.id,
         attributes: {
             name: scope.name,
-            'ics-url': `https://schul-cloud.org:3000/calendar/${scope.id}`
+            'ics-url': `${config.ROOT_URL}/calendar/${scope.id}`
         }
     };
 }

@@ -1,3 +1,5 @@
+const config = require('../../config');
+
 const iCalendarDateFormat = (date) => {
     return date.toISOString().replace(/([:-]|(\..{3}))/g, '');
 };
@@ -5,7 +7,7 @@ const iCalendarDateFormat = (date) => {
 function eventsToIcs(events) {
     let ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
-    ics += 'PRODID:https://schulcloud.org:3000/calendar/\n';
+    ics += `PRODID:${config.ROOT_URL}/calendar/\n`;
 
     events.map(function (event) {
         ics += eventToIcs(event);
@@ -17,14 +19,18 @@ function eventsToIcs(events) {
 // TODO REFACTOR TO PARSE ALARMS AND EXDATES HERE!!!
 function eventToIcs(event) {
     let ics = 'BEGIN:VEVENT\n';
-    ics += 'UID:' + event.event_id + '@schulcloud.org\n';
+    ics += 'UID:' + event.event_id + `@${config.DOMAIN_NAME}\n`;
+
     if (event.location) {
         ics += 'LOCATION:' + event.location + '\n';
     }
+
     ics += 'SUMMARY:' + event.summary + '\n';
+
     if (event.description) {
         ics += 'DESCRIPTION:' + event.description + '\n';
     }
+
     if (event.repeat_freq) {
         // TODO: Refactor event repetition to add support for other repeat types
         if (event.repeat_byday)
@@ -35,9 +41,19 @@ function eventToIcs(event) {
     ics += 'DTSTART:' + iCalendarDateFormat(event.dtstart) + '\n';
     ics += 'DTEND:' + iCalendarDateFormat(event.dtend) + '\n';
     ics += 'DTSTAMP:' + iCalendarDateFormat(event.dtstamp) + '\n';
-    ics += 'LAST-MODIFIED:' + iCalendarDateFormat(event['last-modified']) + '\n';
-    ics = formatExdates(ics, event.exdates);
-    ics = formatAlarms(ics, event.alarms);
+
+    if (event['last-modified']) {
+        ics += 'LAST-MODIFIED:' + iCalendarDateFormat(event['last-modified']) + '\n';
+    }
+
+    if (event.exdates) {
+        ics = formatExdates(ics, event.exdates);
+    }
+
+    if (event.alarms) {
+        ics = formatAlarms(ics, event.alarms);
+    }
+
     ics += 'END:VEVENT\n';
 
     return ics;

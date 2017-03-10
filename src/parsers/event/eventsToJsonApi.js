@@ -1,21 +1,20 @@
+const config = require('../../config');
 const validJson = require('../validators/validateEventJson');
 const logger = require('../../infrastructure/logger');
-
+const removeNullValues = require('../../utils/removeNullValues');
 
 function eventsToJsonApi(eventJson) {
-    if (!validJson(eventJson)) {
-        logger.error('[jsonToJsonApi] Got invalid events JSON!');
+    eventJson = removeNullValues(eventJson);
+    let validationResult = validJson(eventJson, false);
+    if (validationResult !== true) {
+        logger.error(`[jsonToJsonApi] Got invalid events JSON: ${validationResult}`);
         return;
     }
 
     return {
-        // TODO: Handle pagination
+        // Enhancement: Handle pagination
         links: {
-            self: 'https://schul-cloud.org:3000/events',
-            next: '',
-            prev: '',
-            first: '',
-            last: ''
+            self: `${config.ROOT_URL}/events`
         },
         data: eventJson.map(eventToJsonApi)
     };
@@ -24,13 +23,13 @@ function eventsToJsonApi(eventJson) {
 function eventToJsonApi(event) {
     const jsonApiEvent = {};
     jsonApiEvent.type = 'event';
-    jsonApiEvent.id = ''; // TODO: Insert ID
+    jsonApiEvent.id = event.id;
     jsonApiEvent.attributes = {};
     jsonApiEvent.relationships = {};
     jsonApiEvent.included = [];
     let rrule = {};
 
-    // Rename event_id and delete both, id and event_di from object
+    // Rename event_id and delete both, id and event_id from object
     event.uid = event.event_id;
     delete event.event_id;
     delete event.id;
@@ -41,12 +40,12 @@ function eventToJsonApi(event) {
                 case 'repeat':
                     rrule[key.split('_')[1]] = event[key];
                     break;
-                case 'alarm':
+                case 'alarms':
                     event[key].forEach(function (alarm) {
                         addAlarmToJsonApi(jsonApiEvent.included, alarm);
                     });
                     break;
-                case 'exdate':
+                case 'exdates':
                     event[key].forEach(function (exdate) {
                         addExDateToJsonApi(jsonApiEvent.included, exdate);
                     });
@@ -64,16 +63,21 @@ function eventToJsonApi(event) {
         }
     }
 
-    addRRuleToJsonApi(jsonApiEvent.included, rrule);
+    addRRuleToJsonApi(jsonApiEvent.included, rrule, jsonApiEvent.id);
+
+    removeEmptyRelationshipAndInclude(jsonApiEvent);
 
     return jsonApiEvent;
 }
 
 
-function addRRuleToJsonApi(includedArray, rrule) {
+function addRRuleToJsonApi(includedArray, rrule, eventId) {
+    if (Object.keys(rrule).length === 0) {
+        return;
+    }
     let rRuleJsonApi = {};
     rRuleJsonApi.type = 'rrule';
-    rRuleJsonApi.id = ''; // TODO: Insert ID
+    rRuleJsonApi.id = `${eventId}-rrule`;
     rRuleJsonApi.attributes = rrule;
     includedArray.push(rRuleJsonApi);
 }
@@ -81,18 +85,29 @@ function addRRuleToJsonApi(includedArray, rrule) {
 function addExDateToJsonApi(includedArray, exdate) {
     let exDateJsonApi = {};
     exDateJsonApi.type = 'exdate';
-    exDateJsonApi.id = ''; // TODO: Insert ID
+    exDateJsonApi.id = exdate.id;
     exDateJsonApi.attributes = {};
-    exDateJsonApi.attributes.timestamp = exdate;
+    exDateJsonApi.attributes.timestamp = exdate.date;
     includedArray.push(exDateJsonApi);
 }
 
 function addAlarmToJsonApi(includedArray, alarm) {
     let alarmJsonApi = {};
     alarmJsonApi.type = 'alarm';
-    alarmJsonApi.id = ''; // TODO: Insert ID
+    alarmJsonApi.id = alarm.id;
+    delete alarm.id;
     alarmJsonApi.attributes = alarm;
     includedArray.push(alarmJsonApi);
+}
+
+function removeEmptyRelationshipAndInclude(jsonApiEvent) {
+    if (Object.keys(jsonApiEvent.relationships).length === 0) {
+        delete jsonApiEvent.relationships;
+    }
+
+    if (jsonApiEvent.included.length === 0) {
+        delete jsonApiEvent.included;
+    }
 }
 
 module.exports = eventsToJsonApi;

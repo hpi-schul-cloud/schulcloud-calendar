@@ -5,63 +5,77 @@ const returnError = require('../../utils/response/returnError');
 const logger = require('../../infrastructure/logger');
 
 function icsToJson(req, res, next) {
-    const lines = req.body.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split('\n');
+    const jsonApiData = req.body.data;
+    const events = [];
 
-    if (!validIcs(lines)) {
-        logger.error('[icsToJson] Invalid ICS file');
-        return;
-    }
-
-    let events = [];
-    let event = {};
-
-    let alarm = {};
-    let parseAlarm = false;
-
-    lines.forEach(function(line) {
-        switch (line) {
-            case 'BEGIN:VCALENDAR':
-                break;
-            case 'END:VCALENDAR':
-                break;
-            case 'BEGIN:VEVENT':
-                event = {};
-                event.scopeIds = req.body.scopeIds;
-                event.separateUsers = req.body.separateUsers;
-                break;
-            case 'END:VEVENT':
-                if (!parseAlarm) {
-                    events.push(event);
-                } else {
-                    logger.error('[icsToJson] Created invalid JSON, are all required fields present?');
-                }
-                break;
-            case 'BEGIN:VALARM':
-                alarm = {};
-                parseAlarm = true;
-                break;
-            case 'END:VALARM':
-                parseAlarm = false;
-                if (event['alarms'] === undefined) {
-                    event['alarms'] = [];
-                }
-                event['alarms'].push(alarm);
-                break;
-            default:
-                if (parseAlarm) {
-                    lineToAlarmJson(line, alarm);
-                } else {
-                    lineToJson(line, event);
-                }
-                break;
+    jsonApiData.forEach(function (event) {
+        if (event.type != 'event') {
+            returnError(res, "only data of type 'event' allowed.", 400, 'Bad Request');
+            return;
         }
+
+        if (event.attributes.ics === undefined) {
+            returnError(res, 'ics attribute missing in JSON', 400, 'Bad Request');
+            return;
+        }
+
+        const lines = event.attributes.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split('\n');
+
+        if (!validIcs(lines)) {
+            returnError(res, 'Invalid ICS file', 400, 'Bad Request');
+            return;
+        }
+
+        let parsedEvent = {};
+        let parsedAlarm = {};
+        let isParsingAlarm = false;
+
+        lines.forEach(function (line) {
+            switch (line) {
+                case 'BEGIN:VCALENDAR':
+                    break;
+                case 'END:VCALENDAR':
+                    break;
+                case 'BEGIN:VEVENT':
+                    parsedEvent = {};
+                    parsedEvent.scopeIds = event.relationships['scope-ids'];
+                    parsedEvent.separateUsers = event.relationships['separate-users'];
+                    break;
+                case 'END:VEVENT':
+                    if (!isParsingAlarm) {
+                        events.push(parsedEvent);
+                    } else {
+                        logger.error('[icsToJson] Created invalid JSON, are all required fields present?');
+                    }
+                    break;
+                case 'BEGIN:VALARM':
+                    parsedAlarm = {};
+                    isParsingAlarm = true;
+                    break;
+                case 'END:VALARM':
+                    isParsingAlarm = false;
+                    if (parsedEvent['alarms'] === undefined) {
+                        parsedEvent['alarms'] = [];
+                    }
+                    parsedEvent['alarms'].push(parsedAlarm);
+                    break;
+                default:
+                    if (isParsingAlarm) {
+                        lineToAlarmJson(line, parsedAlarm);
+                    } else {
+                        lineToJson(line, parsedEvent);
+                    }
+                    break;
+            }
+        });
     });
 
-    if (validJson(events)) {
+    let validationResult = validJson(events, true, req.method === 'PUT');
+    if (validationResult === true) {
         req.events = events;
         next();
     } else {
-        returnError(res, 'Invalid ICS or missing JSON field!', 400, 'Bad Request');
+        returnError(res, `Invalid ICS or missing JSON field: ${validationResult}`, 400, 'Bad Request');
     }
 }
 
@@ -169,9 +183,9 @@ function lineToJson(line, event) {
         }
             break;
         case 'EXDATE':
-            if (!Array.isArray(event['exdate']))
-                event['exdate'] = [];
-            event['exdate'].push(regularDateFormat(fieldValue));
+            if (!Array.isArray(event['exdates']))
+                event['exdates'] = [];
+            event['exdates'].push(regularDateFormat(fieldValue));
             break;
         default: {
             // temporary for timezone support...
@@ -198,10 +212,10 @@ function lineToJson(line, event) {
                     event['last-modified'] = regularDateFormat(fieldValue);
                     break;
                 case 'EXDATE':
-                    if (!Array.isArray(event['exdate'])) {
-                        event['exdate'] = [];
+                    if (!Array.isArray(event['exdates'])) {
+                        event['exdates'] = [];
                     }
-                    event['exdate'].push(regularDateFormat(fieldValue));
+                    event['exdates'].push(regularDateFormat(fieldValue));
                     break;
                 default:
                     logger.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);

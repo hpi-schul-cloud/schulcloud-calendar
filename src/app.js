@@ -34,6 +34,7 @@ app.use('/', toDos);
 app.use(function (req, res, next) {
     const err = new Error('Not Found');
     err.status = 404;
+    err.title = 'Page Not Found';
     next(err);
 });
 
@@ -43,7 +44,7 @@ app.use(function (err, req, res, next) { // eslint-disable-line no-unused-vars
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    returnError(res, err.message, err.status);
+    returnError(res, err.message, err.status, err.title);
 });
 
 module.exports = app;
