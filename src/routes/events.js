@@ -12,8 +12,8 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // preprocessing
 const authorize = require('../infrastructure/authorization');
-const jsonApiToJson = require('../parsers/jsonApiToJson');
-const icsToJson = require('../parsers/icsToJson');
+const jsonApiToJson = require('../parsers/event/jsonApiToJson');
+const icsToJson = require('../parsers/event/icsToJson');
 
 // response
 const returnError = require('../utils/response/returnError');

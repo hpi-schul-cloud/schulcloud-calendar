@@ -1,5 +1,5 @@
-const validJson = require('../validators/validateJson');
-const logger = require('../infrastructure/logger');
+const validJson = require('../validators/validateEventJson');
+const logger = require('../../infrastructure/logger');
 
 
 function eventsToJsonApi(eventJson) {

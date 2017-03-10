@@ -1,8 +1,8 @@
 const validIcs = require('../validators/validateIcs');
-const validJson = require('../validators/validateJson');
-const regularDateFormat = require('./utils/regularDateFormat');
-const returnError = require('../utils/response/returnError');
-const logger = require('../infrastructure/logger');
+const validJson = require('../validators/validateEventJson');
+const regularDateFormat = require('./../utils/regularDateFormat');
+const returnError = require('../../utils/response/returnError');
+const logger = require('../../infrastructure/logger');
 
 function icsToJson(req, res, next) {
     const lines = req.body.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split('\n');
