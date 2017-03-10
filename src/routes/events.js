@@ -41,7 +41,9 @@ router.get('/events', authorize, function (req, res) {
     getEvents(filter, token)
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch((error) => { returnError(res, error); });
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
 router.post('/events', jsonApiToJson, authorize, function (req, res) {
@@ -50,7 +52,9 @@ router.post('/events', jsonApiToJson, authorize, function (req, res) {
         .then(sendInsertNotification)
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch((error) => { returnError(res, error); });
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
 router.post('/events/ics', icsToJson, authorize, function (req, res) {
@@ -59,7 +63,9 @@ router.post('/events/ics', icsToJson, authorize, function (req, res) {
         .then(sendInsertNotification)
         .then(eventsToIcsInJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch((error) => { returnError(res, error); });
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
 router.put('/events/:eventId', jsonApiToJson, authorize, function (req, res) {
@@ -79,7 +85,9 @@ router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
         .then(sendUpdateNotification)
         .then(eventsToIcsInJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch((error) => { returnError(res, error); });
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
 router.delete('/events/:eventId', authorize, function (req, res) {
@@ -105,7 +113,9 @@ router.delete('/events/:eventId', authorize, function (req, res) {
                 returnError(res, error, status, title);
             }
         })
-        .catch((error) => { returnError(res, error); });
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
 function insertEvents(events) {
