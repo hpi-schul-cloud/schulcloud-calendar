@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS repetition_exception_dates;
 DROP TABLE IF EXISTS alarms;
 DROP TABLE IF EXISTS events;
 
-DROP TABLE IF EXISTS feeds;
+DROP TABLE IF EXISTS subscriptions;
 
 DROP TYPE IF EXISTS repeat_type;
 DROP TYPE IF EXISTS weekday_type;
@@ -58,7 +58,7 @@ CREATE TABLE events (
   description       TEXT                              DEFAULT NULL,
   dtstart           TIMESTAMP WITH TIME ZONE NOT NULL,
   dtend             TIMESTAMP WITH TIME ZONE NOT NULL,
-  reference_id      UUID                     NOT NULL,
+  scope_id      UUID                     NOT NULL,
   dtstamp           TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "last-modified"   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   repeat_freq       repeat_type                       DEFAULT NULL,
@@ -99,16 +99,16 @@ CREATE TABLE repetition_exception_dates (
   -- weitere Felder
 );
 
-CREATE TABLE feeds (
+CREATE TABLE subscriptions (
   id                  UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   ics_url             TEXT                     NOT NULL,
   description         TEXT                              DEFAULT NULL,
   last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
   last_updated_status INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
-  reference_id        UUID                     NOT NULL
+  scope_id        UUID                     NOT NULL
 );
 
 CREATE TABLE eventid_originalreferenceid (
   event_id              UUID NOT NULL  REFERENCES events (id),
-  original_reference_id UUID NOT NULL
+  original_scope_id UUID NOT NULL
 );

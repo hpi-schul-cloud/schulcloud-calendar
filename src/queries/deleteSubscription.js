@@ -3,7 +3,7 @@ const errorMessage = require('./utils/errorMessage');
 
 function deleteSubscription(subscriptionId) {
     return new Promise(function(resolve, reject) {
-        const query = 'DELETE FROM feeds WHERE id = $1 RETURNING *';
+        const query = 'DELETE FROM subscriptions WHERE id = $1 RETURNING *';
         client.query(query, [subscriptionId], function (error, result) {
             if (error) {
                 errorMessage(query, error);

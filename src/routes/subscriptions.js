@@ -44,7 +44,7 @@ router.post('/subscriptions', authorize, jsonApiToJson, function (req, res) {
         .then((insertedSubscriptions) => {
             insertedSubscriptions.forEach((insertedSubscription) => {
                 sendNotification.forNewSubscription(
-                    insertedSubscription['reference_id'],
+                    insertedSubscription['scope_id'],
                     insertedSubscription['description'],
                     insertedSubscription['ics_url']
                 );
@@ -60,7 +60,7 @@ router.put('/subscriptions/:subscriptionId', authorize, jsonApiToJson, function 
     updateSubscription(subscriptions, subscriptionId)
         .then((updatedSubscription) => {
             sendNotification.forModifiedSubscription(
-                updatedSubscription['reference_id'],
+                updatedSubscription['scope_id'],
                 updatedSubscription['description'],
                 updatedSubscription['ics_url']
             );
@@ -77,7 +77,7 @@ router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
         .then((deletedSubscription) => {
             if (deletedSubscription) {
                 sendNotification.forDeletedSubscription(
-                    deletedSubscription['reference_id'],
+                    deletedSubscription['scope_id'],
                     deletedSubscription['description'],
                     deletedSubscription['ics_url']
                 );
