@@ -1,4 +1,4 @@
-const config = require('./../config');
+const config = require('../../config');
 const validJson = require('../validators/validateEventJson');
 const logger = require('../../infrastructure/logger');
 const removeNullValues = require('../../utils/removeNullValues');

@@ -1,4 +1,4 @@
-const config = require('./../config');
+const config = require('../../config');
 
 const iCalendarDateFormat = (date) => {
     return date.toISOString().replace(/([:-]|(\..{3}))/g, '');

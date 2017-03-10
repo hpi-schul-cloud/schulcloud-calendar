@@ -1,6 +1,6 @@
-const config = require('./../config');
-const validJson = require('../validators/validateJson');
-const logger = require('../infrastructure/logger');
+const config = require('./../../config');
+const validJson = require('../validators/validateEventJson');
+const logger = require('../../infrastructure/logger');
 const eventsToIcs = require('./eventsToIcs');
 
 function eventsToIcsInJsonApi(eventJson) {

@@ -20,8 +20,8 @@ const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
 const returnIcs = require('../utils/response/returnIcs');
 const sendNotification = require('../services/sendNotification');
-const eventsToJsonApi = require('../formatter/eventsToJsonApi');
-const eventsToIcsInJsonApi = require('../formatter/eventsToIcsInJsonApi');
+const eventsToJsonApi = require('../parsers/event/eventsToJsonApi');
+const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
 // content
 const getEvents = require('../services/getEvents');
@@ -68,8 +68,8 @@ function insertEvents(events) {
             .then((result) => {
                 // TODO: return eventId and maybe complete events
                 result.forEach((response) => {
-                    const {reference_id, summary, dtstart, dtend} = response;
-                    sendNotification.forNewEvent(reference_id, summary, dtstart, dtend);
+                    const {scope_id, summary, dtstart, dtend} = response;
+                    sendNotification.forNewEvent(scope_id, summary, dtstart, dtend);
                 });
                 return result;
             })
