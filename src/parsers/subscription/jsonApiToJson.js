@@ -11,7 +11,6 @@ function jsonApiToJson(req, res, next) {
         };
     });
 
-    // TODO: After that, remove the two validations from services/updateSubscription.js
     let validationResult = validJson(subscriptions, true, req.method === 'PUT');
     if (validationResult === true) {
         req.subscriptions = subscriptions;
