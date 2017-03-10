@@ -18,7 +18,6 @@ const icsToJson = require('../parsers/event/icsToJson');
 // response
 const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
-const returnIcs = require('../utils/response/returnIcs');
 const sendNotification = require('../services/sendNotification');
 const eventsToJsonApi = require('../parsers/event/eventsToJsonApi');
 const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
@@ -111,13 +110,25 @@ function updateEvents(eventId, event) {
 }
 
 router.delete('/events/:eventId', authorize, function (req, res) {
-    // TODO delete only for scopeIds and check for permission to delete for that scopeIds
     const eventId = req.params.eventId;
+    // TODO delete only for scopeIds and check for alarms and exdates
     const scopeIds = req.body.scopeIds;
     deleteEvent(eventId)
-        .then(() => {
-            returnSuccess(res, 204);
-            sendNotification.forDeletedEvent(scopeIds);
+        .then((deletedEvent) => {
+            if (deletedEvent) {
+                returnSuccess(res, 204);
+                sendNotification.forDeletedEvent(
+                    scopeIds,
+                    deletedEvent['summary'],
+                    deletedEvent['dtstart'],
+                    deletedEvent['dtend']
+                );
+            } else {
+                const error = 'Given eventId not found';
+                const status = 404;
+                const title = 'Query Error';
+                returnError(res, error, status, title);
+            }
         })
         .catch((error) => { returnError(res, error); });
 });

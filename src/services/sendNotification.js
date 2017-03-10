@@ -23,12 +23,12 @@ function forModifiedEvent(scopeIds, summary, start, end) {
     _sendNotification(title, body, scopeIds);
 }
 
-function forDeletedEvent(scopeIds, summary, start, end) {
+function forDeletedEvent(scopeId, summary, start, end) {
     const title = `Der Termin "${summary}" wurde gelöscht`;
     const body =
         `Ein Termin wurde gelöscht!\n
         ${summary} von ${start} bis ${end}`;
-    _sendNotification(title, body, scopeIds);
+    _sendNotification(title, body, scopeId);
 }
 
 function forNewSubscription(scopeId, description, icsUrl) {
