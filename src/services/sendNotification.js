@@ -7,20 +7,20 @@ function _sendNotification(title, body, scopeIds) {
     sendNotification(title, body, scopeIds);
 }
 
-function forNewEvent(scopeIds, summary, start, end) {
+function forNewEvent(scopeId, summary, start, end) {
     const title = `Neuer Termin "${summary}" erstellt`;
     const body =
         `Es wurde ein neuer Termin für Sie erstellt!\n
         ${summary} von ${start} bis ${end}`;
-    _sendNotification(title, body, scopeIds);
+    _sendNotification(title, body, scopeId);
 }
 
-function forModifiedEvent(scopeIds, summary, start, end) {
+function forModifiedEvent(scopeId, summary, start, end) {
     const title = `Der Termin "${summary}" wurde verändert`;
     const body =
         `Ein Termin wurde verändert!\n
         ${summary} von ${start} bis ${end}`;
-    _sendNotification(title, body, scopeIds);
+    _sendNotification(title, body, scopeId);
 }
 
 function forDeletedEvent(scopeId, summary, start, end) {

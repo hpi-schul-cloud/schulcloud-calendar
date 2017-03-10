@@ -47,6 +47,7 @@ router.get('/events', authorize, function (req, res) {
 router.post('/events', jsonApiToJson, authorize, function (req, res) {
     const events = req.events;
     insertEvents(events)
+        .then(sendInsertNotification)
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch((error) => { returnError(res, error); });
@@ -55,31 +56,17 @@ router.post('/events', jsonApiToJson, authorize, function (req, res) {
 router.post('/events/ics', icsToJson, authorize, function (req, res) {
     const events = req.events;
     insertEvents(events)
+        .then(sendInsertNotification)
         .then(eventsToIcsInJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch((error) => { returnError(res, error); });
 });
 
-function insertEvents(events) {
-    return new Promise(function (resolve, reject) {
-        storeEvents(events)
-            .then((result) => {
-                // TODO: return eventId and maybe complete events
-                result.forEach((response) => {
-                    const {scope_id, summary, dtstart, dtend} = response;
-                    sendNotification.forNewEvent(scope_id, summary, dtstart, dtend);
-                });
-                return result;
-            })
-            .then(resolve)
-            .catch(reject);
-    });
-}
-
 router.put('/events/:eventId', jsonApiToJson, authorize, function (req, res) {
     const eventId = req.params.eventId;
     const event = req.events;
     updateEvents(eventId, event)
+        .then(sendUpdateNotification)
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch((error) => { returnError(res, error); });
@@ -89,40 +76,28 @@ router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
     const eventId = req.params.eventId;
     const event = req.events;
     updateEvents(eventId, event)
+        .then(sendUpdateNotification)
         .then(eventsToIcsInJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch((error) => { returnError(res, error); });
 });
-
-function updateEvents(eventId, event) {
-    return new Promise(function (resolve, reject) {
-        deleteEvent(eventId)
-            .then(() => {
-                // TODO validate operation (e.g. don't create event if id couldn't be found, ...)
-                // TODO validate result if at least one row has been deleted...
-                // TODO eventId should not change
-                // TODO notification for changed, not for inserted event
-                return insertEvents(event);
-            })
-            .then(resolve)
-            .catch(reject);
-    });
-}
 
 router.delete('/events/:eventId', authorize, function (req, res) {
     const eventId = req.params.eventId;
     // TODO delete only for scopeIds and check for alarms and exdates
     const scopeIds = req.body.scopeIds;
     deleteEvent(eventId)
-        .then((deletedEvent) => {
-            if (deletedEvent) {
+        .then((deletedEvents) => {
+            if (deletedEvents.length > 0) {
                 returnSuccess(res, 204);
-                sendNotification.forDeletedEvent(
-                    scopeIds,
-                    deletedEvent['summary'],
-                    deletedEvent['dtstart'],
-                    deletedEvent['dtend']
-                );
+                deletedEvents.forEach((deletedEvent) => {
+                    sendNotification.forDeletedEvent(
+                        scopeIds,
+                        deletedEvent['summary'],
+                        deletedEvent['dtstart'],
+                        deletedEvent['dtend']
+                    );
+                });
             } else {
                 const error = 'Given eventId not found';
                 const status = 404;
@@ -132,5 +107,47 @@ router.delete('/events/:eventId', authorize, function (req, res) {
         })
         .catch((error) => { returnError(res, error); });
 });
+
+function insertEvents(events) {
+    return new Promise(function (resolve, reject) {
+        storeEvents(events)
+            .then(resolve)
+            .catch(reject);
+    });
+}
+
+function sendInsertNotification(insertedEvents) {
+    insertedEvents.forEach((insertedEvent) => {
+        const {scope_id, summary, dtstart, dtend} = insertedEvent;
+        sendNotification.forNewEvent(scope_id, summary, dtstart, dtend);
+    });
+    return insertedEvents;
+}
+
+function updateEvents(eventId, event) {
+    return new Promise(function (resolve, reject) {
+        deleteEvent(eventId)
+            .then((deletedEvent) => {
+                if (deletedEvent) {
+                    return insertEvents(event);
+                } else {
+                    const error = 'Given eventId not found';
+                    const status = 404;
+                    const title = 'Query Error';
+                    reject({error, status, title});
+                }
+            })
+            .then(resolve)
+            .catch(reject);
+    });
+}
+
+function sendUpdateNotification(updatedEvents) {
+    updatedEvents.forEach((updatedEvent) => {
+        const { scope_id, summary, dtstart, dtend } = updatedEvent;
+        sendNotification.forModifiedEvent(scope_id, summary, dtstart, dtend);
+    });
+    return updatedEvents;
+}
 
 module.exports = router;

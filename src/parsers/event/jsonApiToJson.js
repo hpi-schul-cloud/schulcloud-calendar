@@ -1,4 +1,4 @@
-const validJson = require('../validators/validateEventJson');
+const validateJson = require('../validators/validateEventJson');
 const returnError = require('../../utils/response/returnError');
 const logger = require('../../infrastructure/logger');
 
@@ -53,7 +53,7 @@ function jsonApiToJson(req, res, next) {
         events.push(json);
     });
 
-    let validationResult = validJson(events, true, req.method === 'PUT');
+    let validationResult = validateJson(events, true, req.method === 'PUT');
     if (validationResult === true) {
         req.events = events;
         next();
