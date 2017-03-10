@@ -182,7 +182,7 @@ paths:
         - user-token: []
   /events/ics:
     post:
-      summary: Create a new Event for a list of UUIDs where the ics is given (* does not accept or produce JSON API and does not check for ID).
+      summary: Create a new Event for a list of UUIDs where the ics is given (* does not produce JSON API and does not check for ID).
       responses:
         '201':
           description: CreateEventResponse
@@ -211,7 +211,7 @@ paths:
     put:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
-        service earlier. Thereby the ics is transcribed (* does not accept or produce JSON API and does not check for ID).
+        service earlier. Thereby the ics is transcribed (* does not produce JSON API and does not check for ID).
       description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details.The data array may contain more than one event but only if the uid is equal for all events (occours if a single event is changed in a series of events).
       responses:
         '200':
