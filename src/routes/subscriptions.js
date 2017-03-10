@@ -18,6 +18,7 @@ const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
 const sendNotification = require('../services/sendNotification');
+const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJsonApi');
 
 // content
 const getSubscriptions = require('../services/getSubscriptions');
@@ -34,11 +35,14 @@ router.get('/subscriptions', authorize, function (req, res) {
     const lastUpdateFailed = req.query['last-update-failed'];
     const filter = { scopeId, subscriptionId, lastUpdateFailed };
     getSubscriptions(filter, token)
-        .then((subscriptions) => { returnSuccess(res, 200, subscriptions); })
-        .catch((error) => { returnError(res, error); });
+        .then(subscriptionsToJsonApi)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
-router.post('/subscriptions', authorize, jsonApiToJson, function (req, res) {
+router.post('/subscriptions', jsonApiToJson, authorize, function (req, res) {
     const { subscriptions } = req;
     storeSubscriptions(subscriptions)
         .then((insertedSubscriptions) => {
@@ -49,12 +53,16 @@ router.post('/subscriptions', authorize, jsonApiToJson, function (req, res) {
                     insertedSubscription['ics_url']
                 );
             });
-            returnSuccess(res, 200, insertedSubscriptions);
+            return insertedSubscriptions;
         })
-        .catch((error) => returnError(error));
+        .then(subscriptionsToJsonApi)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
-router.put('/subscriptions/:subscriptionId', authorize, jsonApiToJson, function (req, res) {
+router.put('/subscriptions/:subscriptionId', jsonApiToJson, authorize, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
     const subscriptions = req.subscriptions;
     updateSubscription(subscriptions, subscriptionId)
@@ -64,8 +72,10 @@ router.put('/subscriptions/:subscriptionId', authorize, jsonApiToJson, function 
                 updatedSubscription['description'],
                 updatedSubscription['ics_url']
             );
-            returnSuccess(res, 204);
+            return updatedSubscription;
         })
+        .then(subscriptionsToJsonApi)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({error, status, title}) => {
             returnError(res, error, status, title);
         });
@@ -89,7 +99,9 @@ router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
                 returnError(res, error, status, title);
             }
         })
-        .catch((error) => { returnError(res, error); });
+        .catch(({error, status, title}) => {
+            returnError(res, error, status, title);
+        });
 });
 
 module.exports = router;
