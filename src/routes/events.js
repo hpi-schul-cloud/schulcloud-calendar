@@ -21,7 +21,7 @@ const returnSuccess = require('../utils/response/returnSuccess');
 const returnIcs = require('../utils/response/returnIcs');
 const sendNotification = require('../services/sendNotification');
 const eventsToJsonApi = require('../formatter/eventsToJsonApi');
-const eventsToIcs = require('../formatter/eventsToIcs');
+const eventsToIcsInJsonApi = require('../formatter/eventsToIcsInJsonApi');
 
 // content
 const getEvents = require('../services/getEvents');
@@ -56,8 +56,8 @@ router.post('/events', jsonApiToJson, authorize, function (req, res) {
 router.post('/events/ics', icsToJson, authorize, function (req, res) {
     const events = req.events;
     insertEvents(events)
-        .then(eventsToIcs)
-        .then((icsString) => { returnIcs(res, icsString); })
+        .then(eventsToIcsInJsonApi)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch((error) => { returnError(res, error); });
 });
 
@@ -90,8 +90,8 @@ router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
     const eventId = req.params.eventId;
     const event = req.events;
     updateEvents(eventId, event)
-        .then(eventsToIcs)
-        .then((icsString) => { returnIcs(res, icsString); })
+        .then(eventsToIcsInJsonApi)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch((error) => { returnError(res, error); });
 });
 
