@@ -4,7 +4,7 @@ info:
   description: >-
     API specification of the Schul-Cloud Calendar Service based on the JSON API specification 1.0 (http://jsonapi.org). Contribute today on https://github.com/schulcloud/schulcloud-calendar.
     _Important_: Routes with a `X` as last character in the summary (next to the route) are not yet implemented, those with an asterisk `*` are not yet finished.
-  version: 0.0.7
+  version: 0.0.8
   contact:
     email: schulcloud-dev@lists.myhpi.de
 host: 'schul-cloud.org:3000'
@@ -20,17 +20,13 @@ tags:
   - name: calendar
     description: Get an ICS feed
   - name: events
-    description: Work with one or multiple events as JSON
-  - name: events/ics
-    description: Work with one or multiple events as ICS string
+    description: Work with one or multiple events
   - name: share
     description: Access an ICS feed from an external endpoint
   - name: subscriptions
     description: Manage subscribed ICS feeds
   - name: to-dos
-    description: Work with one or multiple To Dos as JSON
-  - name: to-dos/ics
-    description: Work with one or multiple To Dos as ICS string
+    description: Work with one or multiple To Dos
 paths:
   '/calendar/list':
     get:
@@ -199,7 +195,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyIcsEventRequest'
       tags:
-        - events/ics
+        - events
       security:
         - user-token: []
   '/events/ics/{event-id}':
@@ -229,7 +225,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyIcsEventRequest'
       tags:
-        - events/ics
+        - events
       security:
         - user-token: []
 
@@ -549,7 +545,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyIcsToDoRequest'
       tags:
-        - to-dos/ics
+        - to-dos
       security:
         - user-token: []
   '/to-dos/ics/{to-do-id}':
@@ -579,7 +575,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyIcsToDoRequest'
       tags:
-        - to-dos/ics
+        - to-dos
       security:
         - user-token: []
 
