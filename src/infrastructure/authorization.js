@@ -30,15 +30,50 @@ function authentication(req, res, next) {
                     }
                 });
                 req.user = user;
-                next();
+                if (validAccess(req)) {
+                    next();
+                } else {
+                    returnError(res, 'Access denied!', 403, 'Forbidden!');
+                }
             },
             function () {
                 returnError(res, 'Invalid Authorization token!', 401, 'Unauthorized');
             }
         );
     } else {
-        returnError(res, 'Invalid Authorization token!', 401, 'Unauthorized');
+        returnError(res, 'Missing Authorization token!', 401, 'Unauthorized');
     }
+}
+
+function validAccess(req) {
+    // TODO: Add more complex checks for the following:
+    // Missing in query:
+    // event-id (GET), subscription-id (GET), to-do-id (GET)
+    // Missing in path:
+    // event-id (PUT, DELETE), share-token (GET, DELETE), subscription-id (PUT, DELETE), to-do-id (PUT, DELETE)
+    const user = req.user;
+
+    if (req.method === 'GET') {
+        return hasPermission(user, 'can-read', req.query['scope-id']);
+    } else {
+        let valid = true;
+        req.events.forEach(function(event) {
+            event.scopeIds.forEach(function(scopeId) {
+                valid &= hasPermission(user, 'can-write', scopeId);
+            });
+        });
+        return valid;
+    }
+}
+
+function hasPermission(user, permission, scopeId) {
+    if (user.id === scopeId) {
+        return true;
+    } else if (user.scope.hasOwnProperty(scopeId) &&
+        user.scope[scopeId].authorities.hasOwnProperty(permission)) {
+        return user.scope[scopeId].authorities[permission];
+    }
+    return false;
 }
 
 module.exports = authentication;

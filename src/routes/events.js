@@ -45,7 +45,7 @@ router.get('/events', authorize, function (req, res) {
         .catch((error) => { returnError(res, error); });
 });
 
-router.post('/events', authorize, jsonApiToJson, function (req, res) {
+router.post('/events', jsonApiToJson, authorize, function (req, res) {
     const events = req.events;
     insertEvents(events)
         .then(eventsToJsonApi)
@@ -53,7 +53,7 @@ router.post('/events', authorize, jsonApiToJson, function (req, res) {
         .catch((error) => { returnError(res, error); });
 });
 
-router.post('/events/ics', authorize, icsToJson, function (req, res) {
+router.post('/events/ics', icsToJson, authorize, function (req, res) {
     const events = req.events;
     insertEvents(events)
         .then(eventsToIcs)
@@ -77,7 +77,7 @@ function insertEvents(events) {
     });
 }
 
-router.put('/events/:eventId', authorize, jsonApiToJson, function (req, res) {
+router.put('/events/:eventId', jsonApiToJson, authorize, function (req, res) {
     const eventId = req.params.eventId;
     const event = req.events;
     updateEvents(eventId, event)
@@ -86,7 +86,7 @@ router.put('/events/:eventId', authorize, jsonApiToJson, function (req, res) {
         .catch((error) => { returnError(res, error); });
 });
 
-router.put('/events/ics/:eventId', authorize, icsToJson, function (req, res) {
+router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
     const eventId = req.params.eventId;
     const event = req.events;
     updateEvents(eventId, event)
@@ -112,7 +112,7 @@ function updateEvents(eventId, event) {
 
 router.delete('/events/:eventId', authorize, function (req, res) {
     // TODO works but there are funny errors, investigate
-    // TODO delete only for scopeIds
+    // TODO delete only for scopeIds and check for permission to delete for that scopeIds
     const eventId = req.params.eventId;
     const scopeIds = req.body.scopeIds;
     deleteEvent(eventId)
