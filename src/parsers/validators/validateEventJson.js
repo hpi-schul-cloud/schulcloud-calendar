@@ -13,10 +13,7 @@ function validateJson(json, scopeIDsRequired = true, onlyOneEvent = false) {
         return false;
     }
 
-    if (onlyOneEvent && json.length !== 1) {
-        error_message = "Only one event is allowed.";
-        return false;
-    }
+    let event_uids = new Set();
 
     json.every(function (event) {
         // Fields are required by our implementation
@@ -40,6 +37,7 @@ function validateJson(json, scopeIDsRequired = true, onlyOneEvent = false) {
             error_message = "The attribute 'uid' is required.";
             return false;
         }
+        event_uids.add(event.id);
 
         // Fields are required by the iCalendar standard if outer scope doesn't have a METHOD
         if (!event.dtstart) {
@@ -239,9 +237,15 @@ function validateJson(json, scopeIDsRequired = true, onlyOneEvent = false) {
                         return false;
                     }
                 }
+                return true;
             });
         }
+        return true;
     });
+
+    if (onlyOneEvent && event_uids.size !== 1) {
+        error_message = 'Only one event is allowed for this operation.';
+    }
 
     return error_message || true;
 }
