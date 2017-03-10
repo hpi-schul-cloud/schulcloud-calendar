@@ -67,7 +67,9 @@ function validAccess(req) {
 }
 
 function hasPermission(user, permission, scopeId) {
-    if (user.id === scopeId) {
+    if (scopeId === undefined) {
+        return true;
+    } else if (user.id === scopeId) {
         return true;
     } else if (user.scope.hasOwnProperty(scopeId) &&
         user.scope[scopeId].authorities.hasOwnProperty(permission)) {
