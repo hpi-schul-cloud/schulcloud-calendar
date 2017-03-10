@@ -22,7 +22,7 @@ BEGIN
      '2016-11-23 18:30:00.000000', '8b0753ab-6fa8-4f42-80bd-700fe8f7d66f', NOW(), NOW(), NULL, NULL, NULL, NULL, NULL,
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
-  INSERT INTO repetition_exception_dates VALUES
+  INSERT INTO exdates VALUES
     (uuid_generate_v4(), new_event_id, '2016-11-21 09:00:00.000000');
 
   INSERT INTO subscriptions VALUES

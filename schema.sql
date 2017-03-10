@@ -5,9 +5,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Delete old Table and Type definitions
 -- ######################################
 
-DROP TABLE IF EXISTS eventid_originalreferenceid;
+DROP TABLE IF EXISTS eventid_originalscopeid;
 
-DROP TABLE IF EXISTS repetition_exception_dates;
+DROP TABLE IF EXISTS exdates;
 DROP TABLE IF EXISTS alarms;
 DROP TABLE IF EXISTS events;
 
@@ -92,7 +92,7 @@ CREATE TABLE alarms (
   summary     TEXT                             DEFAULT NULL  -- email alarm; subject of message
 );
 
-CREATE TABLE repetition_exception_dates (
+CREATE TABLE exdates (
   id       UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   event_id UUID                     NOT NULL REFERENCES events (id) ON DELETE CASCADE,
   date     TIMESTAMP WITH TIME ZONE NOT NULL
@@ -108,7 +108,7 @@ CREATE TABLE subscriptions (
   scope_id        UUID                     NOT NULL
 );
 
-CREATE TABLE eventid_originalreferenceid (
+CREATE TABLE eventid_originalscopeid (
   event_id              UUID NOT NULL  REFERENCES events (id),
   original_scope_id UUID NOT NULL
 );
