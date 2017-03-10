@@ -10,7 +10,7 @@ function returnSuccess(res, code, content) {
     if (res && !res.headersSent) {
         const message = content
             ? JSON.stringify(content)
-            : `{"code": ${code}}`;
+            : `{"Statuscode": ${code}}`;
         res.contentType('application/json').status(code).send(message);
     }
     else

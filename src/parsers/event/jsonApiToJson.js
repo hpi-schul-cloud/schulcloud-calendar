@@ -8,7 +8,7 @@ function jsonApiToJson(req, res, next) {
 
     jsonApiData.forEach(function (event) {
         if (event.type != 'event') {
-            returnError(res, "only data of type 'event' allowed.", 400, 'Bad Request');
+            returnError(res, "Only data of type 'event' allowed.", 400, 'Bad Request');
             return;
         }
 

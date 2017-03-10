@@ -72,7 +72,8 @@ function insertEvents(events) {
                     sendNotification.forNewEvent(reference_id, summary, dtstart, dtend);
                 });
                 return result;
-            }).then(resolve)
+            })
+            .then(resolve)
             .catch(reject);
     });
 }

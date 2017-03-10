@@ -8,7 +8,6 @@ const logger = require('../../infrastructure/logger');
  * @param title
  */
 function returnError(res, error, status = 500, title = 'Internal Server Error') {
-    // TODO: In case of an 404 error, the title is not changed (but should).
     const errorMessage = {
         errors: [{
             detail: error || '',

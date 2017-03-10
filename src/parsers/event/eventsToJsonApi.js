@@ -4,6 +4,7 @@ const logger = require('../../infrastructure/logger');
 const removeNullValues = require('../../utils/removeNullValues');
 
 function eventsToJsonApi(eventJson) {
+    eventJson = removeNullValues(eventJson);
     let validationResult = validJson(eventJson, false);
     if (validationResult !== true) {
         logger.error(`[jsonToJsonApi] Got invalid events JSON: ${validationResult}`);
@@ -20,7 +21,6 @@ function eventsToJsonApi(eventJson) {
 }
 
 function eventToJsonApi(event) {
-    removeNullValues(event);
     const jsonApiEvent = {};
     jsonApiEvent.type = 'event';
     jsonApiEvent.id = event.id;
@@ -71,13 +71,13 @@ function eventToJsonApi(event) {
 }
 
 
-function addRRuleToJsonApi(includedArray, rrule, eventID) {
+function addRRuleToJsonApi(includedArray, rrule, eventId) {
     if (Object.keys(rrule).length === 0) {
         return;
     }
     let rRuleJsonApi = {};
     rRuleJsonApi.type = 'rrule';
-    rRuleJsonApi.id = `${eventID}-rrule`;
+    rRuleJsonApi.id = `${eventId}-rrule`;
     rRuleJsonApi.attributes = rrule;
     includedArray.push(rRuleJsonApi);
 }

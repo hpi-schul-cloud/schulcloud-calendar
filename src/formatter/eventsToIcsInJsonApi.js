@@ -20,13 +20,13 @@ function eventsToIcsInJsonApi(eventJson) {
 }
 
 function eventToIcsInJsonApi(event) {
-    const jsonApiEvent = {};
-    jsonApiEvent.type = 'event';
-    jsonApiEvent.id = event.id;
-    jsonApiEvent.attributes = {};
-    jsonApiEvent.attributes.ics = eventsToIcs([event]);
-
-    return jsonApiEvent;
+    return {
+        type: 'event',
+        id: event.id,
+        attributes: {
+            ics: eventsToIcs([event])
+        }
+    }
 }
 
 module.exports = eventsToIcsInJsonApi;
