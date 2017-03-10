@@ -2,7 +2,9 @@
 
 [Calendar API](https://schulcloud.github.io/schulcloud-calendar/#/default)
 
-[Schul-Cloud API Requirements](https://github.com/schulcloud/schulcloud-calendar/blob/master/wiki/schulcloud_api_requirements.md)
+[Schul-Cloud API Requirements](https://github.com/schulcloud/schulcloud-calendar/blob/master/wiki/schulcloud-api-requirements.md)
+
+[Research of Caldav Modules for Node](https://github.com/schulcloud/schulcloud-calendar/blob/master/wiki/node-caldav-research.md)
 
 ## Setup
 ### Installation
