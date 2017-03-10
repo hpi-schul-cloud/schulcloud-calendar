@@ -764,8 +764,6 @@ definitions:
                 ics:
                   type: string
                   example: 'BEGIN:VCALENDAR\n...\nEND:VCALENDAR'
-            relationships:
-              $ref: '#/definitions/RelationshipScopeIds'
 
   GetEventResponseData:
     type: array
@@ -780,8 +778,6 @@ definitions:
           example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
         attributes:
           $ref: '#/definitions/EventJSONattributes'
-        relationships:
-          $ref: '#/definitions/RelationshipScopeIds'
         included:
           type: array
           items:
@@ -1198,8 +1194,6 @@ definitions:
                 ics:
                   type: string
                   example: 'BEGIN:VTODO\n...\nEND:VTODO'
-            relationships:
-              $ref: '#/definitions/RelationshipScopeIds'
 
   GetToDoResponseData:
     type: array
@@ -1214,8 +1208,6 @@ definitions:
           example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
         attributes:
           $ref: '#/definitions/ToDoJSONattributes'
-        relationships:
-          $ref: '#/definitions/RelationshipScopeIds'
         included:
           type: array
           items:
@@ -1338,8 +1330,6 @@ definitions:
         example: "8ad5a293-8ed8-45d9-8a20-2e353051af1c"
       attributes:
         $ref: '#/definitions/ExternalFeedAttributesResponse'
-      relationships:
-        $ref: '#/definitions/RelationshipScopeIds'
 
   ExternalFeedAttributesRequest:
     type: object
