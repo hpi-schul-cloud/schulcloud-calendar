@@ -2,8 +2,11 @@ function validateJson(json, scopeIDsRequired = true, onlyOneSubscription = false
     let errorMessage = null;
 
     if (!Array.isArray(json)) {
-        errorMessage = "The value of 'data' must be an array.";
-        return false;
+        return "The value of 'data' must be an array.";
+    }
+
+    if (onlyOneSubscription && json.size !== 1) {
+        return 'Only one subscription is allowed for this operation.';
     }
 
     json.every(function (subscription) {
@@ -28,10 +31,6 @@ function validateJson(json, scopeIDsRequired = true, onlyOneSubscription = false
             return false;
         }
     });
-
-    if (onlyOneSubscription && json.size !== 1) {
-        errorMessage = 'Only one subscription is allowed for this operation.';
-    }
 
     return errorMessage || true;
 }
