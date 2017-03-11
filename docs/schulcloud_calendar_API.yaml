@@ -630,7 +630,7 @@ definitions:
               type: string
               example: "event"
             attributes:
-              $ref: '#/definitions/EventJSONattributes'
+              $ref: '#/definitions/EventJSONattributesRequest'
             relationships:
               $ref: '#/definitions/RelationshipScopeIds'
             included:
@@ -777,7 +777,7 @@ definitions:
           type: string
           example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
         attributes:
-          $ref: '#/definitions/EventJSONattributes'
+          $ref: '#/definitions/EventJSONattributesResponse'
         included:
           type: array
           items:
@@ -843,12 +843,9 @@ definitions:
         items:
           $ref: '#/definitions/ShareToken'
 
-  EventJSONattributes:
+  EventJSONattributesRequest:
     type: object
     properties:
-      uid:
-        type: string
-        example: "71c2f833-e26b-4635-b954-2f72f136cfd9@schul-cloud.org"
       summary:
         type: string
         example: Legend Summer Party
@@ -887,6 +884,15 @@ definitions:
       x-sc-...:
         description: custom Schul-Cloud specific fields, MUST have a 'x-sc-' prefix
         type: string
+
+  EventJSONattributesResponse:
+    type: object
+    allOf:
+      - $ref: '#/definitions/EventJSONattributesRequest'
+      - properties:
+          uid:
+            type: string
+            example: "71c2f833-e26b-4635-b954-2f72f136cfd9@schul-cloud.org"
 
   RRuleJSONattributes:
     type: object
