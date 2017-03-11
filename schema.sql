@@ -51,6 +51,15 @@ CREATE TYPE alarm_action AS ENUM (
 -- TODO: Handle x-prop / iana-prop fields
 -- ######################################
 
+-- The event_id is needed for deviants from repetitions, where a new event is
+-- created with the same id as the original event. Since the id in the database
+-- needs to be unique, we needed another one.
+-- A side effect is that events that were created for multiple scopes and/or
+-- with separateUsers = true that are duplicated but in general hold the same
+-- information have the same event_id.
+-- Although potentially a lot of repetition deviants can reference the same
+-- event_id, they can still be matched and extracted correctly with the
+-- scope_id.
 CREATE TABLE events (
   id                UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   summary           TEXT                              DEFAULT NULL,
@@ -108,6 +117,11 @@ CREATE TABLE subscriptions (
   scope_id        UUID                     NOT NULL
 );
 
+-- If separateUsers in a POST /events request is set, the event_id is saved with
+-- the original scopeIds given in the request. This is done in case new scopes
+-- are introduced to a subordinate scope, for example, a new student in a class.
+-- In that case, the information which events need to be added for the new
+-- student can be found in this table.
 CREATE TABLE eventid_originalscopeid (
   event_id              UUID NOT NULL,
   original_scope_id     UUID NOT NULL
