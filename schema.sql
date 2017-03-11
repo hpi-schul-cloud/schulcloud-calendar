@@ -109,6 +109,6 @@ CREATE TABLE subscriptions (
 );
 
 CREATE TABLE eventid_originalscopeid (
-  event_id              UUID NOT NULL  REFERENCES events (id),
-  original_scope_id UUID NOT NULL
+  event_id              UUID NOT NULL,
+  original_scope_id     UUID NOT NULL
 );
