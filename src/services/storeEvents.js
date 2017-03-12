@@ -17,15 +17,15 @@ function storeEvents(events) {
 
 function storeEvent(event) {
     return new Promise((resolve, reject) => {
-        const { separateUsers, scopeIds } = event;
+        const {separate_users, scope_ids} = event;
         // the eventId that is returned (different to the internal, unique id)
         const eventId = uuidV4();
-        getScopeIdsForSeparateUsers(scopeIds, separateUsers)
+        getScopeIdsForSeparateUsers(scope_ids, separate_users)
             .then((allScopeIds) => {
                 return storeEventForScopes(event, allScopeIds, eventId);
             })
             .then((insertedEvents) => {
-                return updateOriginalScopeIds(separateUsers, scopeIds, insertedEvents);
+                return updateOriginalScopeIds(separate_users, scope_ids, insertedEvents);
             })
             .then(resolve)
             .catch(reject);

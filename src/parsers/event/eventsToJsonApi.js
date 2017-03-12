@@ -21,12 +21,14 @@ function eventsToJsonApi(eventJson) {
 }
 
 function eventToJsonApi(event) {
-    const jsonApiEvent = {};
-    jsonApiEvent.type = 'event';
-    jsonApiEvent.id = event.id;
-    jsonApiEvent.attributes = {};
-    jsonApiEvent.relationships = {};
-    jsonApiEvent.included = [];
+    const jsonApiEvent = {
+        type: 'event',
+        id: event.id,
+        attributes: {},
+        relationships: {},
+        included: [],
+    };
+
     let rrule = {};
 
     // Rename event_id and delete both, id and event_id from object
@@ -50,10 +52,10 @@ function eventToJsonApi(event) {
                         addExDateToJsonApi(jsonApiEvent.included, exdate);
                     });
                     break;
-                case 'scopeIds':
+                case 'scope_ids':
                     jsonApiEvent.relationships['scope-ids'] = event[key];
                     break;
-                case 'separateUsers':
+                case 'separate_users':
                     jsonApiEvent.relationships['separate-users'] = event[key];
                     break;
                 default:

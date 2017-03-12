@@ -113,7 +113,7 @@ CREATE TABLE subscriptions (
   ics_url             TEXT                     NOT NULL,
   description         TEXT                              DEFAULT NULL,
   last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
-  last_updated_status INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
+  last_updated_status INTEGER                           DEFAULT NULL,
   scope_id            UUID                     NOT NULL
 );
 
