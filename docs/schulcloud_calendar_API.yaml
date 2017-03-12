@@ -57,7 +57,7 @@ paths:
         type: string
         description: Pass the user's token to authenticate
     get:
-      summary: Get an ICS feed (* no JSON API returned).
+      summary: Get an ICS feed.
       responses:
         '200':
           description: ICS calendar feed
