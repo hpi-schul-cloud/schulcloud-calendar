@@ -21,8 +21,7 @@ const returnIcs = require('../utils/response/returnIcs');
 // content
 const getScopesForToken = require('../services/scopes/getScopesForToken');
 const scopesToCalendarList = require('../parsers/calendar/scopesToCalendarList');
-const getScopeIdsForToken = require('../services/scopes/getScopeIdsForToken');
-const getEvents = require('../services/events/getEvents');
+const getEventsFromDb = require('../services/events/getEvents');
 const flatten = require('../utils/flatten');
 const eventsToIcs = require('../parsers/event/eventsToIcs');
 
@@ -32,7 +31,7 @@ router.get('/calendar/list', authorize, function (req, res) {
     const token = req.get('Authorization');
     getScopesForToken(token)
         .then(scopesToCalendarList)
-        .then((calendarList) => { returnSuccess(res, 200, calendarList); })
+        .then((calendarList) => returnSuccess(res, 200, calendarList))
         .catch(({error, status, title}) => {
             returnError(res, error, status, title);
         });
@@ -41,25 +40,32 @@ router.get('/calendar/list', authorize, function (req, res) {
 router.get('/calendar', authorize, function (req, res) {
     const scopeId = req.query['scope-id'];
     const token = req.token;
-    getScopeIdsForToken(token, scopeId)
-        .then(getIcs)
-        .then((icsString) => { returnIcs(res, icsString); })
+    getScopesForToken(token)
+        .then((scopes) => getIcs(scopes, scopeId))
+        .then((icsString) => returnIcs(res, icsString))
         .catch(({error, status, title}) => {
             returnError(res, error, status, title);
         });
 });
 
-function getIcs(scopeIds) {
+function getIcs(scopes, scopeId) {
     return new Promise((resolve, reject) => {
-        Promise.all(scopeIds.map((scopeId) => {
-            const filter = { scopeId, all: true };
-            return getEvents(filter);
-        }))
-            .then((events) => {
-                resolve(eventsToIcs(flatten(events)));
-            })
-            .catch(reject);
+        if (scopeId) {
+            const scope = scopes.find(({id}) => id === scopeId);
+            getEvents(scopeId)
+                .then((events) => resolve(eventsToIcs(events, scope)))
+                .catch(reject);
+        } else {
+            Promise.all(scopes.map(({id}) => getEvents(id)))
+                .then((events) => resolve(eventsToIcs(flatten(events))))
+                .catch(reject);
+        }
     });
+
+    function getEvents(scopeId) {
+        const filter = { scopeId, all: true };
+        return getEventsFromDb(filter);
+    }
 }
 
 module.exports = router;

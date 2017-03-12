@@ -4,10 +4,14 @@ const iCalendarDateFormat = (date) => {
     return date.toISOString().replace(/([:-]|(\..{3}))/g, '');
 };
 
-function eventsToIcs(events) {
+function eventsToIcs(events, scope) {
     let ics = 'BEGIN:VCALENDAR\n';
     ics += 'VERSION:2.0\n';
     ics += `PRODID:${config.ROOT_URL}/calendar/\n`;
+
+    if (scope && scope.name) {
+        ics += `X-WR-CALNAME:${scope.name}\n`;
+    }
 
     events.map(function (event) {
         ics += eventToIcs(event);
