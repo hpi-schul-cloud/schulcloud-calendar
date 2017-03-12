@@ -67,7 +67,7 @@ CREATE TABLE events (
   description       TEXT                              DEFAULT NULL,
   dtstart           TIMESTAMP WITH TIME ZONE NOT NULL,
   dtend             TIMESTAMP WITH TIME ZONE NOT NULL,
-  scope_id      UUID                     NOT NULL,
+  scope_id          UUID                     NOT NULL,
   dtstamp           TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "last-modified"   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   repeat_freq       repeat_type                       DEFAULT NULL,
@@ -91,10 +91,10 @@ CREATE TABLE events (
 CREATE TABLE alarms (
   id          UUID UNIQUE PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
   event_id    UUID                    NOT NULL REFERENCES events (id) ON DELETE CASCADE,
-  trigger     TEXT                    NOT NULL, -- when to initially alarm
+  trigger     TEXT                    NOT NULL,              -- when to initially alarm
   repeat      INTEGER                          DEFAULT NULL, -- how many times
   duration    INTERVAL                         DEFAULT NULL, -- interval of repeated (additional) alarms
-  action      alarm_action            NOT NULL, -- one of "audio", "display", "email"
+  action      alarm_action            NOT NULL,              -- one of "audio", "display", "email"
   attach      TEXT                             DEFAULT NULL, -- sound file, email attachment
   description TEXT                             DEFAULT NULL, -- text to dsiplay / body of email message
   attendee    TEXT                             DEFAULT NULL, -- email alarm; recipients of message
@@ -114,7 +114,7 @@ CREATE TABLE subscriptions (
   description         TEXT                              DEFAULT NULL,
   last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
   last_updated_status INTEGER                  NOT NULL DEFAULT 418, -- I'm a teapot
-  scope_id        UUID                     NOT NULL
+  scope_id            UUID                     NOT NULL
 );
 
 -- If separateUsers in a POST /events request is set, the event_id is saved with
