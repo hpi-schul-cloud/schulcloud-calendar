@@ -43,6 +43,8 @@ function buildQuery(filter) {
     } else {
         query = 'SELECT * FROM events WHERE event_id = $1';
         params = [ eventId ];
+        // always return all events when eventId is given
+        all = true;
     }
 
     // if all is not set, filter by timespan
