@@ -7,7 +7,7 @@ function authentication(req, res, next) {
     // not set then no attempt to authenticate is registered.
     let token = req.get('Authorization');
 
-    if (req.method === 'GET' && (req.url === '/calendar' || req.url === '/calendar/') ) {
+    if (req.method === 'GET' && (/^\/calendar[\/]?\?/.test(req.url))) {
         token = req.query['authorization'];
     }
 
@@ -61,7 +61,7 @@ function validAccess(req) {
         return hasPermission(user, 'can-read', req.query['scope-id']);
     } else {
         if (req.events) {
-            return hasPermissionForAll(user, req.events)
+            return hasPermissionForAll(user, req.events);
         } else if (req.subscriptions) {
             return hasPermissionForAll(user, req.subscriptions);
         }
