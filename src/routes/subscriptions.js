@@ -21,9 +21,9 @@ const sendNotification = require('../services/sendNotification');
 const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJsonApi');
 
 // content
-const getSubscriptions = require('../services/getSubscriptions');
-const storeSubscriptions = require('../services/storeSubscriptions');
-const updateSubscription = require('../services/updateSubscription');
+const getSubscriptions = require('../services/subscriptions/getSubscriptions');
+const storeSubscriptions = require('../services/subscriptions/storeSubscriptions');
+const updateSubscription = require('../services/subscriptions/updateSubscription');
 const deleteSubscription = require('../queries/deleteSubscription');
 
 /* routes */

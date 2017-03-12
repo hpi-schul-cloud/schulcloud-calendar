@@ -1,10 +1,10 @@
 const uuidV4 = require('uuid/v4');
-const getScopeIdsForSeparateUsers = require('./getScopeIdsForSeparateUsers');
-const insertRawEvent = require('../queries/insertRawEvent');
-const insertExdate = require('../queries/insertExdate');
-const insertAlarm = require('../queries/insertAlarm');
-const insertOriginalScopeId = require('../queries/insertOriginalScopeId');
-const flatten = require('../utils/flatten');
+const insertRawEvent = require('../../queries/insertRawEvent');
+const insertExdate = require('../../queries/insertExdate');
+const insertAlarm = require('../../queries/insertAlarm');
+const insertOriginalScopeId = require('../../queries/insertOriginalScopeId');
+const flatten = require('../../utils/flatten');
+const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 
 function storeEvents(events) {
     return new Promise((resolve, reject) => {

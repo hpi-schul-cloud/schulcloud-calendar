@@ -1,6 +1,6 @@
-const getScopeIdsForToken = require('./getScopeIdsForToken');
-const flatten = require('../utils/flatten');
-const getSubscriptionsFromDb = require('../queries/getSubscriptions');
+const flatten = require('../../utils/flatten');
+const getSubscriptionsFromDb = require('../../queries/getSubscriptions');
+const getScopeIdsForToken = require('../scopes/getScopeIdsForToken');
 
 function getSubscriptions(filter, token) {
     return new Promise(function (resolve, reject) {

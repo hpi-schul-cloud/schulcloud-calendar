@@ -1,8 +1,8 @@
-const getScopeIdsForToken = require('./getScopeIdsForToken');
-const flatten = require('../utils/flatten');
-const getAlarms = require('../queries/getAlarms');
-const getExdates = require('../queries/getExdates');
-const getRawEvents = require('../queries/getRawEvents');
+const getAlarms = require('../../queries/getAlarms');
+const getExdates = require('../../queries/getExdates');
+const getRawEvents = require('../../queries/getRawEvents');
+const flatten = require('../../utils/flatten');
+const getScopeIdsForToken = require('../scopes/getScopeIdsForToken');
 
 function getEvents(filter, token) {
     return new Promise(function (resolve, reject) {

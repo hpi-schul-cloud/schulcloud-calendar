@@ -23,8 +23,8 @@ const eventsToJsonApi = require('../parsers/event/eventsToJsonApi');
 const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
 // content
-const getEvents = require('../services/getEvents');
-const storeEvents = require('../services/storeEvents');
+const getEvents = require('../services/events/getEvents');
+const storeEvents = require('../services/events/storeEvents');
 const deleteEvent = require('../queries/deleteEvent');
 
 /* routes */

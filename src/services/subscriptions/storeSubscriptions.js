@@ -1,6 +1,6 @@
-const insertSubscription = require('../queries/insertSubscription');
-const getScopeIdsForSeparateUsers = require('../services/getScopeIdsForSeparateUsers');
-const flatten = require('../utils/flatten');
+const insertSubscription = require('../../queries/insertSubscription');
+const flatten = require('../../utils/flatten');
+const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 
 function storeSubscriptions(subscriptions) {
     return new Promise((resolve, reject) => {

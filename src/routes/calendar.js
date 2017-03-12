@@ -19,10 +19,10 @@ const returnSuccess = require('../utils/response/returnSuccess');
 const returnIcs = require('../utils/response/returnIcs');
 
 // content
-const getScopesForToken = require('../services/getScopesForToken');
+const getScopesForToken = require('../services/scopes/getScopesForToken');
 const scopesToCalendarList = require('../parsers/calendar/scopesToCalendarList');
-const getScopeIdsForToken = require('../services/getScopeIdsForToken');
-const getEvents = require('../services/getEvents');
+const getScopeIdsForToken = require('../services/scopes/getScopeIdsForToken');
+const getEvents = require('../services/events/getEvents');
 const flatten = require('../utils/flatten');
 const eventsToIcs = require('../parsers/event/eventsToIcs');
 
