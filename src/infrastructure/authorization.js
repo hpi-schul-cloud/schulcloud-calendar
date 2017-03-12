@@ -1,6 +1,5 @@
 const getAllScopesForToken = require('../http/getAllScopesForToken');
 const returnError = require('../utils/response/returnError');
-const flatten = require('../utils/flatten');
 
 /**
  * Validate access to the requested resource based on the Authorization token used.
@@ -12,10 +11,10 @@ const flatten = require('../utils/flatten');
  */
 function authentication(requiredAccessRights = {}) {
     return function (req, res, next) {
-        getUser(req)
+        getUser(req, res)
             .then(validateScopeIdInQuery)
             .then((req) => {
-                return validateAccess(req, requiredAccessRights)
+                return validateAccess(req, requiredAccessRights);
             })
             .then((result) => {
                 if (result === true) {
@@ -27,7 +26,7 @@ function authentication(requiredAccessRights = {}) {
             .catch(() => {
                 returnError(res, 'Invalid Authorization token!', 401, 'Unauthorized');
             });
-    }
+    };
 }
 
 function validateScopeIdInQuery(req) {
@@ -89,7 +88,7 @@ function hasPermission(user, permission, scopeId) {
     return false;
 }
 
-function getUser(req) {
+function getUser(req, res) {
     return new Promise((resolve) => {
         if (!req.user) {
             let token = req.get('Authorization');
@@ -103,7 +102,7 @@ function getUser(req) {
                     .then((apiResponse) => {
                         req.user = parseUserInformation(apiResponse);
                         resolve(req);
-                    })
+                    });
             } else {
                 return returnError(res, 'Missing Authorization token!', 401, 'Unauthorized');
             }

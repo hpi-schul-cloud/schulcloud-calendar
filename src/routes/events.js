@@ -53,13 +53,13 @@ router.get('/events',
         'can-read':  ['result']
     }),
     function (req, res) {
-        new Promise((resolve) => {resolve(req.result)})
+        new Promise((resolve) => {resolve(req.result);})
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({error, status, title}) => {
             returnError(res, error, status, title);
         });
-});
+    });
 
 router.post('/events',
     jsonApiToJson,
@@ -75,7 +75,7 @@ router.post('/events',
             .catch(({error, status, title}) => {
                 returnError(res, error, status, title);
             });
-});
+    });
 
 router.post('/events/ics',
     icsToJson,
@@ -91,7 +91,7 @@ router.post('/events/ics',
             .catch(({error, status, title}) => {
                 returnError(res, error, status, title);
             });
-});
+    });
 
 router.put('/events/:eventId',
     authorize(),
@@ -120,7 +120,7 @@ router.put('/events/:eventId',
             .then(eventsToJsonApi)
             .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
             .catch((error) => { returnError(res, error); });
-});
+    });
 
 router.put('/events/ics/:eventId',
     authorize(),
@@ -151,7 +151,7 @@ router.put('/events/ics/:eventId',
             .catch(({error, status, title}) => {
                 returnError(res, error, status, title);
             });
-});
+    });
 
 router.delete('/events/:eventId',
     authorize(),
@@ -196,7 +196,7 @@ router.delete('/events/:eventId',
             .catch(({error, status, title}) => {
                 returnError(res, error, status, title);
             });
-});
+    });
 
 function insertEvents(events) {
     return new Promise(function (resolve, reject) {
