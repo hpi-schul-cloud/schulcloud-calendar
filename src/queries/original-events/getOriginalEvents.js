@@ -1,5 +1,5 @@
 const client = require('../../infrastructure/database');
-const errorMessage = require('../_errorMessage');
+const errorMessage = require('../utils/errorMessage');
 
 function getOriginalEvents(eventId) {
     return new Promise(function (resolve, reject) {

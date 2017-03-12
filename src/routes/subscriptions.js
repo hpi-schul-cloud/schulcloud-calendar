@@ -23,7 +23,7 @@ const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJ
 // content
 const getSubscriptions = require('../services/subscriptions/getSubscriptions');
 const storeSubscriptions = require('../services/subscriptions/storeSubscriptions');
-const updateSubscription = require('../services/subscriptions/updateSubscription');
+const updateSubscription = require('../queries/subscriptions/updateSubscription');
 const deleteSubscription = require('../queries/subscriptions/deleteSubscription');
 
 /* routes */
@@ -64,15 +64,22 @@ router.post('/subscriptions', jsonApiToJson, authorize, function (req, res) {
 
 router.put('/subscriptions/:subscriptionId', jsonApiToJson, authorize, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
-    const subscriptions = req.subscriptions;
-    updateSubscription(subscriptions, subscriptionId)
+    const { ics_url, description } = req.subscriptions[0];
+    updateSubscription([ics_url, description, subscriptionId])
         .then((updatedSubscription) => {
-            sendNotification.forModifiedSubscription(
-                updatedSubscription['scope_id'],
-                updatedSubscription['description'],
-                updatedSubscription['ics_url']
-            );
-            return [updatedSubscription];
+            if (updatedSubscription) {
+                sendNotification.forModifiedSubscription(
+                    updatedSubscription['scope_id'],
+                    updatedSubscription['description'],
+                    updatedSubscription['ics_url']
+                );
+                return [updatedSubscription];
+            } else {
+                const error = 'Given subscriptionId not found';
+                const status = 404;
+                const title = 'Query Error';
+                return Promise.reject({error, status, title});
+            }
         })
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
