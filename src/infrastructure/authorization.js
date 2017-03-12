@@ -5,7 +5,11 @@ const returnError = require('../utils/response/returnError');
 function authentication(req, res, next) {
     // provide the data that was used to authenticate the request; if this is
     // not set then no attempt to authenticate is registered.
-    const token = req.get('Authorization');
+    let token = req.get('Authorization');
+
+    if (req.method === 'GET' && (req.url === '/calendar' || req.url === '/calendar/') ) {
+        token = req.query['authorization'];
+    }
 
     if (token) {
         req.token = token;

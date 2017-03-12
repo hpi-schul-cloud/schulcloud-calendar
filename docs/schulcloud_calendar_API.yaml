@@ -4,7 +4,7 @@ info:
   description: >-
     API specification of the Schul-Cloud Calendar Service based on the JSON API specification 1.0 (http://jsonapi.org). Contribute today on https://github.com/schulcloud/schulcloud-calendar.
     _Important_: Routes with a `X` as last character in the summary (next to the route) are not yet implemented, those with an asterisk `*` are not yet finished.
-  version: 0.0.7
+  version: 0.0.8
   contact:
     email: schulcloud-dev@lists.myhpi.de
 host: 'schul-cloud.org:3000'
@@ -20,17 +20,13 @@ tags:
   - name: calendar
     description: Get an ICS feed
   - name: events
-    description: Work with one or multiple events as JSON
-  - name: events/ics
-    description: Work with one or multiple events as ICS string
+    description: Work with one or multiple events
   - name: share
     description: Access an ICS feed from an external endpoint
   - name: subscriptions
     description: Manage subscribed ICS feeds
   - name: to-dos
-    description: Work with one or multiple To Dos as JSON
-  - name: to-dos/ics
-    description: Work with one or multiple To Dos as ICS string
+    description: Work with one or multiple To Dos
 paths:
   '/calendar/list':
     get:
@@ -53,10 +49,15 @@ paths:
     parameters:
       - name: scope-id
         in: query
+        required: false
+        type: string
+      - name: authorization
+        in: query
         required: true
         type: string
+        description: Pass the user's token to authenticate
     get:
-      summary: Get an ICS feed (* no JSON API returned).
+      summary: Get an ICS feed.
       responses:
         '200':
           description: ICS calendar feed
@@ -68,8 +69,6 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - calendar
-      security:
-        - user-token: []
 
   /events:
     get:
@@ -199,7 +198,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyIcsEventRequest'
       tags:
-        - events/ics
+        - events
       security:
         - user-token: []
   '/events/ics/{event-id}':
@@ -229,7 +228,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyIcsEventRequest'
       tags:
-        - events/ics
+        - events
       security:
         - user-token: []
 
@@ -549,7 +548,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyIcsToDoRequest'
       tags:
-        - to-dos/ics
+        - to-dos
       security:
         - user-token: []
   '/to-dos/ics/{to-do-id}':
@@ -579,7 +578,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateModifyIcsToDoRequest'
       tags:
-        - to-dos/ics
+        - to-dos
       security:
         - user-token: []
 
@@ -631,7 +630,7 @@ definitions:
               type: string
               example: "event"
             attributes:
-              $ref: '#/definitions/EventJSONattributes'
+              $ref: '#/definitions/EventJSONattributesRequest'
             relationships:
               $ref: '#/definitions/RelationshipScopeIds'
             included:
@@ -765,8 +764,6 @@ definitions:
                 ics:
                   type: string
                   example: 'BEGIN:VCALENDAR\n...\nEND:VCALENDAR'
-            relationships:
-              $ref: '#/definitions/RelationshipScopeIds'
 
   GetEventResponseData:
     type: array
@@ -780,9 +777,7 @@ definitions:
           type: string
           example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
         attributes:
-          $ref: '#/definitions/EventJSONattributes'
-        relationships:
-          $ref: '#/definitions/RelationshipScopeIds'
+          $ref: '#/definitions/EventJSONattributesResponse'
         included:
           type: array
           items:
@@ -848,12 +843,9 @@ definitions:
         items:
           $ref: '#/definitions/ShareToken'
 
-  EventJSONattributes:
+  EventJSONattributesRequest:
     type: object
     properties:
-      uid:
-        type: string
-        example: "71c2f833-e26b-4635-b954-2f72f136cfd9@schul-cloud.org"
       summary:
         type: string
         example: Legend Summer Party
@@ -892,6 +884,15 @@ definitions:
       x-sc-...:
         description: custom Schul-Cloud specific fields, MUST have a 'x-sc-' prefix
         type: string
+
+  EventJSONattributesResponse:
+    type: object
+    allOf:
+      - $ref: '#/definitions/EventJSONattributesRequest'
+      - properties:
+          uid:
+            type: string
+            example: "71c2f833-e26b-4635-b954-2f72f136cfd9@schul-cloud.org"
 
   RRuleJSONattributes:
     type: object
@@ -1199,8 +1200,6 @@ definitions:
                 ics:
                   type: string
                   example: 'BEGIN:VTODO\n...\nEND:VTODO'
-            relationships:
-              $ref: '#/definitions/RelationshipScopeIds'
 
   GetToDoResponseData:
     type: array
@@ -1215,8 +1214,6 @@ definitions:
           example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
         attributes:
           $ref: '#/definitions/ToDoJSONattributes'
-        relationships:
-          $ref: '#/definitions/RelationshipScopeIds'
         included:
           type: array
           items:
@@ -1339,8 +1336,6 @@ definitions:
         example: "8ad5a293-8ed8-45d9-8a20-2e353051af1c"
       attributes:
         $ref: '#/definitions/ExternalFeedAttributesResponse'
-      relationships:
-        $ref: '#/definitions/RelationshipScopeIds'
 
   ExternalFeedAttributesRequest:
     type: object

@@ -38,7 +38,7 @@ router.get('/calendar/list', authorize, function (req, res) {
 
 router.get('/calendar', authorize, function (req, res) {
     const scopeId = req.query['scope-id'];
-    const token = req.get('Authorization');
+    const token = req.token;
     getScopeIdsForToken(token, scopeId)
         .then(getIcs)
         .then((icsString) => { returnIcs(res, icsString); })
