@@ -232,101 +232,6 @@ paths:
       security:
         - user-token: []
 
-  '/share/list':
-    get:
-      summary: Get a list of current share tokens for the given authentication token (X).
-      responses:
-        '200':
-          description: ShareTokenList
-          schema:
-            $ref: '#/definitions/ShareTokenList'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - share
-      security:
-        - user-token: []
-
-  '/share/calendar/{share-token}':
-    parameters:
-      - name: share-token
-        in: path
-        required: true
-        type: string
-    get:
-      summary: Get an ICS feed for the specified share token (X).
-      responses:
-        '200':
-          description: ICS calendar feed
-          schema:
-            type: file
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - share
-
-
-  '/share/{scope-id}/':
-    parameters:
-      - name: scope-id
-        in: path
-        required: true
-        type: string
-    post:
-      summary: Create a new share token for the specified scope id (X).
-      responses:
-        '201':
-          description: ShareTokenList
-          schema:
-            $ref: '#/definitions/GetCreateSingleShareTokenResponse'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - share
-      security:
-        - user-token: []
-
-  '/share/{share-token}':
-    parameters:
-      - name: share-token
-        in: path
-        required: true
-        type: string
-    get:
-      summary: Get details for a given share token (X).
-      responses:
-        '200':
-          description: ShareToken
-          schema:
-            $ref: '#/definitions/GetCreateSingleShareTokenResponse'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - share
-      security:
-        - user-token: []
-    delete:
-      summary: Revoke the specified share token (X).
-      responses:
-        '204':
-          description: Successful
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      tags:
-        - share
-      security:
-        - user-token: []
-
   '/subscriptions':
     get:
       summary: Get a list of subscribed feeds for the scopes you have write access to.
@@ -377,7 +282,6 @@ paths:
         - subscriptions
       security:
         - user-token: []
-
   '/subscriptions/{subscription-id}':
     parameters:
       - name: subscription-id
@@ -417,6 +321,97 @@ paths:
             $ref: '#/definitions/Error'
       tags:
         - subscriptions
+      security:
+        - user-token: []
+
+  '/share/list':
+    get:
+      summary: Get a list of current share tokens for the given authentication token (X).
+      responses:
+        '200':
+          description: ShareTokenList
+          schema:
+            $ref: '#/definitions/ShareTokenList'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - share
+      security:
+        - user-token: []
+  '/share/calendar/{share-token}':
+    parameters:
+      - name: share-token
+        in: path
+        required: true
+        type: string
+    get:
+      summary: Get an ICS feed for the specified share token (X).
+      responses:
+        '200':
+          description: ICS calendar feed
+          schema:
+            type: file
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - share
+  '/share/{scope-id}/':
+    parameters:
+      - name: scope-id
+        in: path
+        required: true
+        type: string
+    post:
+      summary: Create a new share token for the specified scope id (X).
+      responses:
+        '201':
+          description: ShareTokenList
+          schema:
+            $ref: '#/definitions/GetCreateSingleShareTokenResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - share
+      security:
+        - user-token: []
+  '/share/{share-token}':
+    parameters:
+      - name: share-token
+        in: path
+        required: true
+        type: string
+    get:
+      summary: Get details for a given share token (X).
+      responses:
+        '200':
+          description: ShareToken
+          schema:
+            $ref: '#/definitions/GetCreateSingleShareTokenResponse'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - share
+      security:
+        - user-token: []
+    delete:
+      summary: Revoke the specified share token (X).
+      responses:
+        '204':
+          description: Successful
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      tags:
+        - share
       security:
         - user-token: []
 
