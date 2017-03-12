@@ -1,82 +1,80 @@
 const getAllScopesForToken = require('../http/getAllScopesForToken');
 const returnError = require('../utils/response/returnError');
+const flatten = require('../utils/flatten');
 
-
-function authentication(req, res, next) {
-    // provide the data that was used to authenticate the request; if this is
-    // not set then no attempt to authenticate is registered.
-    let token = req.get('Authorization');
-
-    if (req.method === 'GET' && (/^\/calendar[\/]?\?/.test(req.url))) {
-        token = req.query['authorization'];
-    }
-
-    if (token) {
-        req.token = token;
-        getAllScopesForToken(token).then(
-            function (value) {
-                value = JSON.parse(value);
-
-                let user = {};
-                user.scope = {};
-                value.data.forEach(function (scope) {
-                    if (scope.type === 'user') {
-                        user.id = scope.id;
-                        user.name = scope.attributes.name;
-                    } else if (scope.type === 'scope') {
-                        user.scope[scope.id] = {};
-                        user.scope[scope.id].id = scope.id;
-                        user.scope[scope.id].name = scope.attributes.name;
-                        user.scope[scope.id].authorities = {};
-                        scope.attributes.authorities.forEach(function (authority) {
-                            user.scope[scope.id].authorities[authority] = true;
-                        });
-                    }
-                });
-                req.user = user;
-                if (validAccess(req)) {
+/**
+ * Validate access to the requested resource based on the Authorization token used.
+ * @param   requiredAccessRights: Defines an object with the required access rights to validate and an array as key
+ *                                with object names to check. This name should match a name known by req,
+ *                                e.g. 'events' is given, so that req.events will be checked.
+ * @returns function to act as middleware. This will call the next() handler to continue with the request
+ *          or returnError() to indicate an error
+ */
+function authentication(requiredAccessRights = {}) {
+    return function (req, res, next) {
+        getUser(req)
+            .then(validateScopeIdInQuery)
+            .then((req) => {
+                return validateAccess(req, requiredAccessRights)
+            })
+            .then((result) => {
+                if (result === true) {
                     next();
                 } else {
                     returnError(res, 'Access denied!', 403, 'Forbidden!');
                 }
-            },
-            function () {
+            })
+            .catch(() => {
                 returnError(res, 'Invalid Authorization token!', 401, 'Unauthorized');
-            }
-        );
-    } else {
-        returnError(res, 'Missing Authorization token!', 401, 'Unauthorized');
+            });
     }
 }
 
-function validAccess(req) {
-    // TODO: Add more complex checks for the following:
-    // Missing in query:
-    // event-id (GET), subscription-id (GET), to-do-id (GET)
-    // Missing in path:
-    // event-id (PUT, DELETE), share-token (GET, DELETE), subscription-id (PUT, DELETE), to-do-id (PUT, DELETE)
-    const user = req.user;
-
-    if (req.method === 'GET') {
-        return hasPermission(user, 'can-read', req.query['scope-id']);
-    } else {
-        if (req.events) {
-            return hasPermissionForAll(user, req.events);
-        } else if (req.subscriptions) {
-            return hasPermissionForAll(user, req.subscriptions);
+function validateScopeIdInQuery(req) {
+    if (req.scopeIdValid === undefined) {
+        if (req.query['scope-id']) {
+            req.scopeIdValid = hasPermission(req.user, 'can-read', req.query['scope-id']);
+        } else {
+            req.scopeIdValid = true;
         }
-        return true;
     }
+    return req;
 }
 
-function hasPermissionForAll(user, container) {
+function validateAccess(req, requiredAccessRights) {
+    if (req.scopeIdValid === false) {
+        return false;
+    }
+
+    const user = req.user;
     let valid = true;
-    container.forEach(function (subscription) {
-        subscription.scope_ids.forEach(function (scopeId) {
-            valid &= hasPermission(user, 'can-write', scopeId);
-        });
+
+    for (let accessRight in requiredAccessRights) {
+        if (requiredAccessRights.hasOwnProperty(accessRight)) {
+            let containerNames = requiredAccessRights[accessRight];
+            containerNames.forEach((jsonName) => {
+                let json = req[jsonName] || [];
+                valid &= hasPermissionForAll(user, json, accessRight);
+            });
+        }
+    }
+
+    return Boolean(valid);
+}
+
+function hasPermissionForAll(user, container, accessLevel) {
+    let valid = true;
+    container.forEach(function (element) {
+        if (Array.isArray(element.scope_ids)) {
+            element.scope_ids.forEach(function (scopeId) {
+                valid &= hasPermission(user, accessLevel, scopeId);
+            });
+        } else if (element.scope_id) {
+            // TODO: Currently only in use by subscriptions, refactor to be an array
+            valid &= hasPermission(user, accessLevel, element.scope_id);
+        }
     });
-    return valid;
+    return Boolean(valid);
 }
 
 function hasPermission(user, permission, scopeId) {
@@ -90,5 +88,52 @@ function hasPermission(user, permission, scopeId) {
     }
     return false;
 }
+
+function getUser(req) {
+    return new Promise((resolve) => {
+        if (!req.user) {
+            let token = req.get('Authorization');
+            if (req.method === 'GET' && (/^\/calendar[\/]?\?/.test(req.url))) {
+                token = req.query['authorization'];
+            }
+
+            if (token) {
+                req.token = token;
+                getAllScopesForToken(token)
+                    .then((apiResponse) => {
+                        req.user = parseUserInformation(apiResponse);
+                        resolve(req);
+                    })
+            } else {
+                return returnError(res, 'Missing Authorization token!', 401, 'Unauthorized');
+            }
+        } else {
+            resolve(req);
+        }
+    });
+}
+
+function parseUserInformation(apiResponse) {
+    apiResponse = JSON.parse(apiResponse);
+
+    let user = {};
+    user.scope = {};
+    apiResponse.data.forEach(function (scope) {
+        if (scope.type === 'user') {
+            user.id = scope.id;
+            user.name = scope.attributes.name;
+        } else if (scope.type === 'scope') {
+            user.scope[scope.id] = {};
+            user.scope[scope.id].id = scope.id;
+            user.scope[scope.id].name = scope.attributes.name;
+            user.scope[scope.id].authorities = {};
+            scope.attributes.authorities.forEach(function (authority) {
+                user.scope[scope.id].authorities[authority] = true;
+            });
+        }
+    });
+    return user;
+}
+
 
 module.exports = authentication;
