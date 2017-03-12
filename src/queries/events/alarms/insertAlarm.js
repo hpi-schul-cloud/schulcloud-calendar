@@ -1,11 +1,13 @@
 const client = require('../../../infrastructure/database');
 const errorMessage = require('../../_errorMessage');
+const paramsTemplate = require('../../_paramsTemplate');
+const columnNames = require('./_columnNames');
 
 function insertAlarm(params) {
     return new Promise(function (resolve, reject) {
-        const query = `INSERT INTO alarms (event_id, trigger, repeat, duration, action, attach, description, attendee, summary)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-             RETURNING id, event_id, trigger, repeat, duration, action, attach, description, attendee, summary`;
+        const query = `INSERT INTO alarms (${columnNames}) `
+            + `VALUES ${paramsTemplate(columnNames)} `
+            + `RETURNING id, ${columnNames}`;
         client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
