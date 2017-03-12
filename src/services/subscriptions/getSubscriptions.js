@@ -1,5 +1,5 @@
 const flatten = require('../../utils/flatten');
-const getSubscriptionsFromDb = require('../../queries/getSubscriptions');
+const getSubscriptionsFromDb = require('../../queries/subscriptions/getSubscriptions');
 const getScopeIdsForToken = require('../scopes/getScopeIdsForToken');
 
 function getSubscriptions(filter, token) {

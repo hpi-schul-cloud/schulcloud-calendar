@@ -1,5 +1,5 @@
-const client = require('../infrastructure/database');
-const errorMessage = require('./utils/errorMessage');
+const client = require('../../infrastructure/database');
+const errorMessage = require('../_errorMessage');
 
 function getSubscriptions(filter) {
     return new Promise((resolve, reject) => {

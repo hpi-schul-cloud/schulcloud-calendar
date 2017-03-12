@@ -24,7 +24,7 @@ const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJ
 const getSubscriptions = require('../services/subscriptions/getSubscriptions');
 const storeSubscriptions = require('../services/subscriptions/storeSubscriptions');
 const updateSubscription = require('../services/subscriptions/updateSubscription');
-const deleteSubscription = require('../queries/deleteSubscription');
+const deleteSubscription = require('../queries/subscriptions/deleteSubscription');
 
 /* routes */
 

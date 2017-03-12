@@ -1,6 +1,6 @@
-const client = require('../infrastructure/database');
-const errorMessage = require('./utils/errorMessage');
-const isoDateFormat = require('../utils/isoDateFormat');
+const client = require('../../infrastructure/database');
+const isoDateFormat = require('../../utils/isoDateFormat');
+const errorMessage = require('../_errorMessage');
 
 const THREE_WEEKS = 1000 * 60 * 60 * 24 * 21;
 const FROM = new Date(new Date().getTime() - THREE_WEEKS);

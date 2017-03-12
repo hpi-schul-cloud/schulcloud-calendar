@@ -1,8 +1,8 @@
 const uuidV4 = require('uuid/v4');
-const insertRawEvent = require('../../queries/insertRawEvent');
-const insertExdate = require('../../queries/insertExdate');
-const insertAlarm = require('../../queries/insertAlarm');
-const insertOriginalScopeId = require('../../queries/insertOriginalScopeId');
+const insertRawEvent = require('../../queries/events/insertRawEvent');
+const insertExdate = require('../../queries/events/exdates/insertExdate');
+const insertAlarm = require('../../queries/events/alarms/insertAlarm');
+const insertOriginalScopeId = require('../../queries/original-events/insertOriginalEvent');
 const flatten = require('../../utils/flatten');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 

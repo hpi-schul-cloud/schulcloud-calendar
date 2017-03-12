@@ -1,6 +1,6 @@
-const getAlarms = require('../../queries/getAlarms');
-const getExdates = require('../../queries/getExdates');
-const getRawEvents = require('../../queries/getRawEvents');
+const getAlarms = require('../../queries/events/alarms/getAlarms');
+const getExdates = require('../../queries/events/exdates/getExdates');
+const getRawEvents = require('../../queries/events/getRawEvents');
 const flatten = require('../../utils/flatten');
 const getScopeIdsForToken = require('../scopes/getScopeIdsForToken');
 

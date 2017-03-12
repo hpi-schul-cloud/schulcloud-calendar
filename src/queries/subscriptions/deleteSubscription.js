@@ -1,5 +1,5 @@
-const client = require('../infrastructure/database');
-const errorMessage = require('./utils/errorMessage');
+const client = require('../../infrastructure/database');
+const errorMessage = require('../_errorMessage');
 
 function deleteSubscription(subscriptionId) {
     return new Promise(function(resolve, reject) {

@@ -1,4 +1,4 @@
-const insertSubscription = require('../../queries/insertSubscription');
+const insertSubscription = require('../../queries/subscriptions/insertSubscription');
 const flatten = require('../../utils/flatten');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 

@@ -1,5 +1,5 @@
-const updateSubscriptionInDb = require('../../queries/updateSubscription');
-const deleteSubscription = require('../../queries/deleteSubscription');
+const updateSubscriptionInDb = require('../../queries/subscriptions/updateSubscription');
+const deleteSubscription = require('../../queries/subscriptions/deleteSubscription');
 
 function updateSubscription(subscriptions, subscriptionId) {
     return new Promise((resolve, reject) => {

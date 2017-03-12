@@ -1,5 +1,5 @@
-const client = require('../infrastructure/database');
-const errorMessage = require('./utils/errorMessage');
+const client = require('../../infrastructure/database');
+const errorMessage = require('../_errorMessage');
 
 // NOTE: delete needs to be called before, otherwise the id won't be unique anymore
 function udpdateSubscription(params) {

@@ -1,7 +1,7 @@
-const client = require('../infrastructure/database');
-const errorMessage = require('./utils/errorMessage');
+const client = require('../../infrastructure/database');
+const errorMessage = require('../_errorMessage');
 
-function getOriginalScopeId(eventId) {
+function getOriginalEvents(eventId) {
     return new Promise(function (resolve, reject) {
         const query = 'SELECT original_scope_id FROM eventid_originalscopeid WHERE event_id = $1';
         client.query(query, [eventId], function (error, result) {
@@ -15,4 +15,4 @@ function getOriginalScopeId(eventId) {
     });
 }
 
-module.exports = getOriginalScopeId;
+module.exports = getOriginalEvents;

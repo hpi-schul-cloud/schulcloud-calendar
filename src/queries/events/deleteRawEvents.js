@@ -1,9 +1,9 @@
-const client = require('../infrastructure/database');
-const errorMessage = require('./utils/errorMessage');
+const client = require('../../infrastructure/database');
+const errorMessage = require('../_errorMessage');
 
-function getExdates(eventId) {
+function deleteEvents(eventId) {
     return new Promise(function(resolve, reject) {
-        const query = 'SELECT id, date FROM exdates WHERE event_id = $1';
+        const query = 'DELETE FROM events WHERE event_id = $1 RETURNING *';
         client.query(query, [eventId], function (error, result) {
             if (error) {
                 errorMessage(query, error);
@@ -15,4 +15,4 @@ function getExdates(eventId) {
     });
 }
 
-module.exports = getExdates;
+module.exports = deleteEvents;
