@@ -105,7 +105,6 @@ CREATE TABLE exdates (
   id       UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   event_id UUID                     NOT NULL REFERENCES events (id) ON DELETE CASCADE,
   date     TIMESTAMP WITH TIME ZONE NOT NULL
-  -- weitere Felder
 );
 
 CREATE TABLE subscriptions (
