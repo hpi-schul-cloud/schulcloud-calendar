@@ -30,7 +30,7 @@ const eventsToIcs = require('../parsers/event/eventsToIcs');
 router.get('/calendar/list', authorize, function (req, res) {
     const token = req.get('Authorization');
     getScopesForToken(token)
-        .then(scopesToCalendarList)
+        .then((scopes) => scopesToCalendarList(scopes, token))
         .then((calendarList) => returnSuccess(res, 200, calendarList))
         .catch(({error, status, title}) => {
             returnError(res, error, status, title);
