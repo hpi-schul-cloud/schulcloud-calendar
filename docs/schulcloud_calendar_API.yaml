@@ -4,7 +4,7 @@ info:
   description: >-
     API specification of the Schul-Cloud Calendar Service based on the JSON API specification 1.0 (http://jsonapi.org). Contribute today on https://github.com/schulcloud/schulcloud-calendar.
     _Important_: Routes with a `X` as last character in the summary (next to the route) are not yet implemented, those with an asterisk `*` are not yet finished.
-  version: 0.0.8
+  version: 0.0.9
   contact:
     email: schulcloud-dev@lists.myhpi.de
 host: 'schul-cloud.org:3000'
@@ -759,6 +759,8 @@ definitions:
                 ics:
                   type: string
                   example: 'BEGIN:VCALENDAR\n...\nEND:VCALENDAR'
+            relationships:
+              $ref: '#/definitions/RelationshipScopeIdsWithoutSeparateUsers'
 
   GetEventResponseData:
     type: array
@@ -773,6 +775,8 @@ definitions:
           example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
         attributes:
           $ref: '#/definitions/EventJSONattributesResponse'
+        relationships:
+          $ref: '#/definitions/RelationshipScopeIdsWithoutSeparateUsers'
         included:
           type: array
           items:
@@ -1195,6 +1199,8 @@ definitions:
                 ics:
                   type: string
                   example: 'BEGIN:VTODO\n...\nEND:VTODO'
+            relationships:
+              $ref: '#/definitions/RelationshipScopeIdsWithoutSeparateUsers'
 
   GetToDoResponseData:
     type: array
@@ -1209,6 +1215,8 @@ definitions:
           example: '71c2f833-e26b-4635-b954-2f72f136cfd9'
         attributes:
           $ref: '#/definitions/ToDoJSONattributes'
+        relationships:
+          $ref: '#/definitions/RelationshipScopeIdsWithoutSeparateUsers'
         included:
           type: array
           items:
@@ -1331,6 +1339,8 @@ definitions:
         example: "8ad5a293-8ed8-45d9-8a20-2e353051af1c"
       attributes:
         $ref: '#/definitions/ExternalFeedAttributesResponse'
+      relationships:
+        $ref: '#/definitions/RelationshipScopeIdsWithoutSeparateUsers'
 
   ExternalFeedAttributesRequest:
     type: object
@@ -1363,10 +1373,15 @@ definitions:
 
   RelationshipScopeIds:
     type: object
+    allOf:
+      - $ref: '#/definitions/RelationshipScopeIdsWithoutSeparateUsers'
+      - properties:
+          separate-users:
+            type: boolean
+
+  RelationshipScopeIdsWithoutSeparateUsers:
+    type: object
     properties:
-      separate-users:
-        type: boolean
-        example: true
       scope-ids:
         description: ids of entities
         type: array
