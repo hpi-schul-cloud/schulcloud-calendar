@@ -21,10 +21,10 @@ tags:
     description: Get an ICS feed
   - name: events
     description: Work with one or multiple events
-  - name: share
-    description: Access an ICS feed from an external endpoint
   - name: subscriptions
     description: Manage subscribed ICS feeds
+  - name: share
+    description: Access an ICS feed from an external endpoint
   - name: to-dos
     description: Work with one or multiple To Dos
 paths:
