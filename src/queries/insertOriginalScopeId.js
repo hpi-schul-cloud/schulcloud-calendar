@@ -1,10 +1,10 @@
 const client = require('../infrastructure/database');
 const errorMessage = require('./utils/errorMessage');
 
-function insertOriginalScopeId(eventId, originalReferenceId) {
+function insertOriginalScopeId(eventId, originalScopeId) {
     return new Promise(function (resolve, reject) {
-        const query = 'INSERT INTO eventid_originalreferenceid (event_id, original_scope_id) VALUES ($1, $2)';
-        client.query(query, [eventId, originalReferenceId], function (error, result) {
+        const query = 'INSERT INTO eventid_originalscopeid (event_id, original_scope_id) VALUES ($1, $2)';
+        client.query(query, [eventId, originalScopeId], function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);

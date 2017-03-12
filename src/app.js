@@ -8,8 +8,6 @@ const index = require('./routes');
 const calendar = require('./routes/calendar');
 const events = require('./routes/events');
 const subscriptions = require('./routes/subscriptions');
-const share = require('./routes/share');
-const toDos = require('./routes/toDos');
 
 const returnError = require('./utils/response/returnError');
 
@@ -27,8 +25,6 @@ app.use('/', index);
 app.use('/', calendar);
 app.use('/', events);
 app.use('/', subscriptions);
-app.use('/', share);
-app.use('/', toDos);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

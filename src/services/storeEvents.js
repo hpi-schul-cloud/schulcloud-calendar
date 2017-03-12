@@ -8,27 +8,21 @@ const flatten = require('../utils/flatten');
 
 function storeEvents(events) {
     return new Promise((resolve, reject) => {
-        // holds the eventId that is returned
-        // (different to the internal and unique id)
-        const externalEventIds = events.reduce((idMap, event) => {
-            const eventId = event.uid;
-            idMap[eventId] = idMap[eventId] || uuidV4();
-            return idMap;
-        }, {});
-
         Promise.all(events.map((event) => {
-            return storeEvent(event, externalEventIds[event.uid]);
+            return storeEvent(event);
         })).then((events) => resolve(flatten(events))).catch(reject);
 
     });
 }
 
-function storeEvent(event, externalEventId) {
+function storeEvent(event) {
     return new Promise((resolve, reject) => {
-        const {separateUsers, scopeIds} = event;
+        const { separateUsers, scopeIds } = event;
+        // the eventId that is returned (different to the internal, unique id)
+        const eventId = uuidV4();
         getScopeIdsForSeparateUsers(scopeIds, separateUsers)
             .then((allScopeIds) => {
-                return storeEventForScopes(event, allScopeIds, externalEventId);
+                return storeEventForScopes(event, allScopeIds, eventId);
             })
             .then((insertedEvents) => {
                 return updateOriginalScopeIds(separateUsers, scopeIds, insertedEvents);
@@ -130,17 +124,15 @@ function insertAlarms(event, insertedEvent) {
 }
 
 function updateOriginalScopeIds(separateUsers, scopeIds, insertedEvents) {
-    return insertedEvents;
-    // TODO insert right ids in eventid_originalreferenceid table
-    // return new Promise((resolve, reject) => {
-    //     if (!separateUsers) {
-    //         resolve(insertedEvents);
-    //     }
-    //     const eventId = insertedEvents[0]['event_id'];
-    //     Promise.all(scopeIds.map((scopeId) => {
-    //         return insertOriginalScopeId(eventId, scopeId);
-    //     })).then(() => { resolve(insertedEvents); }).catch(reject);
-    // });
+    return new Promise((resolve, reject) => {
+        if (!separateUsers || insertedEvents.length === 0) {
+            return resolve(insertedEvents);
+        }
+        const eventId = insertedEvents[0]['event_id'];
+        Promise.all(scopeIds.map((scopeId) => {
+            return insertOriginalScopeId(eventId, scopeId);
+        })).then(() => { resolve(insertedEvents); }).catch(reject);
+    });
 }
 
 module.exports = storeEvents;
