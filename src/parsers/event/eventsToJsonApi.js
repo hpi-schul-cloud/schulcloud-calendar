@@ -38,7 +38,9 @@ function eventToJsonApi(event) {
 
     for (let key in event) {
         if (event.hasOwnProperty(key)) {
-            switch (key.split('_')[0]) {
+            if (key.startsWith('repeat'))
+                key = 'repeat';
+            switch (key) {
                 case 'repeat':
                     rrule[key.split('_')[1]] = event[key];
                     break;
@@ -52,8 +54,8 @@ function eventToJsonApi(event) {
                         addExDateToJsonApi(jsonApiEvent.included, exdate);
                     });
                     break;
-                case 'scope_ids':
-                    jsonApiEvent.relationships['scope-ids'] = event[key];
+                case 'scope_id':
+                    jsonApiEvent.relationships['scope-ids'] = [event[key]];
                     break;
                 case 'separate_users':
                     jsonApiEvent.relationships['separate-users'] = event[key];
