@@ -10,8 +10,9 @@ router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-// preprocessing
-const authorize = require('../infrastructure/authorization');
+// authentication, authorization and preprocessing
+const { authenticateFromHeaderField } = require('../security/authentication');
+const { authorizeAccessToScopeId, authorizeAccessToObject } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
@@ -28,23 +29,30 @@ const deleteSubscription = require('../queries/subscriptions/deleteSubscription'
 
 /* routes */
 
-router.get('/subscriptions', authorize, function (req, res) {
-    const token = req.get('Authorization');
+router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
     const scopeId = req.query['scope-id'];
     const subscriptionId = req.query['subscription-id'];
     const lastUpdateFailed = req.query['last-update-failed'];
     const filter = { scopeId, subscriptionId, lastUpdateFailed };
-    getSubscriptions(filter, token)
+    const user = req.user;
+    const token = req.get('Authorization');
+
+    authorizeAccessToScopeId(user, filter.scopeId)
+        .then(() => getSubscriptions(filter, token))
+        .then((subscriptions) => authorizeAccessToObject(user, 'can-read', subscriptions))
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({message, status, title}) => {
+        .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });
 });
 
-router.post('/subscriptions', jsonApiToJson, authorize, function (req, res) {
-    const { subscriptions } = req;
-    storeSubscriptions(subscriptions)
+router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
+    const user = req.user;
+    const subscriptions = req.subscriptions;
+
+    authorizeAccessToObject(user, 'can-write', subscriptions)
+        .then(storeSubscriptions)
         .then((insertedSubscriptions) => {
             insertedSubscriptions.forEach((insertedSubscription) => {
                 sendNotification.forNewSubscription(
@@ -57,15 +65,23 @@ router.post('/subscriptions', jsonApiToJson, authorize, function (req, res) {
         })
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({message, status, title}) => {
+        .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });
 });
 
-router.put('/subscriptions/:subscriptionId', jsonApiToJson, authorize, function (req, res) {
+router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
+    const subscription = req.subscriptions;
     const subscriptionId = req.params.subscriptionId;
-    const subscriptions = req.subscriptions;
-    updateSubscription(subscriptions, subscriptionId)
+    const filter = { subscriptionId: subscriptionId };
+    const user = req.user;
+    const token = req.get('Authorization');
+
+    getSubscriptions(filter, token)
+        .then((existingSubscription) => authorizeAccessToObject(user, 'can-read', existingSubscription))
+        .then((existingSubscription) => authorizeAccessToObject(user, 'can-write', existingSubscription))
+        .then(() => authorizeAccessToObject(user, 'can-write', subscription))
+        .then((subscription) => updateSubscription(subscription, subscriptionId))
         .then((updatedSubscription) => {
             sendNotification.forModifiedSubscription(
                 updatedSubscription['scope_id'],
@@ -76,14 +92,20 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authorize, function 
         })
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({message, status, title}) => {
+        .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });
 });
 
-router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
+router.delete('/subscriptions/:subscriptionId', authenticateFromHeaderField, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
-    deleteSubscription(subscriptionId)
+    const filter = { subscriptionId: subscriptionId };
+    const user = req.user;
+    const token = req.get('Authorization');
+
+    getSubscriptions(filter, token)
+        .then((existingSubscription) => authorizeAccessToObject(user, 'can-write', existingSubscription))
+        .then(() => deleteSubscription(subscriptionId))
         .then((deletedSubscription) => {
             if (deletedSubscription) {
                 sendNotification.forDeletedSubscription(
@@ -99,7 +121,7 @@ router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
                 returnError(res, message, status, title);
             }
         })
-        .catch(({message, status, title}) => {
+        .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });
 });
