@@ -10,8 +10,9 @@ router.use(cors(corsOptions));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-// preprocessing
-const authorize = require('../infrastructure/authorization');
+// authentication, authorization and preprocessing
+const { authenticateFromHeaderField, authenticateFromQueryParameter } = require('../security/authentication');
+const { authorizeAccessToScopeId } = require('../security/authorization');
 
 // response
 const returnError = require('../utils/response/returnError');
@@ -27,7 +28,7 @@ const eventsToIcs = require('../parsers/event/eventsToIcs');
 
 /* routes */
 
-router.get('/calendar/list', authorize, function (req, res) {
+router.get('/calendar/list', authenticateFromHeaderField, function (req, res) {
     const token = req.get('Authorization');
     getScopesForToken(token)
         .then(scopesToCalendarList)
@@ -37,10 +38,13 @@ router.get('/calendar/list', authorize, function (req, res) {
         });
 });
 
-router.get('/calendar', authorize, function (req, res) {
+router.get('/calendar', authenticateFromQueryParameter, function (req, res) {
     const scopeId = req.query['scope-id'];
+    const user = req.user;
     const token = req.token;
-    getScopesForToken(token)
+
+    authorizeAccessToScopeId(user, scopeId)
+        .then(() => getScopesForToken(token))
         .then((scopes) => getIcs(scopes, scopeId))
         .then((icsString) => returnIcs(res, icsString))
         .catch(({ message, status, title }) => {
