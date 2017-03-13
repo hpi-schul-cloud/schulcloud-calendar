@@ -23,9 +23,10 @@ const eventsToJsonApi = require('../parsers/event/eventsToJsonApi');
 const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
 // content
+const compact = require('../utils/compact');
 const getEvents = require('../services/events/getEvents');
 const storeEvents = require('../services/events/storeEvents');
-const deleteEvent = require('../queries/events/deleteRawEvents');
+const deleteEvent = require('../queries/events/deleteEvent');
 
 /* routes */
 
@@ -94,22 +95,25 @@ router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
 
 router.delete('/events/:eventId', authorize, function (req, res) {
     const eventId = req.params.eventId;
-    // TODO delete only for scopeIds and check for alarms and exdates
-    const scopeIds = req.body.scope_ids;
-    deleteEvent(eventId)
+    // TODO check for alarms and exdates
+    // TODO separateUsers
+    // TODO how do I get this in a more nice way?
+    const scopeIds = req.body.data[0].relationships['scope-ids'];
+    Promise.all(scopeIds.map((scopeId) => deleteEvent([eventId, scopeId])))
         .then((deletedEvents) => {
+            deletedEvents = compact(deletedEvents);
             if (deletedEvents.length > 0) {
                 returnSuccess(res, 204);
                 deletedEvents.forEach((deletedEvent) => {
                     sendNotification.forDeletedEvent(
-                        scopeIds,
+                        deletedEvent['scope_id'],
                         deletedEvent['summary'],
                         deletedEvent['dtstart'],
                         deletedEvent['dtend']
                     );
                 });
             } else {
-                const error = 'Given eventId not found';
+                const error = 'Given eventId or scopeIds not found';
                 const status = 404;
                 const title = 'Query Error';
                 returnError(res, error, status, title);

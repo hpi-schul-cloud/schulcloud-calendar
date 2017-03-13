@@ -2,19 +2,20 @@ const client = require('../../infrastructure/database');
 const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
 
-function deleteEvents(eventId) {
+function deleteEvent(params) {
     return new Promise(function(resolve, reject) {
-        const query = 'DELETE FROM events WHERE event_id = $1 '
+        const query = 'DELETE FROM events '
+            + 'WHERE event_id = $1 AND scope_id = $2 '
             + `RETURNING ${allColumns}`;
-        client.query(query, [eventId], function (error, result) {
+        client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
             } else {
-                resolve(result.rows);
+                resolve(result.rows[0]);
             }
         });
     });
 }
 
-module.exports = deleteEvents;
+module.exports = deleteEvent;
