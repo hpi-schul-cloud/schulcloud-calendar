@@ -2,7 +2,8 @@ const {
     allColumns,
     insertColumns,
     insertTemplate,
-    // updateTemplate
+    updateColumns,
+    updateTemplate
 } = require('../utils/queryStrings');
 
 const columns = [
@@ -35,5 +36,6 @@ module.exports = {
     allColumns: allColumns(columns),
     insertColumns: insertColumns(columns),
     insertTemplate: insertTemplate(columns),
-    // updateTemplate: updateTemplate(columns)
+    updateColumns: updateColumns(columns),
+    updateTemplate: updateTemplate(columns)
 };

@@ -26,6 +26,7 @@ const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 const getEvents = require('../services/events/getEvents');
 const storeEvents = require('../services/events/storeEvents');
 const deleteEvents = require('../services/events/deleteEvents');
+const modifyEvents = require('../services/events/modifyEvents');
 
 /* routes */
 
@@ -70,10 +71,26 @@ router.post('/events/ics', icsToJson, authorize, function (req, res) {
         });
 });
 
+function insertEvents(events, user) {
+    return new Promise(function (resolve, reject) {
+        storeEvents(events, user)
+            .then(resolve)
+            .catch(reject);
+    });
+}
+
+function sendInsertNotification(insertedEvents) {
+    insertedEvents.forEach((insertedEvent) => {
+        const {scope_id, summary, dtstart, dtend} = insertedEvent;
+        sendNotification.forNewEvent(scope_id, summary, dtstart, dtend);
+    });
+    return insertedEvents;
+}
+
 router.put('/events/:eventId', jsonApiToJson, authorize, function (req, res) {
     const eventId = req.params.eventId;
-    const event = req.events;
-    updateEvents(eventId, event)
+    const event = req.events[0];
+    updateEvents(event, eventId)
         .then(sendUpdateNotification)
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -83,7 +100,7 @@ router.put('/events/:eventId', jsonApiToJson, authorize, function (req, res) {
 router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
     const eventId = req.params.eventId;
     const event = req.events;
-    updateEvents(eventId, event)
+    updateEvents(event, eventId)
         .then(sendUpdateNotification)
         .then(eventsToIcsInJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -91,6 +108,32 @@ router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
             returnError(res, error, status, title);
         });
 });
+
+function updateEvents(event, eventId) {
+    return new Promise(function (resolve, reject) {
+        modifyEvents(event, eventId)
+            .then((updatedEvents) => {
+                if (updatedEvents.length === 0) {
+                    const error = 'Given eventId or scopeIds not found '
+                        + 'for event modification';
+                    const status = 404;
+                    const title = 'Query Error';
+                    reject({error, status, title});
+                } else {
+                    resolve(updatedEvents);
+                }
+            })
+            .catch(reject);
+    });
+}
+
+function sendUpdateNotification(updatedEvents) {
+    updatedEvents.forEach((updatedEvent) => {
+        const { scope_id, summary, dtstart, dtend } = updatedEvent;
+        sendNotification.forModifiedEvent(scope_id, summary, dtstart, dtend);
+    });
+    return updatedEvents;
+}
 
 router.delete('/events/:eventId', authorize, function (req, res) {
     const eventId = req.params.eventId;
@@ -110,7 +153,8 @@ router.delete('/events/:eventId', authorize, function (req, res) {
                     );
                 });
             } else {
-                const error = 'Given eventId or scopeIds not found';
+                const error = 'Given eventId or scopeIds not found '
+                    + 'for event deletion';
                 const status = 404;
                 const title = 'Query Error';
                 returnError(res, error, status, title);
@@ -120,47 +164,5 @@ router.delete('/events/:eventId', authorize, function (req, res) {
             returnError(res, error, status, title);
         });
 });
-
-function insertEvents(events, user) {
-    return new Promise(function (resolve, reject) {
-        storeEvents(events, user)
-            .then(resolve)
-            .catch(reject);
-    });
-}
-
-function sendInsertNotification(insertedEvents) {
-    insertedEvents.forEach((insertedEvent) => {
-        const {scope_id, summary, dtstart, dtend} = insertedEvent;
-        sendNotification.forNewEvent(scope_id, summary, dtstart, dtend);
-    });
-    return insertedEvents;
-}
-
-function updateEvents(eventId, event) {
-    return new Promise(function (resolve, reject) {
-        deleteEvents(eventId)
-            .then((deletedEvent) => {
-                if (deletedEvent) {
-                    return insertEvents(event);
-                } else {
-                    const error = 'Given eventId not found';
-                    const status = 404;
-                    const title = 'Query Error';
-                    reject({error, status, title});
-                }
-            })
-            .then(resolve)
-            .catch(reject);
-    });
-}
-
-function sendUpdateNotification(updatedEvents) {
-    updatedEvents.forEach((updatedEvent) => {
-        const { scope_id, summary, dtstart, dtend } = updatedEvent;
-        sendNotification.forModifiedEvent(scope_id, summary, dtstart, dtend);
-    });
-    return updatedEvents;
-}
 
 module.exports = router;

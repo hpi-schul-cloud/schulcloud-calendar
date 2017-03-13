@@ -1,14 +1,16 @@
-// Returns column1, column 2, ...
+const idColumns = ['id', 'scope_id', 'event_id'];
+
+// Returns 'column1, column 2, ...'
 function allColumns(columns) {
     return columns.join(', ');
 }
 
-// Returns (column1, column 2, ...) without id
+// Returns '(column1, column 2, ...)' without id
 function insertColumns(columns) {
     return `(${columns.filter((column) => column !== 'id')})`;
 }
 
-// Returns ($1, $2, ...)
+// Returns '($1, $2, ...)'
 function insertTemplate(columns) {
     let paramCount = 0;
     return columns.reduce((params, column) => {
@@ -20,11 +22,16 @@ function insertTemplate(columns) {
     }, '(') + ')';
 }
 
-// Returns column1 = $1, column2 = $2, ...
+// Returns [column1, column 2, ...] without id columns
+function updateColumns(columns) {
+    return columns.filter((column) => !(idColumns.includes(column)));
+}
+
+// Returns 'column1 = $1, column2 = $2, ...'
 function updateTemplate(columns) {
     let paramCount = 0;
     return columns.reduce((params, column) => {
-        if (column === 'id' || column === 'scope_id') return params;
+        if (idColumns.includes(column)) return params;
         paramCount += 1;
         return paramCount === 1
             ? params += `${column} = $${paramCount}`
@@ -32,16 +39,10 @@ function updateTemplate(columns) {
     }, '');
 }
 
-function lastUpdateParam(columns) {
-    return columns
-        .filter((column) => column !== 'id' && column !== 'scope_id')
-        .length + 1;
-}
-
 module.exports = {
     allColumns,
     insertColumns,
     insertTemplate,
-    updateTemplate,
-    lastUpdateParam
+    updateColumns,
+    updateTemplate
 };

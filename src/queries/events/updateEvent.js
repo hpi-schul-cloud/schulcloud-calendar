@@ -3,15 +3,17 @@ const errorMessage = require('../utils/errorMessage');
 const {
     allColumns,
     updateColumns,
-    updateTemplate,
+    updateTemplate
  } = require('./constants');
 
-function udpdateSubscription(params) {
+function udpdateEvent(params) {
     return new Promise(function(resolve, reject) {
-        const lastUpdateParam = updateColumns.length + 1;
-        const query = 'UPDATE subscriptions '
+        const lastButOneUpdateParam = updateColumns.length + 1;
+        const lastUpdateParam = updateColumns.length + 2;
+        const query = 'UPDATE events '
             + `SET ${updateTemplate} `
-            + `WHERE id = $${lastUpdateParam} `
+            + `WHERE event_id = $${lastButOneUpdateParam} `
+            + `AND scope_id = $${lastUpdateParam}`
             + `RETURNING ${allColumns}`;
         client.query(query, params, function (error, result) {
             if (error) {
@@ -24,4 +26,4 @@ function udpdateSubscription(params) {
     });
 }
 
-module.exports = udpdateSubscription;
+module.exports = udpdateEvent;
