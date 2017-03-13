@@ -37,8 +37,8 @@ router.get('/subscriptions', authorize, function (req, res) {
     getSubscriptions(filter, token)
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({error, status, title}) => {
-            returnError(res, error, status, title);
+        .catch(({message, status, title}) => {
+            returnError(res, message, status, title);
         });
 });
 
@@ -57,8 +57,8 @@ router.post('/subscriptions', jsonApiToJson, authorize, function (req, res) {
         })
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({error, status, title}) => {
-            returnError(res, error, status, title);
+        .catch(({message, status, title}) => {
+            returnError(res, message, status, title);
         });
 });
 
@@ -76,8 +76,8 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authorize, function 
         })
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({error, status, title}) => {
-            returnError(res, error, status, title);
+        .catch(({message, status, title}) => {
+            returnError(res, message, status, title);
         });
 });
 
@@ -93,14 +93,14 @@ router.delete('/subscriptions/:subscriptionId', authorize, function (req, res) {
                 );
                 returnSuccess(res, 204);
             } else {
-                const error = 'Given subscriptionId not found';
+                const message = 'Given subscriptionId not found';
                 const status = 404;
                 const title = 'Query Error';
-                returnError(res, error, status, title);
+                returnError(res, message, status, title);
             }
         })
-        .catch(({error, status, title}) => {
-            returnError(res, error, status, title);
+        .catch(({message, status, title}) => {
+            returnError(res, message, status, title);
         });
 });
 

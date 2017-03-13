@@ -13,10 +13,10 @@ function updateSubscription(subscriptions, subscriptionId) {
                     const params = [subscriptionId, ics_url, description, scopeId];
                     return updateSubscriptionInDb(params);
                 } else {
-                    const error = 'Given subscriptionId not found';
-                    const status = 404;
-                    const title = 'Query Error';
-                    reject({error, status, title});
+                    const error = new Error('Given subscriptionId not found');
+                    error.status = 404;
+                    error.title = 'Query Error';
+                    reject(error);
                 }
             })
             .then(resolve)

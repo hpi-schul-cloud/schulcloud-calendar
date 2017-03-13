@@ -28,10 +28,10 @@ app.use('/', subscriptions);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    const err = new Error('Not Found');
-    err.status = 404;
-    err.title = 'Page Not Found';
-    next(err);
+    const error = new Error('Not Found');
+    error.status = 404;
+    error.title = 'Page Not Found';
+    next(error);
 });
 
 // error handler

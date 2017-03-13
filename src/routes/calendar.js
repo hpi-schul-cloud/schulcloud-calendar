@@ -32,8 +32,8 @@ router.get('/calendar/list', authorize, function (req, res) {
     getScopesForToken(token)
         .then(scopesToCalendarList)
         .then((calendarList) => returnSuccess(res, 200, calendarList))
-        .catch(({error, status, title}) => {
-            returnError(res, error, status, title);
+        .catch(({ message, status, title }) => {
+            returnError(res, message, status, title);
         });
 });
 
@@ -43,8 +43,8 @@ router.get('/calendar', authorize, function (req, res) {
     getScopesForToken(token)
         .then((scopes) => getIcs(scopes, scopeId))
         .then((icsString) => returnIcs(res, icsString))
-        .catch(({error, status, title}) => {
-            returnError(res, error, status, title);
+        .catch(({ message, status, title }) => {
+            returnError(res, message, status, title);
         });
 });
 
