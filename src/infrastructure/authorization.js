@@ -30,7 +30,7 @@ function authentication(requiredAccessRights = {}) {
 }
 
 function validateScopeIdInQuery(req) {
-    if (req.scopeIdValid === undefined) {
+    if (typeof req.scopeIdValid === 'undefined') {
         if (req.query['scope-id']) {
             req.scopeIdValid = hasPermission(req.user, 'can-read', req.query['scope-id']);
         } else {
@@ -77,7 +77,7 @@ function hasPermissionForAll(user, container, accessLevel) {
 }
 
 function hasPermission(user, permission, scopeId) {
-    if (scopeId === undefined) {
+    if (typeof scopeId === 'undefined') {
         return true;
     } else if (user.id === scopeId) {
         return true;

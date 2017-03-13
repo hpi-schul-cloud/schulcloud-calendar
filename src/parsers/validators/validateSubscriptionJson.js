@@ -11,7 +11,7 @@ function validateJson(json, isIncoming = true, shouldBeOneSubscriptionOrScopeId 
 
     json.every(function (subscription) {
         // Fields are required by our implementation
-        if (isIncoming && subscription.separate_users === undefined) {
+        if (isIncoming && typeof subscription.separate_users === 'undefined') {
             errorMessage = "The attribute 'relationships'.'separate-users' is required for every subscription.";
             return false;
         }
