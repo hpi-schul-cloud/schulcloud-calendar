@@ -80,7 +80,7 @@ router.post('/events/ics', icsToJson, authenticateFromHeaderField, function (req
 });
 
 router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function(req, res) {
-    const event = req.event;
+    const event = req.events;
     const eventId = req.params.eventId;
     const filter = { eventId: eventId, all: true };
     const user = req.user;
@@ -100,7 +100,7 @@ router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, funct
 });
 
 router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, function(req, res) {
-    const event = req.event;
+    const event = req.events;
     const eventId = req.params.eventId;
     const filter = { eventId: eventId, all: true };
     const user = req.user;
