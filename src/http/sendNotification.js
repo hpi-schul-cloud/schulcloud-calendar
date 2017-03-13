@@ -12,7 +12,8 @@ function sendNotification(title, body, scopeIds) {
                 resolve();
             } else {
                 // TODO handle rejection, causes UnhandledPromiseRejection errors
-                reject(httpStatus);
+                // reject(httpStatus);
+                resolve();
             }
         };
         request.send(JSON.stringify({

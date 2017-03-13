@@ -23,10 +23,9 @@ const eventsToJsonApi = require('../parsers/event/eventsToJsonApi');
 const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
 // content
-const compact = require('../utils/compact');
 const getEvents = require('../services/events/getEvents');
 const storeEvents = require('../services/events/storeEvents');
-const deleteEvent = require('../queries/events/deleteEvent');
+const deleteEvents = require('../services/events/deleteEvents');
 
 /* routes */
 
@@ -95,13 +94,11 @@ router.put('/events/ics/:eventId', icsToJson, authorize, function (req, res) {
 
 router.delete('/events/:eventId', authorize, function (req, res) {
     const eventId = req.params.eventId;
-    // TODO check for alarms and exdates
-    // TODO separateUsers
-    // TODO how do I get this in a more nice way?
+    // TODO parse req in beforehand and get those in a nicer way
     const scopeIds = req.body.data[0].relationships['scope-ids'];
-    Promise.all(scopeIds.map((scopeId) => deleteEvent([eventId, scopeId])))
+    const separateUsers = req.body.data[0].relationships['separate-users'];
+    deleteEvents(eventId, scopeIds, separateUsers)
         .then((deletedEvents) => {
-            deletedEvents = compact(deletedEvents);
             if (deletedEvents.length > 0) {
                 returnSuccess(res, 204);
                 deletedEvents.forEach((deletedEvent) => {
@@ -142,7 +139,7 @@ function sendInsertNotification(insertedEvents) {
 
 function updateEvents(eventId, event) {
     return new Promise(function (resolve, reject) {
-        deleteEvent(eventId)
+        deleteEvents(eventId)
             .then((deletedEvent) => {
                 if (deletedEvent) {
                     return insertEvents(event);
