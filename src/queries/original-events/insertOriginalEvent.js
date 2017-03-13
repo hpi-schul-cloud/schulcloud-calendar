@@ -1,12 +1,17 @@
 const client = require('../../infrastructure/database');
 const errorMessage = require('../utils/errorMessage');
+const {
+    allColumns,
+    insertColumns,
+    insertTemplate
+} = require('./constants');
 
-function insertOriginalEvent(eventId, originalScopeId) {
+function insertOriginalEvent(params) {
     return new Promise(function (resolve, reject) {
-        const query = 'INSERT INTO eventid_originalscopeid '
-            + '(event_id, original_scope_id) '
-            + 'VALUES ($1, $2)';
-        client.query(query, [eventId, originalScopeId], function (error, result) {
+        const query = `INSERT INTO original_events ${insertColumns} `
+            + `VALUES ${insertTemplate} `
+            + `RETURNING ${allColumns}`;
+        client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);

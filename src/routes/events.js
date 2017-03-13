@@ -48,7 +48,8 @@ router.get('/events', authorize, function (req, res) {
 
 router.post('/events', jsonApiToJson, authorize, function (req, res) {
     const events = req.events;
-    insertEvents(events)
+    const user = req.user.id;
+    insertEvents(events, user)
         .then(sendInsertNotification)
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -59,7 +60,8 @@ router.post('/events', jsonApiToJson, authorize, function (req, res) {
 
 router.post('/events/ics', icsToJson, authorize, function (req, res) {
     const events = req.events;
-    insertEvents(events)
+    const user = req.user.id;
+    insertEvents(events, user)
         .then(sendInsertNotification)
         .then(eventsToIcsInJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -118,9 +120,9 @@ router.delete('/events/:eventId', authorize, function (req, res) {
         });
 });
 
-function insertEvents(events) {
+function insertEvents(events, user) {
     return new Promise(function (resolve, reject) {
-        storeEvents(events)
+        storeEvents(events, user)
             .then(resolve)
             .catch(reject);
     });

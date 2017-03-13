@@ -2,20 +2,20 @@ const uuidV4 = require('uuid/v4');
 const insertRawEvent = require('../../queries/events/insertRawEvent');
 const insertExdate = require('../../queries/events/exdates/insertExdate');
 const insertAlarm = require('../../queries/events/alarms/insertAlarm');
-const insertOriginalScopeId = require('../../queries/original-events/insertOriginalEvent');
+const insertOriginalEvent = require('../../queries/original-events/insertOriginalEvent');
 const flatten = require('../../utils/flatten');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 
-function storeEvents(events) {
+function storeEvents(events, user) {
     return new Promise((resolve, reject) => {
         Promise.all(events.map((event) => {
-            return storeEvent(event);
+            return storeEvent(event, user);
         })).then((events) => resolve(flatten(events))).catch(reject);
 
     });
 }
 
-function storeEvent(event) {
+function storeEvent(event, user) {
     return new Promise((resolve, reject) => {
         const {separate_users, scope_ids} = event;
         // the eventId that is returned (different to the internal, unique id)
@@ -25,7 +25,12 @@ function storeEvent(event) {
                 return storeEventForScopes(event, allScopeIds, eventId);
             })
             .then((insertedEvents) => {
-                return updateOriginalScopeIds(separate_users, scope_ids, insertedEvents);
+                return insertOriginalEvents(
+                    separate_users,
+                    scope_ids,
+                    insertedEvents,
+                    user
+                );
             })
             .then(resolve)
             .catch(reject);
@@ -123,16 +128,39 @@ function insertAlarms(event, insertedEvent) {
     });
 }
 
-function updateOriginalScopeIds(separateUsers, scopeIds, insertedEvents) {
+function insertOriginalEvents(separateUsers, scopeIds, insertedEvents, user) {
     return new Promise((resolve, reject) => {
         if (!separateUsers || insertedEvents.length === 0) {
             return resolve(insertedEvents);
         }
+        // all events here should have the same core params so we can just take
+        // the first one
         const eventId = insertedEvents[0]['event_id'];
+        const originalEvent = getOriginalEvent(insertedEvents[0]);
         Promise.all(scopeIds.map((scopeId) => {
-            return insertOriginalScopeId(eventId, scopeId);
-        })).then(() => { resolve(insertedEvents); }).catch(reject);
+            const params = [eventId, scopeId, originalEvent, user];
+            return insertOriginalEvent(params);
+        })).then(() => resolve(insertedEvents)).catch(reject);
     });
+}
+
+function getOriginalEvent(insertedEvent) {
+    let originalEvents = removeIds(insertedEvent);
+    originalEvents.alarms = originalEvents.alarms.map(removeIds);
+    originalEvents.exdates = originalEvents.exdates.map(removeIds);
+    return JSON.stringify(originalEvents);
+
+    function removeIds(object) {
+        if (object) {
+            return Object.keys(object).reduce((newObject, property) => {
+                if (['id', 'scope_id', 'event_id'].includes(property)) {
+                    return newObject;
+                }
+                newObject[property] = object[property];
+                return newObject;
+            }, {});
+        }
+    }
 }
 
 module.exports = storeEvents;
