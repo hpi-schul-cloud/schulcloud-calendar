@@ -11,18 +11,21 @@ function validateJson(json, isIncoming = true, shouldBeOneSubscriptionOrScopeId 
 
     json.every(function (subscription) {
         // Fields are required by our implementation
-        if (isIncoming && typeof subscription.separate_users === 'undefined') {
-            errorMessage = "The attribute 'relationships'.'separate-users' is required for every subscription.";
-            return false;
-        }
 
-        if (isIncoming && !shouldBeOneSubscriptionOrScopeId && !(subscription.scope_ids && Array.isArray(subscription.scope_ids) && subscription.scope_ids.length > 0)) {
-            errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with one ore more entries";
-            return false;
-        } else if (isIncoming && shouldBeOneSubscriptionOrScopeId && !(subscription.scope_ids && Array.isArray(subscription.scope_ids) && subscription.scope_ids.length === 1)) {
-            errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with exactly one ID";
-            return false;
-        }
+        // TODO they are not for PUT, needs to be adapted
+
+        // if (isIncoming && typeof subscription.separate_users === 'undefined') {
+        //     errorMessage = "The attribute 'relationships'.'separate-users' is required for every subscription.";
+        //     return false;
+        // }
+
+        // if (isIncoming && !shouldBeOneSubscriptionOrScopeId && !(subscription.scope_ids && Array.isArray(subscription.scope_ids) && subscription.scope_ids.length > 0)) {
+        //     errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with one ore more entries";
+        //     return false;
+        // } else if (isIncoming && shouldBeOneSubscriptionOrScopeId && !(subscription.scope_ids && Array.isArray(subscription.scope_ids) && subscription.scope_ids.length === 1)) {
+        //     errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with exactly one ID";
+        //     return false;
+        // }
 
         if (!subscription.ics_url) {
             errorMessage = "The attribute 'ics-url' is required.";

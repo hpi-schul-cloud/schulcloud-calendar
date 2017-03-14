@@ -13,6 +13,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
 const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
+const authorizeWithPotentialScopeIds = require('./_authorizeWithPotentialScopeIds');
 const jsonApiToJson = require('../parsers/event/jsonApiToJson');
 const icsToJson = require('../parsers/event/icsToJson');
 
@@ -105,7 +106,7 @@ function handleUpdate(req, res, outputFormatter) {
     const user = req.user;
     const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
         .then(() => updateEvents(event, eventId))
         .then(sendUpdateNotification)
         .then(outputFormatter)
@@ -148,7 +149,7 @@ router.delete('/events/:eventId', authenticateFromHeaderField, function (req, re
     const user = req.user;
     const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
         .then(() => deleteEvents(eventId, scopeIds))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {
@@ -173,24 +174,5 @@ router.delete('/events/:eventId', authenticateFromHeaderField, function (req, re
             returnError(res, message, status, title);
         });
 });
-
-// authorization for DELETE and UPDATE
-function authorizeWithPotentialScopeIds(eventId, scopeIds, user, token) {
-    return new Promise((resolve, reject) => {
-        if (scopeIds && scopeIds.length > 0) {
-            Promise.all(scopeIds.map((scopeId) =>
-                authorizeAccessToScopeId(user, scopeId))
-            ).then(resolve).catch(reject);
-        } else {
-            const filter = { eventId: eventId };
-            getEvents(filter, token)
-                .then((existingEvents) =>
-                    authorizeAccessToObjects(user, 'can-write', existingEvents)
-                )
-                .then(resolve)
-                .catch(reject);
-        }
-    });
-}
 
 module.exports = router;

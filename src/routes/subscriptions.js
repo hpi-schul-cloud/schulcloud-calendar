@@ -13,6 +13,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
 const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
+const authorizeWithPotentialScopeIds = require('./_authorizeWithPotentialScopeIds');
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
@@ -73,15 +74,12 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
     const subscription = req.subscriptions[0];
     const { ics_url, description } = subscription;
+    const scopeIds = subscription.scope_ids;
     const subscriptionId = req.params.subscriptionId;
-    const filter = { subscriptionId: subscriptionId };
     const user = req.user;
     const token = req.get('Authorization');
 
-    getSubscriptions(filter, token)
-        .then((existingSubscriptions) => authorizeAccessToObjects(user, 'can-read', existingSubscriptions))
-        .then((existingSubscriptions) => authorizeAccessToObjects(user, 'can-write', existingSubscriptions))
-        .then(() => authorizeAccessToObjects(user, 'can-write', [subscription]))
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
         .then(() => updateSubscription([ics_url, description, subscriptionId]))
         .then((updatedSubscription) => {
             if (updatedSubscription) {
@@ -107,12 +105,12 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
 
 router.delete('/subscriptions/:subscriptionId', authenticateFromHeaderField, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
-    const filter = { subscriptionId: subscriptionId };
+    // TODO somehow parse in beforehand to get the scopeIds in a nicer way
+    const scopeIds = req.body.data[0].relationships['scope-ids'];
     const user = req.user;
     const token = req.get('Authorization');
 
-    getSubscriptions(filter, token)
-        .then((existingSubscriptions) => authorizeAccessToObjects(user, 'can-write', existingSubscriptions))
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
         .then(() => deleteSubscription(subscriptionId))
         .then((deletedSubscription) => {
             if (deletedSubscription) {
