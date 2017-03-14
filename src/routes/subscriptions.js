@@ -26,7 +26,7 @@ const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJ
 const getSubscriptions = require('../services/subscriptions/getSubscriptions');
 const insertSubscriptions = require('../services/subscriptions/insertSubscriptions');
 const updateSubscriptions = require('../services/subscriptions/updateSubscriptions');
-const deleteSubscription = require('../queries/subscriptions/deleteSubscription');
+const deleteSubscriptions = require('../services/subscriptions/deleteSubscriptions');
 
 /* routes */
 
@@ -82,7 +82,7 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
         .then(() => updateSubscriptions(subscription, subscriptionId))
         .then((updatedSubscriptions) => {
             if (updatedSubscriptions.length === 0) {
-                const error = 'Given subscriptionId not found';
+                const error = 'Given subscriptionId or scopeIds not found';
                 const status = 404;
                 const title = 'Query Error';
                 return Promise.reject({error, status, title});
@@ -105,25 +105,26 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
 router.delete('/subscriptions/:subscriptionId', authenticateFromHeaderField, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
     // TODO somehow parse in beforehand to get the scopeIds in a nicer way
-    const scopeIds = req.body.data[0].relationships['scope-ids'];
+    const scopeIds = req.body.data[0].relationships
+        && req.body.data[0].relationships['scope-ids'];
     const user = req.user;
     const token = req.get('Authorization');
 
     authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
-        .then(() => deleteSubscription(subscriptionId))
-        .then((deletedSubscription) => {
-            if (deletedSubscription) {
-                sendNotification.forDeletedSubscription(
-                    deletedSubscription['scope_id'],
-                    deletedSubscription['description'],
-                    deletedSubscription['ics_url']
-                );
-                returnSuccess(res, 204);
-            } else {
-                const message = 'Given subscriptionId not found';
+        .then(() => deleteSubscriptions(subscriptionId, scopeIds))
+        .then((deletedSubscriptions) => {
+            if (deletedSubscriptions.length === 0) {
+                const message = 'Given subscriptionId or scopeIds not found';
                 const status = 404;
                 const title = 'Query Error';
                 returnError(res, message, status, title);
+            } else {
+                sendNotification.forDeletedSubscription(
+                    deletedSubscriptions['scope_id'],
+                    deletedSubscriptions['description'],
+                    deletedSubscriptions['ics_url']
+                );
+                return deletedSubscriptions;
             }
         })
         .catch(({ message, status, title }) => {

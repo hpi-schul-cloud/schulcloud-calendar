@@ -145,7 +145,8 @@ function sendUpdateNotification(updatedEvents) {
 router.delete('/events/:eventId', authenticateFromHeaderField, function (req, res) {
     const eventId = req.params.eventId;
     // TODO somehow parse in beforehand to get the scopeIds in a nicer way
-    const scopeIds = req.body.data[0].relationships['scope-ids'];
+    const scopeIds = req.body.data[0].relationships
+        && req.body.data[0].relationships['scope-ids'];
     const user = req.user;
     const token = req.get('Authorization');
 
