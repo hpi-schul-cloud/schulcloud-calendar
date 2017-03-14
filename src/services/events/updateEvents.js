@@ -12,11 +12,11 @@ const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUse
 const handleUndefinedEvents = require('./_handleUndefinedEvents');
 const compact = require('../../utils/compact');
 
-function modifyEvents(event, eventId) {
+function updateEvents(event, eventId) {
     return new Promise((resolve, reject) => {
         const updateRoutine = (!event.scope_ids || event.scope_ids.length === 0)
-            ? modifyAllEvents
-            : modifyEventsWithScopeIds;
+            ? updateAllEvents
+            : updateEventsWithScopeIds;
 
         updateRoutine(event, eventId)
             .then((updatedEvents) => {
@@ -30,7 +30,7 @@ function modifyEvents(event, eventId) {
     });
 }
 
-function modifyAllEvents(event, eventId) {
+function updateAllEvents(event, eventId) {
     return new Promise((resolve, reject) => {
         let params = updateColumns.map((column) => event[column]);
         params = [...params, eventId];
@@ -40,11 +40,11 @@ function modifyAllEvents(event, eventId) {
     });
 }
 
-function modifyEventsWithScopeIds(event, eventId) {
+function updateEventsWithScopeIds(event, eventId) {
     return new Promise((resolve, reject) => {
         const { scope_ids: scopeIds } = event;
         let allUpdatedEvents = [];
-        modifyEventsForScopeIds(scopeIds)
+        updateEventsForScopeIds(scopeIds)
             .then((updatedEvents) => {
                 // add successfully updated events to allUpdatedEvents
                 // collect scopeIds for which events were not found
@@ -71,7 +71,7 @@ function modifyEventsWithScopeIds(event, eventId) {
                         : [...newScopeIds, scopeId];
                 }, []);
             })
-            .then((userScopeIds) => modifyEventsForScopeIds(userScopeIds))
+            .then((userScopeIds) => updateEventsForScopeIds(userScopeIds))
             .then((moreUpdatedEvents) => {
                 allUpdatedEvents = [...allUpdatedEvents, ...moreUpdatedEvents];
             })
@@ -79,7 +79,7 @@ function modifyEventsWithScopeIds(event, eventId) {
             .catch(reject);
     });
 
-    function modifyEventsForScopeIds(scopeIds) {
+    function updateEventsForScopeIds(scopeIds) {
         return new Promise((resolve, reject) => {
             Promise.all(scopeIds.map((scopeId) => {
                 let params = updateColumns.map((column) => event[column]);
@@ -161,4 +161,4 @@ function insertExdates(exdates, eventId) {
     });
 }
 
-module.exports = modifyEvents;
+module.exports = updateEvents;

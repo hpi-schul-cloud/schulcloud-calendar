@@ -6,23 +6,23 @@ const insertOriginalEvent = require('../../queries/original-events/insertOrigina
 const flatten = require('../../utils/flatten');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 
-function storeEvents(events, user) {
+function insertEvents(events, user) {
     return new Promise((resolve, reject) => {
         Promise.all(events.map((event) => {
-            return storeEvent(event, user);
+            return insertEvent(event, user);
         })).then((events) => resolve(flatten(events))).catch(reject);
 
     });
 }
 
-function storeEvent(event, user) {
+function insertEvent(event, user) {
     return new Promise((resolve, reject) => {
         const {separate_users, scope_ids} = event;
         // the eventId that is returned (different to the internal, unique id)
         const eventId = uuidV4();
         getScopeIdsForSeparateUsers(scope_ids, separate_users)
             .then((allScopeIds) => {
-                return storeEventForScopes(event, allScopeIds, eventId);
+                return insertEventForScopes(event, allScopeIds, eventId);
             })
             .then((insertedEvents) => {
                 return insertOriginalEvents(
@@ -37,15 +37,15 @@ function storeEvent(event, user) {
     });
 }
 
-function storeEventForScopes(event, scopeIds, externalEventId) {
+function insertEventForScopes(event, scopeIds, externalEventId) {
     return new Promise((resolve, reject) => {
         Promise.all(scopeIds.map((scopeId) => {
-            return storeEventPerScope(event, scopeId, externalEventId);
+            return insertEventPerScope(event, scopeId, externalEventId);
         })).then(resolve).catch(reject);
     });
 }
 
-function storeEventPerScope(event, scopeId, externalEventId) {
+function insertEventPerScope(event, scopeId, externalEventId) {
     return new Promise((resolve, reject) => {
         const params = [
             event['summary'],
@@ -163,4 +163,4 @@ function getOriginalEvent(insertedEvent) {
     }
 }
 
-module.exports = storeEvents;
+module.exports = insertEvents;

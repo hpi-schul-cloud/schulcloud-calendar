@@ -1,10 +1,10 @@
-const insertSubscription = require('../../queries/subscriptions/insertSubscription');
+const insertSubscriptionInDb = require('../../queries/subscriptions/insertSubscription');
 const flatten = require('../../utils/flatten');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 
-function storeSubscriptions(subscriptions) {
+function insertSubscriptions(subscriptions) {
     return new Promise((resolve, reject) => {
-        Promise.all(subscriptions.map(storeSubscription))
+        Promise.all(subscriptions.map(insertSubscription))
             .then((insertedSubscriptions) => {
                 resolve(flatten(insertedSubscriptions));
             })
@@ -12,7 +12,7 @@ function storeSubscriptions(subscriptions) {
     });
 }
 
-function storeSubscription(subscription) {
+function insertSubscription(subscription) {
     return new Promise((resolve, reject) => {
         const { ics_url, description, scope_ids, separate_users } = subscription;
         getScopeIdsForSeparateUsers(scope_ids, separate_users)
@@ -24,10 +24,10 @@ function storeSubscription(subscription) {
 
         function insertSubscriptions(scope_ids, ics_url, description) {
             return Promise.all(scope_ids.map((scopeId) => {
-                return insertSubscription([ics_url, description, scopeId]);
+                return insertSubscriptionInDb([ics_url, description, scopeId]);
             }));
         }
     });
 }
 
-module.exports = storeSubscriptions;
+module.exports = insertSubscriptions;

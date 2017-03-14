@@ -24,7 +24,7 @@ const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJ
 
 // content
 const getSubscriptions = require('../services/subscriptions/getSubscriptions');
-const storeSubscriptions = require('../services/subscriptions/storeSubscriptions');
+const insertSubscriptions = require('../services/subscriptions/insertSubscriptions');
 const updateSubscription = require('../queries/subscriptions/updateSubscription');
 const deleteSubscription = require('../queries/subscriptions/deleteSubscription');
 
@@ -53,7 +53,7 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
     const subscriptions = req.subscriptions;
 
     authorizeAccessToObjects(user, 'can-write', subscriptions)
-        .then(storeSubscriptions)
+        .then(insertSubscriptions)
         .then((insertedSubscriptions) => {
             insertedSubscriptions.forEach((insertedSubscription) => {
                 sendNotification.forNewSubscription(

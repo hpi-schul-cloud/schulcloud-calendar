@@ -26,9 +26,9 @@ const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
 // content
 const getEvents = require('../services/events/getEvents');
-const storeEvents = require('../services/events/storeEvents');
+const insertEvents = require('../services/events/insertEvents');
 const deleteEvents = require('../services/events/deleteEvents');
-const modifyEvents = require('../services/events/modifyEvents');
+const updateEvents = require('../services/events/updateEvents');
 
 /* routes */
 
@@ -54,19 +54,19 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
 });
 
 router.post('/events', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    handleInsert(req, res, eventsToJsonApi);
+    handlePost(req, res, eventsToJsonApi);
 });
 
 router.post('/events/ics', icsToJson, authenticateFromHeaderField, function (req, res) {
-    handleInsert(req, res, eventsToIcsInJsonApi);
+    handlePost(req, res, eventsToIcsInJsonApi);
 });
 
-function handleInsert(req, res, outputFormatter) {
+function handlePost(req, res, outputFormatter) {
     const user = req.user;
     const events = req.events;
 
     authorizeAccessToObjects(user, 'can-write', events)
-        .then((events) => insertEvents(events, user))
+        .then((events) => doInserts(events, user))
         .then(sendInsertNotification)
         .then(outputFormatter)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -75,9 +75,9 @@ function handleInsert(req, res, outputFormatter) {
         });
 }
 
-function insertEvents(events, user) {
+function doInserts(events, user) {
     return new Promise(function (resolve, reject) {
-        storeEvents(events, user)
+        insertEvents(events, user)
             .then(resolve)
             .catch(reject);
     });
@@ -92,14 +92,14 @@ function sendInsertNotification(insertedEvents) {
 }
 
 router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    handleUpdate(req, res, eventsToJsonApi);
+    handlePut(req, res, eventsToJsonApi);
 });
 
 router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, function(req, res) {
-    handleUpdate(req, res, eventsToIcsInJsonApi);
+    handlePut(req, res, eventsToIcsInJsonApi);
 });
 
-function handleUpdate(req, res, outputFormatter) {
+function handlePut(req, res, outputFormatter) {
     const eventId = req.params.eventId;
     const event = req.events[0];
     const scopeIds = event.scope_ids;
@@ -107,7 +107,7 @@ function handleUpdate(req, res, outputFormatter) {
     const token = req.get('Authorization');
 
     authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
-        .then(() => updateEvents(event, eventId))
+        .then(() => doUpdates(event, eventId))
         .then(sendUpdateNotification)
         .then(outputFormatter)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -116,9 +116,9 @@ function handleUpdate(req, res, outputFormatter) {
         });
 }
 
-function updateEvents(event, eventId) {
+function doUpdates(event, eventId) {
     return new Promise(function (resolve, reject) {
-        modifyEvents(event, eventId)
+        updateEvents(event, eventId)
             .then((updatedEvents) => {
                 if (updatedEvents.length === 0) {
                     const error = new Error('Given eventId or scopeIds not found '
