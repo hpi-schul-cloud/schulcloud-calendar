@@ -53,32 +53,26 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
 });
 
 router.post('/events', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const user = req.user;
-    const events = req.events;
-
-    authorizeAccessToObjects(user, 'can-write', events)
-        .then((events) => insertEvents(events, user))
-        .then(sendInsertNotification)
-        .then(eventsToJsonApi)
-        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
+    handleInsert(req, res, eventsToJsonApi);
 });
 
 router.post('/events/ics', icsToJson, authenticateFromHeaderField, function (req, res) {
+    handleInsert(req, res, eventsToIcsInJsonApi);
+});
+
+function handleInsert(req, res, outputFormatter) {
     const user = req.user;
     const events = req.events;
 
     authorizeAccessToObjects(user, 'can-write', events)
         .then((events) => insertEvents(events, user))
         .then(sendInsertNotification)
-        .then(eventsToIcsInJsonApi)
+        .then(outputFormatter)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });
-});
+}
 
 function insertEvents(events, user) {
     return new Promise(function (resolve, reject) {
@@ -97,26 +91,14 @@ function sendInsertNotification(insertedEvents) {
 }
 
 router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const eventId = req.params.eventId;
-    const event = req.events[0];
-    const filter = { eventId: eventId, all: true };
-    const user = req.user;
-    const token = req.get('Authorization');
-
-    getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObjects(user, 'can-read', existingEvent))
-        .then((existingEvent) => authorizeAccessToObjects(user, 'can-write', existingEvent))
-        .then(() => authorizeAccessToObjects(user, 'can-write', [event]))
-        .then(() => updateEvents(event, eventId))
-        .then(sendUpdateNotification)
-        .then(eventsToJsonApi)
-        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
+    handleUpdate(req, res, eventsToJsonApi);
 });
 
 router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, function(req, res) {
+    handleUpdate(req, res, eventsToIcsInJsonApi);
+});
+
+function handleUpdate(req, res, outputFormatter) {
     const eventId = req.params.eventId;
     const event = req.events[0];
     const filter = { eventId: eventId, all: true };
@@ -124,17 +106,17 @@ router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, funct
     const token = req.get('Authorization');
 
     getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObjects(user, 'can-read', existingEvent))
-        .then((existingEvent) => authorizeAccessToObjects(user, 'can-write', existingEvent))
+        .then((existingEvents) => authorizeAccessToObjects(user, 'can-read', existingEvents))
+        .then((existingEvents) => authorizeAccessToObjects(user, 'can-write', existingEvents))
         .then(() => authorizeAccessToObjects(user, 'can-write', [event]))
         .then(() => updateEvents(event, eventId))
         .then(sendUpdateNotification)
-        .then(eventsToIcsInJsonApi)
+        .then(outputFormatter)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });
-});
+}
 
 function updateEvents(event, eventId) {
     return new Promise(function (resolve, reject) {
@@ -171,7 +153,7 @@ router.delete('/events/:eventId', authenticateFromHeaderField, function (req, re
     const token = req.get('Authorization');
 
     getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObjects(user, 'can-write', existingEvent))
+        .then((existingEvents) => authorizeAccessToObjects(user, 'can-write', existingEvents))
         .then(() => deleteEvents(eventId, scopeIds, separateUsers))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {

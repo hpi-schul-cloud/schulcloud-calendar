@@ -8,12 +8,12 @@ function authorizeAccessToScopeId(user, scopeId) {
     });
 }
 
-function authorizeAccessToObjects(user, access, object) {
+function authorizeAccessToObjects(user, accessLevel, container) {
     return new Promise ((resolve, reject) => {
-        if (!hasPermissionForAll(user, object, access)) {
+        if (!hasPermissionForAll(user, container, accessLevel)) {
             reject(accessDenied());
         } else {
-            resolve(object);
+            resolve(container);
         }
     });
 }
