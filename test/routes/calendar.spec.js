@@ -21,8 +21,7 @@ describe('routes/calendar', function() {
             // needs to be set because we have to wait for promises
             this.timeout(10000);
             request(app)
-                .get('/calendar/test')
-                .set('Authorization', 'student1_1')
+                .get('/calendar?authorization=student1_1')
                 .expect('Content-Disposition', /attachment/)
                 .expect('Content-Type', 'text/calendar')
                 .expect(hasCalendarEntry)
@@ -30,7 +29,7 @@ describe('routes/calendar', function() {
 
             function hasCalendarEntry(res) {
                 const lines = res.text.split('\n');
-                if (lines.lenth < 5) throw new Error('No event entry');
+                return lines.length > 5;
             }
         });
 
