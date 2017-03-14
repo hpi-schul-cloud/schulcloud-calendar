@@ -18,6 +18,7 @@ const columns = [
 ];
 
 module.exports = {
+    columns,
     allColumns: allColumns(columns),
     insertColumns: insertColumns(columns),
     insertTemplate: insertTemplate(columns)

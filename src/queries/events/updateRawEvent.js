@@ -6,14 +6,14 @@ const {
     updateTemplate
  } = require('./constants');
 
-function udpdateEvent(params) {
+function udpdateRawEvent(params) {
     return new Promise(function(resolve, reject) {
         const lastButOneUpdateParam = updateColumns.length + 1;
         const lastUpdateParam = updateColumns.length + 2;
         const query = 'UPDATE events '
             + `SET ${updateTemplate} `
             + `WHERE event_id = $${lastButOneUpdateParam} `
-            + `AND scope_id = $${lastUpdateParam}`
+            + `AND scope_id = $${lastUpdateParam} `
             + `RETURNING ${allColumns}`;
         client.query(query, params, function (error, result) {
             if (error) {
@@ -26,4 +26,4 @@ function udpdateEvent(params) {
     });
 }
 
-module.exports = udpdateEvent;
+module.exports = udpdateRawEvent;

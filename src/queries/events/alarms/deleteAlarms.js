@@ -1,25 +1,21 @@
 const client = require('../../../infrastructure/database');
 const errorMessage = require('../../utils/errorMessage');
-const {
-    allColumns,
-    insertColumns,
-    insertTemplate
-} = require('./constants');
+const { allColumns } = require('./constants');
 
-function insertExdate(params) {
+function deleteAlarms(eventId) {
     return new Promise(function (resolve, reject) {
-        const query = `INSERT INTO exdates ${insertColumns} `
-            + `VALUES ${insertTemplate} `
+        const query = 'DELETE FROM alarms '
+            + 'WHERE event_id = $1 '
             + `RETURNING ${allColumns}`;
-        client.query(query, params, function (error, result) {
+        client.query(query, [eventId], function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
             } else {
-                resolve(result.rows[0]);
+                resolve(result.rows);
             }
         });
     });
 }
 
-module.exports = insertExdate;
+module.exports = deleteAlarms;

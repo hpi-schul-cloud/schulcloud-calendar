@@ -6,7 +6,7 @@ const {
     insertTemplate
 } = require('./constants');
 
-function insertEvent(params) {
+function insertRawEvent(params) {
     return new Promise(function (resolve, reject) {
         const query = `INSERT INTO events ${insertColumns} `
             + `VALUES ${insertTemplate} `
@@ -22,4 +22,4 @@ function insertEvent(params) {
     });
 }
 
-module.exports = insertEvent;
+module.exports = insertRawEvent;
