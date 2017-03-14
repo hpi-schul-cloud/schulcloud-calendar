@@ -6,6 +6,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ######################################
 
 DROP TABLE IF EXISTS original_events;
+DROP TABLE IF EXISTS original_subscriptions;
 
 DROP TABLE IF EXISTS exdates;
 DROP TABLE IF EXISTS alarms;
@@ -113,7 +114,8 @@ CREATE TABLE subscriptions (
   description         TEXT                              DEFAULT NULL,
   last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
   last_updated_status INTEGER                           DEFAULT NULL,
-  scope_id            UUID                     NOT NULL
+  scope_id            UUID                     NOT NULL,
+  subscription_id     UUID                     NOT NULL DEFAULT uuid_generate_v4()
 );
 
 -- If separateUsers in a POST /events request is set, the event_id is saved with
@@ -130,4 +132,9 @@ CREATE TABLE original_events (
   scope_id              UUID                     NOT NULL,
   original_event        JSON                     NOT NULL,
   person_responsible    UUID                     NOT NULL
+);
+
+CREATE TABLE original_subscriptions (
+  subscription_id       UUID                     NOT NULL,
+  scope_id              UUID                     NOT NULL
 );
