@@ -138,7 +138,7 @@ function insertOriginalEvents(separateUsers, scopeIds, insertedEvents, user) {
         const eventId = insertedEvents[0]['event_id'];
         const originalEvent = getOriginalEvent(insertedEvents[0]);
         Promise.all(scopeIds.map((scopeId) => {
-            const params = [eventId, scopeId, originalEvent, user];
+            const params = [eventId, scopeId, originalEvent, user.id];
             return insertOriginalEvent(params);
         })).then(() => resolve(insertedEvents)).catch(reject);
     });

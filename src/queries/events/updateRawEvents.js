@@ -8,13 +8,16 @@ const {
 
 function udpdateRawEvent(params) {
     return new Promise(function(resolve, reject) {
-        const lastButOneUpdateParam = updateColumns.length + 1;
-        const lastUpdateParam = updateColumns.length + 2;
-        const query = 'UPDATE events '
+        const eventIdIndex = updateColumns.length + 1;
+        const scopeIdIndex = updateColumns.length + 2;
+        let query = 'UPDATE events '
             + `SET ${updateTemplate} `
-            + `WHERE event_id = $${lastButOneUpdateParam} `
-            + `AND scope_id = $${lastUpdateParam} `
-            + `RETURNING ${allColumns}`;
+            + `WHERE event_id = $${eventIdIndex} `;
+        // scopeId in params
+        if (params.length === updateColumns.length + 2) {
+            query += `AND scope_id = $${scopeIdIndex} `;
+        }
+        query += `RETURNING ${allColumns}`;
         client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);

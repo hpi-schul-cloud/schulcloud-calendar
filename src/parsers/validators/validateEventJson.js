@@ -17,15 +17,19 @@ function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
 
     json.every((event) => {
         // Fields are required by our implementation
-        if (isIncoming && typeof event.separate_users === 'undefined') {
-            errorMessage = "The attribute 'relationships'.'separate-users' is required for every event.";
-            return false;
-        }
 
-        if (isIncoming && !(event.scope_ids && Array.isArray(event.scope_ids) && event.scope_ids.length > 0)) {
-            errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with one or more scope IDs.";
-            return false;
-        }
+        // TODO the following two checks are not required for PUT, either
+        // change validation or take out
+
+        // if (isIncoming && typeof event.separate_users === 'undefined') {
+        //     errorMessage = "The attribute 'relationships'.'separate-users' is required for every event.";
+        //     return false;
+        // }
+
+        // if (isIncoming && !(event.scope_ids && Array.isArray(event.scope_ids) && event.scope_ids.length > 0)) {
+        //     errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with one or more scope IDs.";
+        //     return false;
+        // }
 
         // Fields are required by the iCalendar standard
         if (!event.dtstamp) {
@@ -37,6 +41,7 @@ function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
             errorMessage = "The attribute 'uid' is required.";
             return false;
         }
+
         event_uids.add(event.id);
 
         // Fields are required by the iCalendar standard if outer scope doesn't have a METHOD
@@ -242,6 +247,8 @@ function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
         }
         return true;
     });
+
+    if (errorMessage) return errorMessage;
 
     if (shouldBeOneEvent && event_uids.size !== 1) {
         errorMessage = 'Only one event is allowed for this operation.';

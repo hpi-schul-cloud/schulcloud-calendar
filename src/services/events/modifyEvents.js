@@ -1,4 +1,4 @@
-const updateRawEvent = require('../../queries/events/updateRawEvent');
+const updateRawEvents = require('../../queries/events/updateRawEvents');
 const { updateColumns } = require('../../queries/events/constants');
 const deleteAlarms = require('../../queries/events/alarms/deleteAlarms');
 const insertAlarm = require('../../queries/events/alarms/insertAlarm');
@@ -10,22 +10,12 @@ const compact = require('../../utils/compact');
 const handleUndefinedEvents = require('./_handleUndefinedEvents');
 
 function modifyEvents(event, eventId) {
-    const { scope_ids, separate_users } = event;
     return new Promise((resolve, reject) => {
-        getScopeIdsForSeparateUsers(scope_ids, separate_users)
-            .then((scopeIds) => modifyEventsForScopeIds(event, eventId, scopeIds))
-            .then(resolve)
-            .catch(reject);
-    });
-}
+        const updateRoutine = (!event.scope_ids || event.scope_ids.length === 0)
+            ? modifyAllEvents
+            : modifyEventsWithScopeIds;
 
-function modifyEventsForScopeIds(event, eventId, scopeIds) {
-    return new Promise((resolve, reject) => {
-        Promise.all(scopeIds.map((scopeId) => {
-            let params = updateColumns.map((column) => event[column]);
-            params = [...params, eventId, scopeId];
-            return updateRawEvent(params);
-        }))
+        updateRoutine(event, eventId)
             .then((updatedEvents) => {
                 handleUndefinedEvents(updatedEvents, 'modification');
                 return compact(updatedEvents);
@@ -35,6 +25,58 @@ function modifyEventsForScopeIds(event, eventId, scopeIds) {
             .then(resolve)
             .catch(reject);
     });
+}
+
+function modifyAllEvents(event, eventId) {
+    return new Promise((resolve, reject) => {
+        let params = updateColumns.map((column) => event[column]);
+        params = [...params, eventId];
+        updateRawEvents(params)
+            .then(resolve)
+            .catch(reject);
+    });
+}
+
+function modifyEventsWithScopeIds(event, eventId) {
+    const { scope_ids: scopeIds } = event;
+    let allUpdatedEvents = [];
+    return new Promise((resolve, reject) => {
+        modifyEventsForScopeIds(scopeIds)
+        .then((updatedEvents) => {
+            // add successfully updated events to allUpdatedEvents
+            // collect scopeIds for which events were not found
+            return updatedEvents.reduce((ids, event, index) => {
+                if (!event) {
+                    return [...ids, scopeIds[index]];
+                } else {
+                    allUpdatedEvents = [...allUpdatedEvents, event];
+                    return [...ids];
+                }
+            }, []);
+        })
+        .then((unsuccessfulScopeIds) => {
+            const separateUsers = true;
+            // if all or some scopeIds could not be found, split them up into
+            // their user scopes and try again
+            return getScopeIdsForSeparateUsers(unsuccessfulScopeIds, separateUsers);
+        })
+        .then((userScopeIds) => modifyEventsForScopeIds(userScopeIds))
+        .then((moreUpdatedEvents) => {
+            allUpdatedEvents = [...allUpdatedEvents, ...moreUpdatedEvents];
+        })
+        .then(() => resolve(allUpdatedEvents))
+        .catch(reject);
+    });
+
+    function modifyEventsForScopeIds(scopeIds) {
+        return new Promise((resolve, reject) => {
+            Promise.all(scopeIds.map((scopeId) => {
+                let params = updateColumns.map((column) => event[column]);
+                params = [...params, eventId, scopeId];
+                return updateRawEvents(params);
+            })).then(resolve).catch(reject);
+        });
+    }
 }
 
 function updateAlarms(updatedEvents, event) {
