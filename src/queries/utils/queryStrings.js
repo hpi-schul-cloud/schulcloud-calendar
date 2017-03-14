@@ -1,4 +1,4 @@
-const idColumns = ['id', 'scope_id', 'event_id'];
+const idColumns = ['id', 'scope_id', 'event_id', 'subscription_id'];
 
 // Returns 'column1, column 2, ...'
 function allColumns(columns) {

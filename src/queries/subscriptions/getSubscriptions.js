@@ -33,8 +33,8 @@ function buildQuery(filter) {
 
     if (subscriptionId) {
         query = paramCount > 1
-            ? `${query} AND id = $${paramCount}`
-            : `${query} id = $${paramCount}`;
+            ? `${query} AND subscription_id = $${paramCount}`
+            : `${query} subscription_id = $${paramCount}`;
         params = [ ...params, subscriptionId ];
         paramCount += 1;
     }

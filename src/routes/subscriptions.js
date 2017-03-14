@@ -25,7 +25,7 @@ const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJ
 // content
 const getSubscriptions = require('../services/subscriptions/getSubscriptions');
 const insertSubscriptions = require('../services/subscriptions/insertSubscriptions');
-const updateSubscription = require('../queries/subscriptions/updateSubscription');
+const updateSubscriptions = require('../services/subscriptions/updateSubscriptions');
 const deleteSubscription = require('../queries/subscriptions/deleteSubscription');
 
 /* routes */
@@ -73,27 +73,26 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 
 router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
     const subscription = req.subscriptions[0];
-    const { ics_url, description } = subscription;
     const scopeIds = subscription.scope_ids;
     const subscriptionId = req.params.subscriptionId;
     const user = req.user;
     const token = req.get('Authorization');
 
     authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
-        .then(() => updateSubscription([ics_url, description, subscriptionId]))
-        .then((updatedSubscription) => {
-            if (updatedSubscription) {
-                sendNotification.forModifiedSubscription(
-                    updatedSubscription['scope_id'],
-                    updatedSubscription['description'],
-                    updatedSubscription['ics_url']
-                );
-                return [updatedSubscription];
-            } else {
+        .then(() => updateSubscriptions(subscription, subscriptionId))
+        .then((updatedSubscriptions) => {
+            if (updatedSubscriptions.length === 0) {
                 const error = 'Given subscriptionId not found';
                 const status = 404;
                 const title = 'Query Error';
                 return Promise.reject({error, status, title});
+            } else {
+                sendNotification.forModifiedSubscription(
+                    updatedSubscriptions['scope_id'],
+                    updatedSubscriptions['description'],
+                    updatedSubscriptions['ics_url']
+                );
+                return updatedSubscriptions;
             }
         })
         .then(subscriptionsToJsonApi)

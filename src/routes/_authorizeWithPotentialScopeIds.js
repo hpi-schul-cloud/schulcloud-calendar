@@ -1,4 +1,3 @@
-const { authenticateFromHeaderField } = require('../security/authentication');
 const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
 
 // authorization for DELETE and UPDATE

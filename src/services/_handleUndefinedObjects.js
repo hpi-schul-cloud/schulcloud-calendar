@@ -1,11 +1,11 @@
-const logger = require('../../infrastructure/logger');
+const logger = require('../infrastructure/logger');
 
 /**
  * Logs warnings if not all events were processed
  * @param processedEvents
  * @param action (one of 'modification', 'deletion')
  */
-function handleUndefinedEvents(processedEvents, action) {
+function handleUndefinedObjects(processedEvents, action, object) {
     const undefinedEvents = processedEvents.filter((event) => {
         return typeof event === 'undefined';
     });
@@ -13,10 +13,10 @@ function handleUndefinedEvents(processedEvents, action) {
         && (undefinedEvents.length !== processedEvents.length);
     if (isIncompleteDeletion) {
         const deletions = processedEvents.length - undefinedEvents.length;
-        const warning = `Event ${action} incomplete, ${deletions} of `
+        const warning = `${object} ${action} incomplete, ${deletions} of `
             + `${processedEvents.length} queries successful`;
         logger.warn(warning);
     }
 }
 
-module.exports = handleUndefinedEvents;
+module.exports = handleUndefinedObjects;

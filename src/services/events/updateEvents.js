@@ -9,7 +9,7 @@ const deleteExdates = require('../../queries/events/exdates/deleteExdates');
 const insertExdate = require('../../queries/events/exdates/insertExdate');
 
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
-const handleUndefinedEvents = require('./_handleUndefinedEvents');
+const handleUndefinedEvents = require('../_handleUndefinedObjects');
 const compact = require('../../utils/compact');
 
 function updateEvents(event, eventId) {
@@ -20,7 +20,7 @@ function updateEvents(event, eventId) {
 
         updateRoutine(event, eventId)
             .then((updatedEvents) => {
-                handleUndefinedEvents(updatedEvents, 'modification');
+                handleUndefinedEvents(updatedEvents, 'modification', 'Event');
                 return compact(updatedEvents);
             })
             .then((updatedEvents) => updateAlarms(updatedEvents, event))
