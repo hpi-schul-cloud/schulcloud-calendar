@@ -13,9 +13,8 @@ function handleUndefinedEvents(processedEvents, action) {
         && (undefinedEvents.length !== processedEvents.length);
     if (isIncompleteDeletion) {
         const deletions = processedEvents.length - undefinedEvents.length;
-        const warning = `Not for all given scope_ids the event ${action} `
-            + `was successful, deleted ${deletions} out of `
-            + `${processedEvents.length} events`;
+        const warning = `Event ${action} incomplete, ${deletions} of `
+            + `${processedEvents.length} queries successful`;
         logger.warn(warning);
     }
 }

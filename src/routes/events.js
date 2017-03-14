@@ -143,13 +143,13 @@ function sendUpdateNotification(updatedEvents) {
 
 router.delete('/events/:eventId', authenticateFromHeaderField, function (req, res) {
     const eventId = req.params.eventId;
-    const separateUsers = req.body.data[0].relationships['separate-users'];
-    const scopeIds = req.body.scope_ids;
+    // TODO somehow parse in beforehand to get the scopeIds in a nicer way
+    const scopeIds = req.body.data[0].relationships['scope-ids'];
     const user = req.user;
     const token = req.get('Authorization');
 
     authorizeWithPotentialScopeIds(eventId, scopeIds, user, token)
-        .then(() => deleteEvents(eventId, scopeIds, separateUsers))
+        .then(() => deleteEvents(eventId, scopeIds))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {
                 returnSuccess(res, 204);

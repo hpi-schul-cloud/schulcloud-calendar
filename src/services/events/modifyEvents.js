@@ -1,10 +1,13 @@
 const updateRawEvents = require('../../queries/events/updateRawEvents');
 const { updateColumns } = require('../../queries/events/constants');
+
 const deleteAlarms = require('../../queries/events/alarms/deleteAlarms');
 const insertAlarm = require('../../queries/events/alarms/insertAlarm');
 const { columns: alarmColumns } = require('../../queries/events/alarms/constants');
+
 const deleteExdates = require('../../queries/events/exdates/deleteExdates');
 const insertExdate = require('../../queries/events/exdates/insertExdate');
+
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 const handleUndefinedEvents = require('./_handleUndefinedEvents');
 const compact = require('../../utils/compact');
@@ -38,9 +41,9 @@ function modifyAllEvents(event, eventId) {
 }
 
 function modifyEventsWithScopeIds(event, eventId) {
-    const { scope_ids: scopeIds } = event;
-    let allUpdatedEvents = [];
     return new Promise((resolve, reject) => {
+        const { scope_ids: scopeIds } = event;
+        let allUpdatedEvents = [];
         modifyEventsForScopeIds(scopeIds)
             .then((updatedEvents) => {
                 // add successfully updated events to allUpdatedEvents
@@ -87,7 +90,7 @@ function modifyEventsWithScopeIds(event, eventId) {
                 // For easier handling, convert empty arrays (unsuccessful
                 // updates) into undefined.
                 // If an event was updated, the query result is an array with
-                // exactly one element.
+                // exactly one element since the scopeId is given.
                 resolve(events.map(([event]) => {
                     return event;
                 }));
