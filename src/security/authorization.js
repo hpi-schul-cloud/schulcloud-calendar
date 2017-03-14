@@ -8,7 +8,7 @@ function authorizeAccessToScopeId(user, scopeId) {
     });
 }
 
-function authorizeAccessToObject(user, access, object) {
+function authorizeAccessToObjects(user, access, object) {
     return new Promise ((resolve, reject) => {
         if (!hasPermissionForAll(user, object, access)) {
             reject(accessDenied());
@@ -55,5 +55,5 @@ function accessDenied() {
 
 module.exports = {
     authorizeAccessToScopeId,
-    authorizeAccessToObject
+    authorizeAccessToObjects
 };

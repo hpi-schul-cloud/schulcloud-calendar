@@ -12,7 +12,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
-const { authorizeAccessToScopeId, authorizeAccessToObject } = require('../security/authorization');
+const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/event/jsonApiToJson');
 const icsToJson = require('../parsers/event/icsToJson');
 
@@ -44,7 +44,7 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
 
     authorizeAccessToScopeId(user, filter.scopeId)
         .then(() => getEvents(filter, token))
-        .then((events) => authorizeAccessToObject(user, 'can-read', events))
+        .then((events) => authorizeAccessToObjects(user, 'can-read', events))
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
@@ -56,7 +56,7 @@ router.post('/events', jsonApiToJson, authenticateFromHeaderField, function (req
     const user = req.user;
     const events = req.events;
 
-    authorizeAccessToObject(user, 'can-write', events)
+    authorizeAccessToObjects(user, 'can-write', events)
         .then((events) => insertEvents(events, user))
         .then(sendInsertNotification)
         .then(eventsToJsonApi)
@@ -70,7 +70,7 @@ router.post('/events/ics', icsToJson, authenticateFromHeaderField, function (req
     const user = req.user;
     const events = req.events;
 
-    authorizeAccessToObject(user, 'can-write', events)
+    authorizeAccessToObjects(user, 'can-write', events)
         .then((events) => insertEvents(events, user))
         .then(sendInsertNotification)
         .then(eventsToIcsInJsonApi)
@@ -98,16 +98,16 @@ function sendInsertNotification(insertedEvents) {
 
 router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
     const eventId = req.params.eventId;
-	const event = req.events[0];
+    const event = req.events[0];
     const filter = { eventId: eventId, all: true };
     const user = req.user;
     const token = req.get('Authorization');
 
     getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-read', existingEvent))
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-write', existingEvent))
-        .then(() => authorizeAccessToObject(user, 'can-write', event))
-        .then((event) => updateEvents(event, eventId))
+        .then((existingEvent) => authorizeAccessToObjects(user, 'can-read', existingEvent))
+        .then((existingEvent) => authorizeAccessToObjects(user, 'can-write', existingEvent))
+        .then(() => authorizeAccessToObjects(user, 'can-write', [event]))
+        .then(() => updateEvents(event, eventId))
         .then(sendUpdateNotification)
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -117,17 +117,17 @@ router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, funct
 });
 
 router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, function(req, res) {
-    const event = req.events[0];
     const eventId = req.params.eventId;
+    const event = req.events[0];
     const filter = { eventId: eventId, all: true };
     const user = req.user;
     const token = req.get('Authorization');
 
     getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-read', existingEvent))
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-write', existingEvent))
-        .then(() => authorizeAccessToObject(user, 'can-write', event))
-        .then((event) => updateEvents(event, eventId))
+        .then((existingEvent) => authorizeAccessToObjects(user, 'can-read', existingEvent))
+        .then((existingEvent) => authorizeAccessToObjects(user, 'can-write', existingEvent))
+        .then(() => authorizeAccessToObjects(user, 'can-write', [event]))
+        .then(() => updateEvents(event, eventId))
         .then(sendUpdateNotification)
         .then(eventsToIcsInJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -141,7 +141,7 @@ function updateEvents(event, eventId) {
         modifyEvents(event, eventId)
             .then((updatedEvents) => {
                 if (updatedEvents.length === 0) {
-					const error = new Error('Given eventId or scopeIds not found '
+                    const error = new Error('Given eventId or scopeIds not found '
 						+ 'for event modification');
                     error.status = 404;
                     error.title = 'Query Error';
@@ -165,13 +165,13 @@ function sendUpdateNotification(updatedEvents) {
 router.delete('/events/:eventId', authenticateFromHeaderField, function (req, res) {
     const eventId = req.params.eventId;
     const separateUsers = req.body.data[0].relationships['separate-users'];
-	const scopeIds = req.body.scope_ids;
+    const scopeIds = req.body.scope_ids;
     const filter = { eventId: eventId, all: true };
     const user = req.user;
     const token = req.get('Authorization');
 
     getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-write', existingEvent))
+        .then((existingEvent) => authorizeAccessToObjects(user, 'can-write', existingEvent))
         .then(() => deleteEvents(eventId, scopeIds, separateUsers))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {

@@ -2,9 +2,7 @@ const updateRawEvent = require('../../queries/events/updateRawEvent');
 const { updateColumns } = require('../../queries/events/constants');
 const deleteAlarms = require('../../queries/events/alarms/deleteAlarms');
 const insertAlarm = require('../../queries/events/alarms/insertAlarm');
-const {
-    columns: alarmColumns
-} = require('../../queries/events/alarms/constants');
+const { columns: alarmColumns } = require('../../queries/events/alarms/constants');
 const deleteExdates = require('../../queries/events/exdates/deleteExdates');
 const insertExdate = require('../../queries/events/exdates/insertExdate');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');

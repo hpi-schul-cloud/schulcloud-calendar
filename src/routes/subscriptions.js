@@ -12,7 +12,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
-const { authorizeAccessToScopeId, authorizeAccessToObject } = require('../security/authorization');
+const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
@@ -39,7 +39,7 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
 
     authorizeAccessToScopeId(user, filter.scopeId)
         .then(() => getSubscriptions(filter, token))
-        .then((subscriptions) => authorizeAccessToObject(user, 'can-read', subscriptions))
+        .then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
@@ -51,7 +51,7 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
     const user = req.user;
     const subscriptions = req.subscriptions;
 
-    authorizeAccessToObject(user, 'can-write', subscriptions)
+    authorizeAccessToObjects(user, 'can-write', subscriptions)
         .then(storeSubscriptions)
         .then((insertedSubscriptions) => {
             insertedSubscriptions.forEach((insertedSubscription) => {
@@ -72,17 +72,17 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 
 router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
     const subscription = req.subscriptions[0];
-	const { ics_url, description } = subscription;
+    const { ics_url, description } = subscription;
     const subscriptionId = req.params.subscriptionId;
     const filter = { subscriptionId: subscriptionId };
     const user = req.user;
     const token = req.get('Authorization');
 
     getSubscriptions(filter, token)
-        .then((existingSubscription) => authorizeAccessToObject(user, 'can-read', existingSubscription))
-        .then((existingSubscription) => authorizeAccessToObject(user, 'can-write', existingSubscription))
-        .then(() => authorizeAccessToObject(user, 'can-write', subscription))
-        .then((subscription) => updateSubscription([ics_url, description, subscriptionId]))
+        .then((existingSubscriptions) => authorizeAccessToObjects(user, 'can-read', existingSubscriptions))
+        .then((existingSubscriptions) => authorizeAccessToObjects(user, 'can-write', existingSubscriptions))
+        .then(() => authorizeAccessToObjects(user, 'can-write', [subscription]))
+        .then(() => updateSubscription([ics_url, description, subscriptionId]))
         .then((updatedSubscription) => {
             if (updatedSubscription) {
                 sendNotification.forModifiedSubscription(
@@ -112,7 +112,7 @@ router.delete('/subscriptions/:subscriptionId', authenticateFromHeaderField, fun
     const token = req.get('Authorization');
 
     getSubscriptions(filter, token)
-        .then((existingSubscription) => authorizeAccessToObject(user, 'can-write', existingSubscription))
+        .then((existingSubscriptions) => authorizeAccessToObjects(user, 'can-write', existingSubscriptions))
         .then(() => deleteSubscription(subscriptionId))
         .then((deletedSubscription) => {
             if (deletedSubscription) {
