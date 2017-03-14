@@ -17,7 +17,7 @@ function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
 
     json.every((event) => {
         // Fields are required by our implementation
-        if (isIncoming && event.separate_users === undefined) {
+        if (isIncoming && typeof event.separate_users === 'undefined') {
             errorMessage = "The attribute 'relationships'.'separate-users' is required for every event.";
             return false;
         }

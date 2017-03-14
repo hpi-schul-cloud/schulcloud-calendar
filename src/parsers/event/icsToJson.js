@@ -14,7 +14,7 @@ function icsToJson(req, res, next) {
             return;
         }
 
-        if (event.attributes.ics === undefined) {
+        if (typeof event.attributes.ics === 'undefined') {
             returnError(res, 'ics attribute missing in JSON', 400, 'Bad Request');
             return;
         }
@@ -54,7 +54,7 @@ function icsToJson(req, res, next) {
                     break;
                 case 'END:VALARM':
                     isParsingAlarm = false;
-                    if (parsedEvent['alarms'] === undefined) {
+                    if (typeof parsedEvent['alarms'] === 'undefined') {
                         parsedEvent['alarms'] = [];
                     }
                     parsedEvent['alarms'].push(parsedAlarm);

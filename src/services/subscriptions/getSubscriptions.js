@@ -4,7 +4,7 @@ const getScopeIdsForToken = require('../scopes/getScopeIdsForToken');
 
 function getSubscriptions(filter, token) {
     return new Promise(function (resolve, reject) {
-        if (filter.scopeId || filter.eventId) {
+        if (filter.scopeId || filter.subscriptionId) {
             getSubscriptionsFromDb(filter)
                 .then(resolve)
                 .catch(reject);
