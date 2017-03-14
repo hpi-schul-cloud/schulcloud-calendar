@@ -140,7 +140,11 @@ paths:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
         service earlier (* doesn't check for ID).
-      description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details. The data array may contain more than one event but only if the uid is equal for all events (occours if a single event is changed in a series of events).
+      description: >-
+        If a `scope-id` is given only the event(s) within that scope will be updated. Conversly all events with the given `event-id` will be updated if there is no scope given. 
+        The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according events with within that scope. If found, the event can be updated. If not, the same check is done for the users within this scope. Thus both cases are covered.
+        The calendar service does a real update action on the event, so it is not deleted and newly added. There are however exceptions. The 'fake' update is done for exdates and alarms. 
+        Further the `scope-id` of an event cannot be changed. Thus when this is desired, the event has to be deleted and added again.
       responses:
         '200':
           description: Successful
@@ -162,6 +166,9 @@ paths:
         - user-token: []
     delete:
       summary: Delete an Event for a list of UUIDs (* all events are deleted, regardless the UUID).
+      description: >-
+        If a `scope-id` is given only the event(s) within that scope will be deleted. Conversly all events with the given `event-id` will be deleted if there is no scope given. 
+        The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according events with within that scope. If found, the event can be deleted. If not, the same check is done for the users within this scope. Thus both cases are covered.
       responses:
         '204':
           description: Successful
@@ -211,7 +218,11 @@ paths:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
         service earlier. Thereby the ics is transcribed (* does not check for ID).
-      description: The calendar service will delete the old event completely (including all alarms, exdates, ...). Therefore, you MUST ensure to re-submit the event with all details.The data array may contain more than one event but only if the uid is equal for all events (occours if a single event is changed in a series of events).
+      description: >-
+        If a `scope-id` is given only the event(s) within that scope will be updated. Conversly all events with the given `event-id` will be updated if there is no scope given. 
+        The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according events with within that scope. If found, the event can be updated. If not, the same check is done for the users within this scope. Thus both cases are covered.
+        The calendar service does a real update action on the event, so it is not deleted and newly added. There are however exceptions. The 'fake' update is done for exdates and alarms. 
+        Further the `scope-id` of an event cannot be changed. Thus when this is desired, the event has to be deleted and added again.
       responses:
         '200':
           description: Successful
@@ -290,7 +301,11 @@ paths:
         type: string
     put:
       summary: Update synchronisation settings for a subscribed feed.
-      description: The calendar service will delete the old external feed subscription completely. Therefore, you MUST ensure to re-submit the subscription with all details.
+      description: >-
+        The behavior of PUT /subscriptions is similar to PUT /events.
+        If a `scope-id` is given only the subscription(s) within that scope will be updated. Conversly all subscriptions with the given `subscription-id` will be updated if there is no scope given.
+        The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according subscriptions with within that scope. If found, the subscription can be updated. If not, the same check is done for the users within this scope. Thus both cases are covered.
+        The calendar service does a real update action on the subscription, so it is not deleted and newly added. 
       responses:
         '200':
           description: FeedUrlList
@@ -312,6 +327,10 @@ paths:
         - user-token: []
     delete:
       summary: Unsubscribe the external feed and stop syncing.
+      description: >-
+        The behavior of DELETE /subscriptions is similar to DELETE /events.
+        If a `scope-id` is given only the subscription(s) within that scope will be deleted. Conversly all subscriptions with the given `subscription-id` will be deleted if there is no scope given. 
+        The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according subscriptions with within that scope. If found, the subscription can be deleted. If not, the same check is done for the users within this scope. Thus both cases are covered.
       responses:
         '204':
           description: Successful
@@ -485,7 +504,6 @@ paths:
       summary: >-
         Modify a To Do for a list of UUIDs, which has been created by the same
         service earlier (X).
-      description: The calendar service will delete the old To Do completely (including all exdates, ...). Therefore, you MUST ensure to re-submit the To Do with all details. The data array may contain more than one To Do but only if the uid is equal for all To Dos (occours if a single To Do is changed in a series of To Dos).
       responses:
         '200':
           description: Successful
@@ -556,7 +574,6 @@ paths:
       summary: >-
         Modify a To Do for a list of UUIDs, which has been created by the same
         service earlier. Thereby the ics is transcribed. (X).
-      description: The calendar service will delete the old To Do completely (including all exdates, ...). Therefore, you MUST ensure to re-submit the To Do with all details. The data array may contain more than one To Do but only if the uid is equal for all To Dos (occours if a single To Do is changed in a series of To Dos).
       responses:
         '200':
           description: Successful
