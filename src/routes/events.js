@@ -101,14 +101,11 @@ router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, funct
 function handleUpdate(req, res, outputFormatter) {
     const eventId = req.params.eventId;
     const event = req.events[0];
-    const filter = { eventId: eventId, all: true };
+    const scopeIds = event.scope_ids;
     const user = req.user;
     const token = req.get('Authorization');
 
-    getEvents(filter, token)
-        .then((existingEvents) => authorizeAccessToObjects(user, 'can-read', existingEvents))
-        .then((existingEvents) => authorizeAccessToObjects(user, 'can-write', existingEvents))
-        .then(() => authorizeAccessToObjects(user, 'can-write', [event]))
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token)
         .then(() => updateEvents(event, eventId))
         .then(sendUpdateNotification)
         .then(outputFormatter)
@@ -148,12 +145,10 @@ router.delete('/events/:eventId', authenticateFromHeaderField, function (req, re
     const eventId = req.params.eventId;
     const separateUsers = req.body.data[0].relationships['separate-users'];
     const scopeIds = req.body.scope_ids;
-    const filter = { eventId: eventId, all: true };
     const user = req.user;
     const token = req.get('Authorization');
 
-    getEvents(filter, token)
-        .then((existingEvents) => authorizeAccessToObjects(user, 'can-write', existingEvents))
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token)
         .then(() => deleteEvents(eventId, scopeIds, separateUsers))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {
@@ -178,5 +173,24 @@ router.delete('/events/:eventId', authenticateFromHeaderField, function (req, re
             returnError(res, message, status, title);
         });
 });
+
+// authorization for DELETE and UPDATE
+function authorizeWithPotentialScopeIds(eventId, scopeIds, user, token) {
+    return new Promise((resolve, reject) => {
+        if (scopeIds && scopeIds.length > 0) {
+            Promise.all(scopeIds.map((scopeId) =>
+                authorizeAccessToScopeId(user, scopeId))
+            ).then(resolve).catch(reject);
+        } else {
+            const filter = { eventId: eventId };
+            getEvents(filter, token)
+                .then((existingEvents) =>
+                    authorizeAccessToObjects(user, 'can-write', existingEvents)
+                )
+                .then(resolve)
+                .catch(reject);
+        }
+    });
+}
 
 module.exports = router;
