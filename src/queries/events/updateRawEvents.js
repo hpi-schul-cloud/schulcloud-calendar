@@ -23,7 +23,7 @@ function udpdateRawEvent(params) {
                 errorMessage(query, error);
                 reject(error);
             } else {
-                resolve(result.rows[0]);
+                resolve(result.rows);
             }
         });
     });

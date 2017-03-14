@@ -6,8 +6,8 @@ const { columns: alarmColumns } = require('../../queries/events/alarms/constants
 const deleteExdates = require('../../queries/events/exdates/deleteExdates');
 const insertExdate = require('../../queries/events/exdates/insertExdate');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
-const compact = require('../../utils/compact');
 const handleUndefinedEvents = require('./_handleUndefinedEvents');
+const compact = require('../../utils/compact');
 
 function modifyEvents(event, eventId) {
     return new Promise((resolve, reject) => {
@@ -42,30 +42,38 @@ function modifyEventsWithScopeIds(event, eventId) {
     let allUpdatedEvents = [];
     return new Promise((resolve, reject) => {
         modifyEventsForScopeIds(scopeIds)
-        .then((updatedEvents) => {
-            // add successfully updated events to allUpdatedEvents
-            // collect scopeIds for which events were not found
-            return updatedEvents.reduce((ids, event, index) => {
-                if (!event) {
-                    return [...ids, scopeIds[index]];
-                } else {
-                    allUpdatedEvents = [...allUpdatedEvents, event];
-                    return [...ids];
-                }
-            }, []);
-        })
-        .then((unsuccessfulScopeIds) => {
-            const separateUsers = true;
-            // if all or some scopeIds could not be found, split them up into
-            // their user scopes and try again
-            return getScopeIdsForSeparateUsers(unsuccessfulScopeIds, separateUsers);
-        })
-        .then((userScopeIds) => modifyEventsForScopeIds(userScopeIds))
-        .then((moreUpdatedEvents) => {
-            allUpdatedEvents = [...allUpdatedEvents, ...moreUpdatedEvents];
-        })
-        .then(() => resolve(allUpdatedEvents))
-        .catch(reject);
+            .then((updatedEvents) => {
+                // add successfully updated events to allUpdatedEvents
+                // collect scopeIds for which events were not found
+                return updatedEvents.reduce((ids, event, index) => {
+                    if (!event) {
+                        return [...ids, scopeIds[index]];
+                    } else {
+                        allUpdatedEvents = [...allUpdatedEvents, event];
+                        return [...ids];
+                    }
+                }, []);
+            })
+            .then((unsuccessfulScopeIds) => {
+                // if all or some scopeIds could not be found, split them up into
+                // their user scopes and try again
+                const separateUsers = true;
+                return getScopeIdsForSeparateUsers(unsuccessfulScopeIds, separateUsers);
+            })
+            .then((userScopeIds) => {
+                // we don't want to do the same query twice
+                return userScopeIds.reduce((newScopeIds, scopeId) => {
+                    return scopeIds.includes(scopeId)
+                        ? newScopeIds
+                        : [...newScopeIds, scopeId];
+                }, []);
+            })
+            .then((userScopeIds) => modifyEventsForScopeIds(userScopeIds))
+            .then((moreUpdatedEvents) => {
+                allUpdatedEvents = [...allUpdatedEvents, ...moreUpdatedEvents];
+            })
+            .then(() => resolve(allUpdatedEvents))
+            .catch(reject);
     });
 
     function modifyEventsForScopeIds(scopeIds) {
@@ -74,7 +82,17 @@ function modifyEventsWithScopeIds(event, eventId) {
                 let params = updateColumns.map((column) => event[column]);
                 params = [...params, eventId, scopeId];
                 return updateRawEvents(params);
-            })).then(resolve).catch(reject);
+            }))
+            .then((events) => {
+                // For easier handling, convert empty arrays (unsuccessful
+                // updates) into undefined.
+                // If an event was updated, the query result is an array with
+                // exactly one element.
+                resolve(events.map(([event]) => {
+                    return event;
+                }));
+            })
+            .catch(reject);
         });
     }
 }

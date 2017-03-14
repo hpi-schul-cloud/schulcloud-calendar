@@ -12,9 +12,10 @@ function handleUndefinedEvents(processedEvents, action) {
     const isIncompleteDeletion = (undefinedEvents.length > 0)
         && (undefinedEvents.length !== processedEvents.length);
     if (isIncompleteDeletion) {
-        const warning = `Only ${processedEvents.length - undefinedEvents.length} `
-            + `out of ${processedEvents.length} scope-ids found `
-            + `for event ${action}`;
+        const deletions = processedEvents.length - undefinedEvents.length;
+        const warning = `Not for all given scope_ids the event ${action} `
+            + `was successful, deleted ${deletions} out of `
+            + `${processedEvents.length} events`;
         logger.warn(warning);
     }
 }
