@@ -21,7 +21,7 @@ function updateSubscriptions(subscription, subscriptionId) {
 }
 
 function updateAllSubscriptions(subscription, subscriptionId) {
-    let params = updateColumns.map((column) => subscription[column]);
+    let params = updateColumns.map((columnName) => subscription[columnName]);
     params = [...params, subscriptionId];
     return updateSubscriptionsInDb(params);
 }
@@ -67,7 +67,7 @@ function updateSubscriptionsWithScopeIds(subscription, subscriptionId, scopeIds)
     function updateSubscriptionsForScopeIds(subscriptions, subscriptionId, scopeIds) {
         return new Promise((resolve, reject) => {
             Promise.all(scopeIds.map((scopeId) => {
-                let params = updateColumns.map((column) => subscription[column]);
+                let params = updateColumns.map((columnName) => subscription[columnName]);
                 params = [...params, subscriptionId, scopeId];
                 return updateSubscriptionsInDb(params);
             }))

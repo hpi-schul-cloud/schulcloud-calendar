@@ -32,7 +32,7 @@ function updateEvents(event, eventId) {
 
 function updateAllEvents(event, eventId) {
     return new Promise((resolve, reject) => {
-        let params = updateColumns.map((column) => event[column]);
+        let params = updateColumns.map((columnName) => event[columnName]);
         params = [...params, eventId];
         updateRawEvents(params)
             .then(resolve)
@@ -82,7 +82,7 @@ function updateEventsWithScopeIds(event, eventId) {
     function updateEventsForScopeIds(scopeIds) {
         return new Promise((resolve, reject) => {
             Promise.all(scopeIds.map((scopeId) => {
-                let params = updateColumns.map((column) => event[column]);
+                let params = updateColumns.map((columnName) => event[columnName]);
                 params = [...params, eventId, scopeId];
                 return updateRawEvents(params);
             }))
@@ -123,10 +123,10 @@ function updateAlarms(updatedEvents, event) {
 function insertAlarms(alarms, eventId) {
     return new Promise((resolve, reject) => {
         Promise.all(alarms.map((alarm) => {
-            const params = alarmColumns.reduce((params, column) => {
-                if (column === 'id') return params;
-                if (column === 'event_id') return [...params, eventId];
-                return [...params, alarm[column]];
+            const params = alarmColumns.reduce((params, columnName) => {
+                if (columnName === 'id') return params;
+                if (columnName === 'event_id') return [...params, eventId];
+                return [...params, alarm[columnName]];
             }, []);
             return insertAlarm(params);
         })).then(resolve).catch(reject);
