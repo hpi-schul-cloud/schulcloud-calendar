@@ -1,6 +1,7 @@
 const client = require('../../infrastructure/database');
 const isoDateFormat = require('../../utils/isoDateFormat');
-const errorMessage = require('../_errorMessage');
+const errorMessage = require('../utils/errorMessage');
+const { allColumns } = require('./constants');
 
 const THREE_WEEKS = 1000 * 60 * 60 * 24 * 21;
 const FROM = new Date(new Date().getTime() - THREE_WEEKS);
@@ -38,11 +39,13 @@ function buildQuery(filter) {
 
     // filter either by scopeId or eventId
     if (scopeId) {
-        query = 'SELECT * FROM events WHERE scope_id = $1';
+        query = `SELECT ${allColumns} FROM events WHERE scope_id = $1`;
         params = [ scopeId ];
     } else {
-        query = 'SELECT * FROM events WHERE event_id = $1';
+        query = `SELECT ${allColumns} FROM events WHERE event_id = $1`;
         params = [ eventId ];
+        // always return all events when eventId is given
+        all = true;
     }
 
     // if all is not set, filter by timespan

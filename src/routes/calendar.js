@@ -31,7 +31,7 @@ const eventsToIcs = require('../parsers/event/eventsToIcs');
 router.get('/calendar/list', authenticateFromHeaderField, function (req, res) {
     const token = req.get('Authorization');
     getScopesForToken(token)
-        .then(scopesToCalendarList)
+        .then((scopes) => scopesToCalendarList(scopes, token))
         .then((calendarList) => returnSuccess(res, 200, calendarList))
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);

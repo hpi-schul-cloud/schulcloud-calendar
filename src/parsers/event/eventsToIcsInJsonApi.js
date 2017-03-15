@@ -26,7 +26,7 @@ function eventToIcsInJsonApi(event) {
         attributes: {
             ics: eventsToIcs([event])
         }
-    }
+    };
 }
 
 module.exports = eventsToIcsInJsonApi;

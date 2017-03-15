@@ -5,7 +5,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Delete old Table and Type definitions
 -- ######################################
 
-DROP TABLE IF EXISTS eventid_originalscopeid;
+DROP TABLE IF EXISTS original_events;
+DROP TABLE IF EXISTS original_subscriptions;
 
 DROP TABLE IF EXISTS exdates;
 DROP TABLE IF EXISTS alarms;
@@ -113,15 +114,27 @@ CREATE TABLE subscriptions (
   description         TEXT                              DEFAULT NULL,
   last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
   last_updated_status INTEGER                           DEFAULT NULL,
-  scope_id            UUID                     NOT NULL
+  scope_id            UUID                     NOT NULL,
+  subscription_id     UUID                     NOT NULL DEFAULT uuid_generate_v4()
 );
 
 -- If separateUsers in a POST /events request is set, the event_id is saved with
--- the original scopeIds given in the request. This is done in case new scopes
+-- the original scope_ids given in the request. This is done in case new scopes
 -- are introduced to a subordinate scope, for example, a new student in a class.
 -- In that case, the information which events need to be added for the new
--- student can be found in this table.
-CREATE TABLE eventid_originalscopeid (
-  event_id              UUID NOT NULL,
-  original_scope_id     UUID NOT NULL
+-- student can be found in this table, together with the event itself and the
+-- scope_id of the person who created or last edited the event.
+-- TODO so far, the original event is only inserted once and not updated nor
+-- deleted
+CREATE TABLE original_events (
+  id                    UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
+  event_id              UUID                     NOT NULL,
+  scope_id              UUID                     NOT NULL,
+  original_event        JSON                     NOT NULL,
+  person_responsible    UUID                     NOT NULL
+);
+
+CREATE TABLE original_subscriptions (
+  subscription_id       UUID                     NOT NULL,
+  scope_id              UUID                     NOT NULL
 );

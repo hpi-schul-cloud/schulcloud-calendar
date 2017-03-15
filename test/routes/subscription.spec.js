@@ -16,8 +16,8 @@ describe('routes/subscription', function() {
         it('subscribes to a feed with one scopeId', function(done) {
             this.timeout(10000);
             request(app)
-                .post('/subscription')
-                .set('Authorization', 'student1_1')
+                .post('/subscriptions')
+                .set('Authorization', 'teacher1_1')
                 .send(withSingleScopeId)
                 .expect(200, done);
         });
@@ -35,7 +35,7 @@ const withSingleScopeId = {
             },
             'relationships': {
                 'separate-users': true,
-                'scope-ids': ['663ad332-3cd6-4e75-90bd-a2dfd9132f84']
+                'scope-ids': ['d46b16ce-6d98-44b7-bcbc-a36c50098144']
             }
         }
     ]

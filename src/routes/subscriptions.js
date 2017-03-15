@@ -12,7 +12,8 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
-const { authorizeAccessToScopeId, authorizeAccessToObject } = require('../security/authorization');
+const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
+const authorizeWithPotentialScopeIds = require('./_authorizeWithPotentialScopeIds');
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
@@ -23,9 +24,9 @@ const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJ
 
 // content
 const getSubscriptions = require('../services/subscriptions/getSubscriptions');
-const storeSubscriptions = require('../services/subscriptions/storeSubscriptions');
-const updateSubscription = require('../services/subscriptions/updateSubscription');
-const deleteSubscription = require('../queries/subscriptions/deleteSubscription');
+const insertSubscriptions = require('../services/subscriptions/insertSubscriptions');
+const updateSubscriptions = require('../services/subscriptions/updateSubscriptions');
+const deleteSubscriptions = require('../services/subscriptions/deleteSubscriptions');
 
 /* routes */
 
@@ -39,7 +40,7 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
 
     authorizeAccessToScopeId(user, filter.scopeId)
         .then(() => getSubscriptions(filter, token))
-        .then((subscriptions) => authorizeAccessToObject(user, 'can-read', subscriptions))
+        .then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
@@ -51,8 +52,8 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
     const user = req.user;
     const subscriptions = req.subscriptions;
 
-    authorizeAccessToObject(user, 'can-write', subscriptions)
-        .then(storeSubscriptions)
+    authorizeAccessToObjects(user, 'can-write', subscriptions)
+        .then(insertSubscriptions)
         .then((insertedSubscriptions) => {
             insertedSubscriptions.forEach((insertedSubscription) => {
                 sendNotification.forNewSubscription(
@@ -71,24 +72,28 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 });
 
 router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const subscription = req.subscriptions;
+    const subscription = req.subscriptions[0];
+    const scopeIds = subscription.scope_ids;
     const subscriptionId = req.params.subscriptionId;
-    const filter = { subscriptionId: subscriptionId };
     const user = req.user;
     const token = req.get('Authorization');
 
-    getSubscriptions(filter, token)
-        .then((existingSubscription) => authorizeAccessToObject(user, 'can-read', existingSubscription))
-        .then((existingSubscription) => authorizeAccessToObject(user, 'can-write', existingSubscription))
-        .then(() => authorizeAccessToObject(user, 'can-write', subscription))
-        .then((subscription) => updateSubscription(subscription, subscriptionId))
-        .then((updatedSubscription) => {
-            sendNotification.forModifiedSubscription(
-                updatedSubscription['scope_id'],
-                updatedSubscription['description'],
-                updatedSubscription['ics_url']
-            );
-            return [updatedSubscription];
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
+        .then(() => updateSubscriptions(subscription, subscriptionId))
+        .then((updatedSubscriptions) => {
+            if (updatedSubscriptions.length === 0) {
+                const error = 'Given subscriptionId or scopeIds not found';
+                const status = 404;
+                const title = 'Query Error';
+                return Promise.reject({error, status, title});
+            } else {
+                sendNotification.forModifiedSubscription(
+                    updatedSubscriptions['scope_id'],
+                    updatedSubscriptions['description'],
+                    updatedSubscriptions['ics_url']
+                );
+                return updatedSubscriptions;
+            }
         })
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -99,26 +104,27 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
 
 router.delete('/subscriptions/:subscriptionId', authenticateFromHeaderField, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
-    const filter = { subscriptionId: subscriptionId };
+    // TODO somehow parse in beforehand to get the scopeIds in a nicer way
+    const scopeIds = req.body.data[0].relationships
+        && req.body.data[0].relationships['scope-ids'];
     const user = req.user;
     const token = req.get('Authorization');
 
-    getSubscriptions(filter, token)
-        .then((existingSubscription) => authorizeAccessToObject(user, 'can-write', existingSubscription))
-        .then(() => deleteSubscription(subscriptionId))
-        .then((deletedSubscription) => {
-            if (deletedSubscription) {
-                sendNotification.forDeletedSubscription(
-                    deletedSubscription['scope_id'],
-                    deletedSubscription['description'],
-                    deletedSubscription['ics_url']
-                );
-                returnSuccess(res, 204);
-            } else {
-                const message = 'Given subscriptionId not found';
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
+        .then(() => deleteSubscriptions(subscriptionId, scopeIds))
+        .then((deletedSubscriptions) => {
+            if (deletedSubscriptions.length === 0) {
+                const message = 'Given subscriptionId or scopeIds not found';
                 const status = 404;
                 const title = 'Query Error';
                 returnError(res, message, status, title);
+            } else {
+                sendNotification.forDeletedSubscription(
+                    deletedSubscriptions['scope_id'],
+                    deletedSubscriptions['description'],
+                    deletedSubscriptions['ics_url']
+                );
+                return deletedSubscriptions;
             }
         })
         .catch(({ message, status, title }) => {

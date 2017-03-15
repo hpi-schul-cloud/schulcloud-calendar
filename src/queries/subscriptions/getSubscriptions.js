@@ -1,5 +1,6 @@
 const client = require('../../infrastructure/database');
-const errorMessage = require('../_errorMessage');
+const errorMessage = require('../utils/errorMessage');
+const { allColumns } = require('./constants');
 
 function getSubscriptions(filter) {
     return new Promise((resolve, reject) => {
@@ -20,7 +21,7 @@ function getSubscriptions(filter) {
 
 function buildQuery(filter) {
     const { scopeId, subscriptionId, lastUpdateFailed } = filter;
-    let query = 'SELECT * FROM subscriptions WHERE';
+    let query = `SELECT ${allColumns} FROM subscriptions WHERE`;
     let params = [];
     let paramCount = 1;
 
@@ -32,8 +33,8 @@ function buildQuery(filter) {
 
     if (subscriptionId) {
         query = paramCount > 1
-            ? `${query} AND id = $${paramCount}`
-            : `${query} id = $${paramCount}`;
+            ? `${query} AND subscription_id = $${paramCount}`
+            : `${query} subscription_id = $${paramCount}`;
         params = [ ...params, subscriptionId ];
         paramCount += 1;
     }

@@ -12,7 +12,8 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
-const { authorizeAccessToScopeId, authorizeAccessToObject } = require('../security/authorization');
+const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
+const authorizeWithPotentialScopeIds = require('./_authorizeWithPotentialScopeIds');
 const jsonApiToJson = require('../parsers/event/jsonApiToJson');
 const icsToJson = require('../parsers/event/icsToJson');
 
@@ -25,8 +26,9 @@ const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
 // content
 const getEvents = require('../services/events/getEvents');
-const storeEvents = require('../services/events/storeEvents');
-const deleteEvent = require('../queries/events/deleteRawEvents');
+const insertEvents = require('../services/events/insertEvents');
+const deleteEvents = require('../services/events/deleteEvents');
+const updateEvents = require('../services/events/updateEvents');
 
 /* routes */
 
@@ -43,7 +45,7 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
 
     authorizeAccessToScopeId(user, filter.scopeId)
         .then(() => getEvents(filter, token))
-        .then((events) => authorizeAccessToObject(user, 'can-read', events))
+        .then((events) => authorizeAccessToObjects(user, 'can-read', events))
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
@@ -52,110 +54,30 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
 });
 
 router.post('/events', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const user = req.user;
-    const events = req.events;
-
-    authorizeAccessToObject(user, 'can-write', events)
-        .then(insertEvents)
-        .then(sendInsertNotification)
-        .then(eventsToJsonApi)
-        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
+    handlePost(req, res, eventsToJsonApi);
 });
 
 router.post('/events/ics', icsToJson, authenticateFromHeaderField, function (req, res) {
+    handlePost(req, res, eventsToIcsInJsonApi);
+});
+
+function handlePost(req, res, outputFormatter) {
     const user = req.user;
     const events = req.events;
 
-    authorizeAccessToObject(user, 'can-write', events)
-        .then(insertEvents)
+    authorizeAccessToObjects(user, 'can-write', events)
+        .then((events) => doInserts(events, user))
         .then(sendInsertNotification)
-        .then(eventsToIcsInJsonApi)
+        .then(outputFormatter)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });
-});
+}
 
-router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function(req, res) {
-    const event = req.events;
-    const eventId = req.params.eventId;
-    const filter = { eventId: eventId, all: true };
-    const user = req.user;
-    const token = req.get('Authorization');
-
-    getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-read', existingEvent))
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-write', existingEvent))
-        .then(() => authorizeAccessToObject(user, 'can-write', event))
-        .then((event) => updateEvents(eventId, event))
-        .then(sendUpdateNotification)
-        .then(eventsToJsonApi)
-        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
-});
-
-router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, function(req, res) {
-    const event = req.events;
-    const eventId = req.params.eventId;
-    const filter = { eventId: eventId, all: true };
-    const user = req.user;
-    const token = req.get('Authorization');
-
-    getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-read', existingEvent))
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-write', existingEvent))
-        .then(() => authorizeAccessToObject(user, 'can-write', event))
-        .then((event) => updateEvents(eventId, event))
-        .then(sendUpdateNotification)
-        .then(eventsToIcsInJsonApi)
-        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
-});
-
-router.delete('/events/:eventId', authenticateFromHeaderField, function(req, res) {
-    const eventId = req.params.eventId;
-    // TODO delete only for scopeIds and check for alarms and exdates
-    const scopeIds = req.body.scope_ids;
-    const filter = { eventId: eventId, all: true };
-    const user = req.user;
-    const token = req.get('Authorization');
-
-    getEvents(filter, token)
-        .then((existingEvent) => authorizeAccessToObject(user, 'can-write', existingEvent))
-        .then(() => deleteEvent(eventId))
-        .then((deletedEvents) => {
-            if (deletedEvents.length > 0) {
-                returnSuccess(res, 204);
-                deletedEvents.forEach((deletedEvent) => {
-                    sendNotification.forDeletedEvent(
-                        scopeIds,
-                        deletedEvent['summary'],
-                        deletedEvent['dtstart'],
-                        deletedEvent['dtend']
-                    );
-                });
-            } else {
-                const message = 'Given eventId not found';
-                const status = 404;
-                const title = 'Query Error';
-                returnError(res, message, status, title);
-            }
-        })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
-});
-
-function insertEvents(events) {
+function doInserts(events, user) {
     return new Promise(function (resolve, reject) {
-        storeEvents(events)
+        insertEvents(events, user)
             .then(resolve)
             .catch(reject);
     });
@@ -169,20 +91,45 @@ function sendInsertNotification(insertedEvents) {
     return insertedEvents;
 }
 
-function updateEvents(eventId, event) {
+router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
+    handlePut(req, res, eventsToJsonApi);
+});
+
+router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, function(req, res) {
+    handlePut(req, res, eventsToIcsInJsonApi);
+});
+
+function handlePut(req, res, outputFormatter) {
+    const eventId = req.params.eventId;
+    const event = req.events[0];
+    const scopeIds = event.scope_ids;
+    const user = req.user;
+    const token = req.get('Authorization');
+
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
+        .then(() => doUpdates(event, eventId))
+        .then(sendUpdateNotification)
+        .then(outputFormatter)
+        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+        .catch(({ message, status, title }) => {
+            returnError(res, message, status, title);
+        });
+}
+
+function doUpdates(event, eventId) {
     return new Promise(function (resolve, reject) {
-        deleteEvent(eventId)
-            .then((deletedEvent) => {
-                if (deletedEvent) {
-                    return insertEvents(event);
-                } else {
-                    const error = new Error('Given eventId not found');
+        updateEvents(event, eventId)
+            .then((updatedEvents) => {
+                if (updatedEvents.length === 0) {
+                    const error = new Error('Given eventId or scopeIds not found '
+						+ 'for event modification');
                     error.status = 404;
                     error.title = 'Query Error';
                     reject(error);
+                } else {
+                    resolve(updatedEvents);
                 }
             })
-            .then(resolve)
             .catch(reject);
     });
 }
@@ -194,5 +141,39 @@ function sendUpdateNotification(updatedEvents) {
     });
     return updatedEvents;
 }
+
+router.delete('/events/:eventId', authenticateFromHeaderField, function (req, res) {
+    const eventId = req.params.eventId;
+    // TODO somehow parse in beforehand to get the scopeIds in a nicer way
+    const scopeIds = req.body.data[0].relationships
+        && req.body.data[0].relationships['scope-ids'];
+    const user = req.user;
+    const token = req.get('Authorization');
+
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
+        .then(() => deleteEvents(eventId, scopeIds))
+        .then((deletedEvents) => {
+            if (deletedEvents.length > 0) {
+                returnSuccess(res, 204);
+                deletedEvents.forEach((deletedEvent) => {
+                    sendNotification.forDeletedEvent(
+                        deletedEvent['scope_id'],
+                        deletedEvent['summary'],
+                        deletedEvent['dtstart'],
+                        deletedEvent['dtend']
+                    );
+                });
+            } else {
+                const message = 'Given eventId or scopeIds not found '
+                    + 'for event deletion';
+                const status = 404;
+                const title = 'Query Error';
+                returnError(res, message, status, title);
+            }
+        })
+        .catch(({ message, status, title }) => {
+            returnError(res, message, status, title);
+        });
+});
 
 module.exports = router;

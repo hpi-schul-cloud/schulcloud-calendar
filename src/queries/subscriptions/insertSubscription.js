@@ -1,10 +1,16 @@
 const client = require('../../infrastructure/database');
-const errorMessage = require('../_errorMessage');
+const errorMessage = require('../utils/errorMessage');
+const {
+    allColumns,
+    insertColumns,
+    insertTemplate
+} = require('./constants');
 
 function insertSubscription(params) {
     return new Promise(function(resolve, reject) {
-        const query = `INSERT INTO subscriptions (ics_url, description, scope_id)
-            VALUES ($1, $2, $3) RETURNING *`;
+        const query = `INSERT INTO subscriptions ${insertColumns} `
+            + `VALUES ${insertTemplate} `
+            + `RETURNING ${allColumns}`;
         client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);

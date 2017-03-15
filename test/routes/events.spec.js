@@ -13,14 +13,6 @@ describe('routes/events/ics', function() {
 
     describe('POST', function() {
 
-        it('handles invalid ids', function(done) {
-            request(app)
-                .post('/events/ics')
-                .set('Authorization', 'student1_1')
-                .send({ ids: 'not an array' })
-                .expect(500, done);
-        });
-
         it('handles an invalid ics');
 
         it('creates events');

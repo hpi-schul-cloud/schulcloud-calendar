@@ -11,8 +11,9 @@ function sendNotification(title, body, scopeIds) {
             if (httpStatus == 201) {
                 resolve();
             } else {
-                // TODO handle rejection, causes UnhandledPromiseRejection errors
-                resolve(httpStatus);
+                // TODO handle rejection and remove resolve, causes UnhandledPromiseRejection errors
+                // reject(httpStatus);
+                resolve();
             }
         };
         request.send(JSON.stringify({
