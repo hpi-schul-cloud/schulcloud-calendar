@@ -19,7 +19,6 @@ function deleteSubscriptions(subscriptionId, scopeIds) {
 }
 
 function deleteAllSubscriptions(subscriptionId) {
-    console.log("DELETING ALL THE SUBS");
     return deleteSubscriptionsFromDb(subscriptionId);
 }
 
