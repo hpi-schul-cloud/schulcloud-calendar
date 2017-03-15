@@ -67,7 +67,7 @@ function deleteSubscriptionsWithScopeIds(subscriptionId, scopeIds) {
                 .then((subscriptions) => {
                     // For easier handling, convert empty arrays (unsuccessful
                     // deletions) into undefined.
-                    // If an subscription was deleted, the query result is an array with
+                    // If a subscription was deleted, the query result is an array with
                     // exactly one element since the scopeId is given.
                     resolve(subscriptions.map(([subscription]) => {
                         return subscription;
