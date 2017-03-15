@@ -1,6 +1,6 @@
 # schulcloud-calendar
 
-[Calendar API](https://schulcloud.github.io/schulcloud-calendar/#/default)
+[Calendar API](https://schul-cloud.github.io/schulcloud-calendar/#/default)
 
 [Schul-Cloud API Requirements](https://github.com/schulcloud/schulcloud-calendar/blob/master/wiki/schulcloud-api-requirements.md)
 

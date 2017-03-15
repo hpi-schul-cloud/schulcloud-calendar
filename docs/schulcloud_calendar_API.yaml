@@ -144,7 +144,7 @@ paths:
         If `scope-ids` is set only the event(s) within that scope(s) will be updated. Conversly all events with the given `event-id` will be updated if there is no scope given. Thereby the `event-id` has to correspond to the field `events(event-id)`.
         The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according events with within that scope. If found, the event can be updated. If not, the same check is done for the users within this scope. Thus both cases are covered.
         Events are updated using the SQL UPDATE command. Alarms and exdates, however, are deleted and newly added. As a result the id changes. 
-        Finally the `scope-id` of an event cannot be modified. Thus when this is desired, the event has to be deleted and added again, too.
+        At last the `scope-id` of an event cannot be modified. Thus when this is desired, the event has to be deleted and added again, too.
       responses:
         '200':
           description: Successful
@@ -222,7 +222,7 @@ paths:
         If `scope-ids` is set only the event(s) within that scope(s) will be updated. Conversly all events with the given `event-id` will be updated if there is no scope given. Thereby the `event-id` has to correspond to the field `events(event-id)`.
         The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according events with within that scope. If found, the event can be updated. If not, the same check is done for the users within this scope. Thus both cases are covered.
         Events are updated using the SQL UPDATE command. Alarms and exdates, however, are deleted and newly added. As a result the id changes. 
-        Finally the `scope-id` of an event cannot be modified. Thus when this is desired, the event has to be deleted and added again, too.
+        At last the `scope-id` of an event cannot be modified. Thus when this is desired, the event has to be deleted and added again, too.
       responses:
         '200':
           description: Successful
