@@ -58,10 +58,9 @@ function eventToIcs(event) {
     }
 
     if (event.x_sc_fields) {
-        const x_sc_fields = JSON.parse(event.x_sc_fields);
-        for (let x_sc_field in x_sc_fields) {
-            if (x_sc_fields.hasOwnProperty(x_sc_field))
-                ics += x_sc_field + ':' + x_sc_fields[x_sc_field] + '\n';
+        for (let x_sc_field in event.x_sc_fields) {
+            if (event.x_sc_fields.hasOwnProperty(x_sc_field))
+                ics += x_sc_field + ':' + event.x_sc_fields[x_sc_field] + '\n';
         }
     }
 

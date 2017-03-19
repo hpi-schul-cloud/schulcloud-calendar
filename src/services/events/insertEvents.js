@@ -70,7 +70,7 @@ function insertEventPerScope(event, scopeId, externalEventId) {
             event['repeat_bysetpos'],
             event['repeat_wkst'],
             externalEventId,
-            JSON.stringify(event['x_sc_fields'])
+            event['x_sc_fields']
         ];
         insertRawEvent(params)
             .then((insertedEvent) => {

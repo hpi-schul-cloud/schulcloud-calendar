@@ -61,7 +61,7 @@ function eventToJsonApi(event) {
                     jsonApiEvent.relationships['separate-users'] = event[key];
                     break;
                 case 'x_sc_fields': {
-                    const x_sc_fields = JSON.parse(event[key]);
+                    const x_sc_fields = event[key];
                     for (let x_sc_field in x_sc_fields) {
                         if (x_sc_fields.hasOwnProperty(x_sc_field))
                             jsonApiEvent.attributes[x_sc_field] = x_sc_fields[x_sc_field];
