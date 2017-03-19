@@ -188,10 +188,10 @@ function lineToJson(line, event) {
             event['exdates'].push(regularDateFormat(fieldValue));
             break;
         default: {
-            if (fieldName.startsWith('X-SC')) {
-                if (!event['x_sc_fields'])
-                    event['x_sc_fields'] = {};
-                event['x_sc_fields'][fieldName] = fieldValue;
+            if (fieldName.startsWith('X-')) {
+                if (!event['x_fields'])
+                    event['x_fields'] = {};
+                event['x_fields'][fieldName] = fieldValue;
             } else {
                 // temporary for timezone support...
                 const splitPosition2 = fieldName.indexOf(';');

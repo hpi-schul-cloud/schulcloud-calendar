@@ -30,7 +30,7 @@ const columns = [
     'repeat_bysetpos',
     'repeat_wkst',
     'event_id',
-    'x_sc_fields'
+    'x_fields'
 ];
 
 module.exports = {

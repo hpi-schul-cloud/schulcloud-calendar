@@ -86,7 +86,7 @@ CREATE TABLE events (
   repeat_bysetpos   INT ARRAY                         DEFAULT NULL,
   repeat_wkst       weekday_type                      DEFAULT NULL,
   event_id          UUID NOT NULL                     DEFAULT uuid_generate_v4(),
-  x_sc_fields       JSONB                             DEFAULT NULL
+  x_fields          JSONB                             DEFAULT NULL
   -- weitere Felder
 );
 
