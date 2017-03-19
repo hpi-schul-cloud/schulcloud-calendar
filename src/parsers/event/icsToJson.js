@@ -188,7 +188,7 @@ function lineToJson(line, event) {
             event['exdates'].push(regularDateFormat(fieldValue));
             break;
         default: {
-            if (fieldName.startsWith('X-')) {
+            if (fieldName.startsWith('X-') && !fieldName.includes(';')) {
                 if (!event['x_fields'])
                     event['x_fields'] = {};
                 event['x_fields'][fieldName] = fieldValue;
@@ -223,7 +223,13 @@ function lineToJson(line, event) {
                         event['exdates'].push(regularDateFormat(fieldValue));
                         break;
                     default:
-                        logger.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
+                        if (realFieldName.startsWith('X-')) {
+                            if (!event['x_fields'])
+                                event['x_fields'] = {};
+                            event['x_fields'][realFieldName] = fieldValue;
+                        } else {
+                            logger.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
+                        }
                         break;
                 }
             }
