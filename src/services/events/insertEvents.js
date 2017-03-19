@@ -69,7 +69,8 @@ function insertEventPerScope(event, scopeId, externalEventId) {
             event['repeat_bymonth'],
             event['repeat_bysetpos'],
             event['repeat_wkst'],
-            externalEventId
+            externalEventId,
+            JSON.stringify(event['x_sc_fields'])
         ];
         insertRawEvent(params)
             .then((insertedEvent) => {

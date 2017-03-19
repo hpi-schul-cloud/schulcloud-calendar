@@ -23,7 +23,13 @@ function jsonApiToJson(req, res, next) {
 
         for (let key in eventAttributes) {
             if (eventAttributes.hasOwnProperty(key)) {
-                json[key] = eventAttributes[key];
+                if (key.startsWith('X-SC')) {
+                    if (!json['x_sc_fields'])
+                        json['x_sc_fields'] = {};
+                    json['x_sc_fields'][key] = eventAttributes[key];
+                } else {
+                    json[key] = eventAttributes[key];
+                }
             }
         }
 

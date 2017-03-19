@@ -29,7 +29,8 @@ const columns = [
     'repeat_bymonth',
     'repeat_bysetpos',
     'repeat_wkst',
-    'event_id'
+    'event_id',
+    'x_sc_fields'
 ];
 
 module.exports = {

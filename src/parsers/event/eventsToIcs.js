@@ -57,6 +57,14 @@ function eventToIcs(event) {
         ics = formatAlarms(ics, event.alarms);
     }
 
+    if (event.x_sc_fields) {
+        const x_sc_fields = JSON.parse(event.x_sc_fields);
+        for (let x_sc_field in x_sc_fields) {
+            if (x_sc_fields.hasOwnProperty(x_sc_field))
+                ics += x_sc_field + ':' + x_sc_fields[x_sc_field] + '\n';
+        }
+    }
+
     ics += 'END:VEVENT\n';
 
     return ics;
