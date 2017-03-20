@@ -60,6 +60,14 @@ function eventToJsonApi(event) {
                 case 'separate_users':
                     jsonApiEvent.relationships['separate-users'] = event[key];
                     break;
+                case 'x_fields': {
+                    const x_fields = event[key];
+                    for (let x_field in x_fields) {
+                        if (x_fields.hasOwnProperty(x_field))
+                            jsonApiEvent.attributes[x_field] = x_fields[x_field];
+                    }
+                }
+                    break;
                 default:
                     jsonApiEvent.attributes[key] = event[key];
                     break;

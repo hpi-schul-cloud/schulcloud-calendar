@@ -5,18 +5,18 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Delete old Table and Type definitions
 -- ######################################
 
-DROP TABLE IF EXISTS original_events;
-DROP TABLE IF EXISTS original_subscriptions;
+DROP TABLE IF EXISTS original_events CASCADE;
+DROP TABLE IF EXISTS original_subscriptions CASCADE;
 
-DROP TABLE IF EXISTS exdates;
-DROP TABLE IF EXISTS alarms;
-DROP TABLE IF EXISTS events;
+DROP TABLE IF EXISTS exdates CASCADE;
+DROP TABLE IF EXISTS alarms CASCADE;
+DROP TABLE IF EXISTS events CASCADE;
 
-DROP TABLE IF EXISTS subscriptions;
+DROP TABLE IF EXISTS subscriptions CASCADE;
 
-DROP TYPE IF EXISTS repeat_type;
-DROP TYPE IF EXISTS weekday_type;
-DROP TYPE IF EXISTS alarm_action;
+DROP TYPE IF EXISTS repeat_type CASCADE;
+DROP TYPE IF EXISTS weekday_type CASCADE;
+DROP TYPE IF EXISTS alarm_action CASCADE;
 
 -- ######################################
 -- Type definitions
@@ -85,7 +85,8 @@ CREATE TABLE events (
   repeat_bymonth    INT ARRAY                         DEFAULT NULL,
   repeat_bysetpos   INT ARRAY                         DEFAULT NULL,
   repeat_wkst       weekday_type                      DEFAULT NULL,
-  event_id          UUID                     NOT NULL DEFAULT uuid_generate_v4()
+  event_id          UUID NOT NULL                     DEFAULT uuid_generate_v4(),
+  x_fields          JSONB                             DEFAULT NULL
   -- weitere Felder
 );
 

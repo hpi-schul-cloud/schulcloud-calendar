@@ -188,38 +188,50 @@ function lineToJson(line, event) {
             event['exdates'].push(regularDateFormat(fieldValue));
             break;
         default: {
-            // temporary for timezone support...
-            const splitPosition2 = fieldName.indexOf(';');
-            if (splitPosition2 === -1) {
-                return;
-            }
-            const realFieldName = fieldName.substr(0, splitPosition2);
-            // const timezone = fieldName.substr(splitPosition2 + 1, fieldName.length);
+            if (fieldName.startsWith('X-') && !fieldName.includes(';')) {
+                if (!event['x_fields'])
+                    event['x_fields'] = {};
+                event['x_fields'][fieldName] = fieldValue;
+            } else {
+                // temporary for timezone support...
+                const splitPosition2 = fieldName.indexOf(';');
+                if (splitPosition2 === -1) {
+                    return;
+                }
+                const realFieldName = fieldName.substr(0, splitPosition2);
+                // const timezone = fieldName.substr(splitPosition2 + 1, fieldName.length);
 
-            // TODO: handle timezone
+                // TODO: handle timezone
 
-            switch (realFieldName) {
-                case 'DTSTART':
-                    event['dtstart'] = regularDateFormat(fieldValue);
-                    break;
-                case 'DTEND':
-                    event['dtend'] = regularDateFormat(fieldValue);
-                    break;
-                case 'DTSTAMP':
-                    event['dtstamp'] = regularDateFormat(fieldValue);
-                    break;
-                case 'LAST-MODIFIED':
-                    event['last-modified'] = regularDateFormat(fieldValue);
-                    break;
-                case 'EXDATE':
-                    if (!Array.isArray(event['exdates'])) {
-                        event['exdates'] = [];
-                    }
-                    event['exdates'].push(regularDateFormat(fieldValue));
-                    break;
-                default:
-                    logger.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
-                    break;
+                switch (realFieldName) {
+                    case 'DTSTART':
+                        event['dtstart'] = regularDateFormat(fieldValue);
+                        break;
+                    case 'DTEND':
+                        event['dtend'] = regularDateFormat(fieldValue);
+                        break;
+                    case 'DTSTAMP':
+                        event['dtstamp'] = regularDateFormat(fieldValue);
+                        break;
+                    case 'LAST-MODIFIED':
+                        event['last-modified'] = regularDateFormat(fieldValue);
+                        break;
+                    case 'EXDATE':
+                        if (!Array.isArray(event['exdates'])) {
+                            event['exdates'] = [];
+                        }
+                        event['exdates'].push(regularDateFormat(fieldValue));
+                        break;
+                    default:
+                        if (realFieldName.startsWith('X-')) {
+                            if (!event['x_fields'])
+                                event['x_fields'] = {};
+                            event['x_fields'][realFieldName] = fieldValue;
+                        } else {
+                            logger.error('[icsToJson] Got unknown ICS field. Implement ' + fieldName);
+                        }
+                        break;
+                }
             }
         }
     }

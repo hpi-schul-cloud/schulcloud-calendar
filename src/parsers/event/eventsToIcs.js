@@ -57,6 +57,13 @@ function eventToIcs(event) {
         ics = formatAlarms(ics, event.alarms);
     }
 
+    if (event.x_fields) {
+        for (let x_field in event.x_fields) {
+            if (event.x_fields.hasOwnProperty(x_field))
+                ics += x_field + (event.x_fields[x_field].includes(':') ? ';' : ':') + event.x_fields[x_field] + '\n';
+        }
+    }
+
     ics += 'END:VEVENT\n';
 
     return ics;
