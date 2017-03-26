@@ -6,16 +6,17 @@ At this point, concepts will be discussed which could not be implemented due to 
 
 There are two applications where automated jobs are tendering:
 
-- Update of external calendar feeds
+- Change of an external calendar feeds
 - Check for waiting notifications
 
 The central Schulcloud-Service will be in charge to update external feeds. For this we offer routes that can be used to modify feeds. The Schulcloud-Service can forward feed changes (delete, edit, add) directly to the calendar service.
+The general concept will look like the following: The Calendar-Service offers one route for each action that needs to be performed on a subscription (for details look at the API specification). These routes can be called periodically by the central Schulcloud-Service. This handling is advantageous for the architecture, because it is possible to run the Cron-Job in a separate docker container. So multiple instances of the Calender-Service can be started without having the problem of handling the according Cron-Jobs directly. Since the Schulcloud shall be used for whole Germany it is likely that there will be multiple instances of the services. With the help of a load balancer it is possible to handle all instances fairly and synchronously.
 
-To send notifications to the Notification-Service in time, the Calendar-Service periodically checks the database for pending notifications. The time interval is set to five minutes. If a notification occurs during this period, it is forwarded accordingly.
+There is a Notifications-Services which notifies users about upcoming events as well as other information from the Schulcloud. To enable this in time, the Calendar-Service periodically checks the database for pending notifications. The time interval is set to five minutes. If a notification occurs during this period, it is forwarded accordingly. From our point of view it is not necessary to set the interval smaller (or even sent notifications in real time) since there are no urgent notifications about events.
 
 ## Route: Share
 
-Since it shall not only be possible to subscribe to an external feed but also to offer own feeds, there is a set of `share` routes defined. To access such a feed, there is a share-token defined. This token is unique for one feed and allows a concrete access. The detailes about the single routes can be found in the [Specification](https://schulcloud.github.io/schulcloud-calendar/#/default).
+Since it shall not only be possible to subscribe to an external feed but also to offer own feeds, there is a set of `share` routes defined. To access such a feed, there is a share-token defined. This token is unique for one feed and allows a concrete access. The details about the single routes can be found in the [specification](https://schulcloud.github.io/schulcloud-calendar/#/default).
 
 ## Route: TODO
 
