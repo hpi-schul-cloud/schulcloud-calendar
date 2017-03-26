@@ -49,7 +49,6 @@ CREATE TYPE alarm_action AS ENUM (
 
 -- ######################################
 -- Table definitions
--- TODO: Handle x-prop / iana-prop fields
 -- ######################################
 
 -- The event_id is needed for deviants from repetitions, where a new event is
@@ -87,7 +86,6 @@ CREATE TABLE events (
   repeat_wkst       weekday_type                      DEFAULT NULL,
   event_id          UUID NOT NULL                     DEFAULT uuid_generate_v4(),
   x_fields          JSONB                             DEFAULT NULL
-  -- weitere Felder
 );
 
 CREATE TABLE alarms (
@@ -125,13 +123,12 @@ CREATE TABLE subscriptions (
 -- In that case, the information which events need to be added for the new
 -- student can be found in this table, together with the event itself and the
 -- scope_id of the person who created or last edited the event.
--- TODO so far, the original event is only inserted once and not updated nor
--- deleted
+-- TODO so far, the original event is only inserted once and not updated nor deleted
 CREATE TABLE original_events (
   id                    UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   event_id              UUID                     NOT NULL,
   scope_id              UUID                     NOT NULL,
-  original_event        JSON                     NOT NULL,
+  original_event        JSONB                    NOT NULL,
   person_responsible    UUID                     NOT NULL
 );
 
