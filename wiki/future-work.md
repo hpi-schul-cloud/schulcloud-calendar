@@ -25,6 +25,10 @@ The iCalendar standard allows the addition of TODOs via a `VTODO` entry. To supp
 
 To handle errors during processing events, transactions might be introduced. The advantages are on the one hand a consistent database (e. g. events are stored completely and correct or not at all) and on the other hand a better transparency for users or external services. Especially if multiple events have to be stored with one request, without such a technique it is not clear which events have been already stored. This could lead to further problems, e. g. if the request will be repeated and some events might exist multiple times afterwards.
 
+## Original Scope IDs
+
+While creating a new event, the scope ids for the event can be separated. If this option has been chosen, we store the 'original' ids anyway. With this option, some additional features are conceivable. The most important feature from our point of view is the automated modification of events for new users belonging to the original, separated scope. In those cases, the original scope id can be separated again and such changes can be performed.
+
 ## Further tasks
 
 // Code TODOs (?)
