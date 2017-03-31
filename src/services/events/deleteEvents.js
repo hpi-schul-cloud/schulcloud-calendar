@@ -2,6 +2,8 @@ const deleteEventsFromDb = require('../../queries/events/deleteEvents');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 const compact = require('../../utils/compact');
 const handleUndefinedEvents = require('../_handleUndefinedObjects');
+const getEvents = require('../../queries/events/getRawEvents');
+const deleteOriginalEvent = require('../../queries/original-events/deleteOriginalEvent');
 
 function deleteEvents(eventId, scopeIds) {
     return new Promise((resolve, reject) => {
@@ -9,6 +11,13 @@ function deleteEvents(eventId, scopeIds) {
             ? deleteAllEvents
             : deleteEventsWithScopeIds;
         deleteRoutine(eventId, scopeIds)
+            .then((deletedEvents) => {
+                Promise.resolve(getEvents({eventId: eventId})).then(remainedEventsForEventId => {
+                    if (remainedEventsForEventId.length === 0)
+                        deleteOriginalEvent([eventId]);
+                });
+                return deletedEvents;
+            })
             .then((deletedEvents) => {
                 handleUndefinedEvents(deletedEvents, 'deletion', 'Event');
                 resolve(compact(deletedEvents));
