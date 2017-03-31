@@ -53,11 +53,8 @@ function updateEventsWithScopeIds(event, eventId) {
         const { scope_ids: scopeIds } = event;
         let allUpdatedEvents = [];
         updateEventsForScopeIds(scopeIds)
-        // actually not useful here, since an inconsistent db state is possible (different events with same eventId)
-        // .then(updatedEvents => {
-        //     updateOriginalEvent([eventId, getOriginalEvent(updatedEvents[0])]);
-        //     return updatedEvents;
-        // })
+        // Updating the the events might lead to an inconsistent db state (with different events and the same event_id),
+        // please see wiki/future-work.md for more details. Therefore, we do not change the original event here.
             .then((updatedEvents) => {
                 // add successfully updated events to allUpdatedEvents
                 // collect scopeIds for which events were not found
