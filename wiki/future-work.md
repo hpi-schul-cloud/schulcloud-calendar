@@ -29,6 +29,9 @@ To handle errors during processing events, transactions might be introduced. The
 
 While creating a new event, the scope ids for the event can be separated. If this option has been chosen, we store the 'original' ids anyway. With this option, some additional features are conceivable. The most important feature from our point of view is the automated modification of events for new users belonging to the original, separated scope. In those cases, the original scope id can be separated again and such changes can be performed.
 
+Currently the original stored event will be deleted, after the last event entry for a separated has been deleted. As long as at least one scope has an entry for the the eventId, the original event will be kept.
+An possible future feature is the modification of an separated event for only a subset of scopes. In those case, it would be necessary to handle the changed events as new ones to avoid an inconsistent database state of multiple, different events with the same eventId. Correspondingly the original event must be duplicated (and changed), too.
+
 ## Further tasks
 
 // Code TODOs (?)
