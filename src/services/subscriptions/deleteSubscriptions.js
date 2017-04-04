@@ -2,6 +2,8 @@ const deleteSubscriptionsFromDb = require('../../queries/subscriptions/deleteSub
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 const compact = require('../../utils/compact');
 const handleUndefinedSubscriptions = require('../_handleUndefinedObjects');
+const getSubscriptions = require('../../queries/subscriptions/getSubscriptions');
+const deleteOriginalSubscription = require('../../queries/subscriptions/deleteOriginalSubscription');
 
 function deleteSubscriptions(subscriptionId, scopeIds) {
     return new Promise((resolve, reject) => {
@@ -10,11 +12,22 @@ function deleteSubscriptions(subscriptionId, scopeIds) {
             : deleteSubscriptionsWithScopeIds;
         deleteRoutine(subscriptionId, scopeIds)
             .then((deletedSubscriptions) => {
+                deleteOriginalSubscriptionIfNecessary(subscriptionId);
+                return deletedSubscriptions;
+            })
+            .then((deletedSubscriptions) => {
                 handleUndefinedSubscriptions(deletedSubscriptions, 'deletion', 'Subscription');
                 resolve(compact(deletedSubscriptions));
             })
             .then(resolve)
             .catch(reject);
+    });
+}
+
+function deleteOriginalSubscriptionIfNecessary(subscriptionId) {
+    Promise.resolve(getSubscriptions({subscriptionId: subscriptionId})).then(remainedSubscriptionsForSubscriptionId => {
+        if (remainedSubscriptionsForSubscriptionId.length === 0)
+            deleteOriginalSubscription([subscriptionId]);
     });
 }
 

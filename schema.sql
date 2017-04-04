@@ -123,7 +123,6 @@ CREATE TABLE subscriptions (
 -- In that case, the information which events need to be added for the new
 -- student can be found in this table, together with the event itself and the
 -- scope_id of the person who created or last edited the event.
--- TODO so far, the original event is only inserted once and not updated nor deleted
 CREATE TABLE original_events (
   id                    UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   event_id              UUID                     NOT NULL,
