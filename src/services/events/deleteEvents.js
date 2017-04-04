@@ -12,10 +12,7 @@ function deleteEvents(eventId, scopeIds) {
             : deleteEventsWithScopeIds;
         deleteRoutine(eventId, scopeIds)
             .then((deletedEvents) => {
-                Promise.resolve(getEvents({eventId: eventId})).then(remainedEventsForEventId => {
-                    if (remainedEventsForEventId.length === 0)
-                        deleteOriginalEvent([eventId]);
-                });
+                deleteOriginalEventIfNecessary(eventId);
                 return deletedEvents;
             })
             .then((deletedEvents) => {
@@ -24,6 +21,13 @@ function deleteEvents(eventId, scopeIds) {
             })
             .then(resolve)
             .catch(reject);
+    });
+}
+
+function deleteOriginalEventIfNecessary(eventId) {
+    Promise.resolve(getEvents({eventId: eventId})).then(remainedEventsForEventId => {
+        if (remainedEventsForEventId.length === 0)
+            deleteOriginalEvent([eventId]);
     });
 }
 
