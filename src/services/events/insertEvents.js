@@ -147,8 +147,10 @@ function insertOriginalEvents(separateUsers, scopeIds, insertedEvents, user) {
 
 function getOriginalEvent(insertedEvent) {
     let originalEvents = removeIds(insertedEvent);
-    originalEvents.alarms = originalEvents.alarms.map(removeIds);
-    originalEvents.exdates = originalEvents.exdates.map(removeIds);
+    if (originalEvents.alarms)
+        originalEvents.alarms = originalEvents.alarms.map(removeIds);
+    if (originalEvents.exdates)
+        originalEvents.exdates = originalEvents.exdates.map(removeIds);
     return JSON.stringify(originalEvents);
 
     function removeIds(object) {
