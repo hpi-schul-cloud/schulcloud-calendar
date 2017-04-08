@@ -1,5 +1,5 @@
 DO $$
-DECLARE new_event_id UUID;
+DECLARE new_event_id TEXT;
 BEGIN
   INSERT INTO events VALUES
     (uuid_generate_v4(), 'Schulfest', NULL, 'Beschreibung', '2016-11-21 09:00:00.000000', '2016-11-21 18:30:00.000000',

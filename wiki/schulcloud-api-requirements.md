@@ -231,7 +231,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_users/:uuid
 ```
 
 ### UUIDs
-UUIDs should be globally unique for each instance in the whole Schul-Cloud. An instance is for example a school, a class or a user (see [Scopes](#Scopes)).
+UUIDs should be globally unique for each instance in the whole Schul-Cloud. An instance is for example a school, a class or a user (see [Scopes](#Scopes)). Within the Calendar-Service UUIDs will be handled as Strings. The central Schul-Cloud-Service takes care that they are unique.
 
 ### Scopes
 Possible scopes are
