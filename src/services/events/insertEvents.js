@@ -5,6 +5,7 @@ const insertAlarm = require('../../queries/events/alarms/insertAlarm');
 const insertOriginalEvent = require('../../queries/original-events/insertOriginalEvent');
 const flatten = require('../../utils/flatten');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
+const getOriginalEvent = require('./getOriginalEvent');
 
 function insertEvents(events, user) {
     return new Promise((resolve, reject) => {
@@ -143,27 +144,6 @@ function insertOriginalEvents(separateUsers, scopeIds, insertedEvents, user) {
             return insertOriginalEvent(params);
         })).then(() => resolve(insertedEvents)).catch(reject);
     });
-}
-
-function getOriginalEvent(insertedEvent) {
-    let originalEvents = removeIds(insertedEvent);
-    if (originalEvents.alarms)
-        originalEvents.alarms = originalEvents.alarms.map(removeIds);
-    if (originalEvents.exdates)
-        originalEvents.exdates = originalEvents.exdates.map(removeIds);
-    return JSON.stringify(originalEvents);
-
-    function removeIds(object) {
-        if (object) {
-            return Object.keys(object).reduce((newObject, property) => {
-                if (['id', 'scope_id', 'event_id'].includes(property)) {
-                    return newObject;
-                }
-                newObject[property] = object[property];
-                return newObject;
-            }, {});
-        }
-    }
 }
 
 module.exports = insertEvents;

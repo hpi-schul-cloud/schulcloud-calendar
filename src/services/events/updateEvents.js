@@ -8,9 +8,13 @@ const { columns: alarmColumns } = require('../../queries/events/alarms/constants
 const deleteExdates = require('../../queries/events/exdates/deleteExdates');
 const insertExdate = require('../../queries/events/exdates/insertExdate');
 
+const updateOriginalEvent = require('../../queries/original-events/updateOriginalEvent');
+
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 const handleUndefinedEvents = require('../_handleUndefinedObjects');
 const compact = require('../../utils/compact');
+
+const getOriginalEvent = require('./getOriginalEvent');
 
 function updateEvents(event, eventId) {
     return new Promise((resolve, reject) => {
@@ -35,6 +39,10 @@ function updateAllEvents(event, eventId) {
         let params = updateColumns.map((columnName) => event[columnName]);
         params = [...params, eventId];
         updateRawEvents(params)
+            .then(updatedEvents => {
+                updateOriginalEvent([eventId, getOriginalEvent(updatedEvents[0])]);
+                return updatedEvents;
+            })
             .then(resolve)
             .catch(reject);
     });
@@ -45,6 +53,8 @@ function updateEventsWithScopeIds(event, eventId) {
         const { scope_ids: scopeIds } = event;
         let allUpdatedEvents = [];
         updateEventsForScopeIds(scopeIds)
+        // Updating the the events might lead to an inconsistent db state (with different events and the same event_id),
+        // please see wiki/future-work.md for more details. Therefore, we do not change the original event here.
             .then((updatedEvents) => {
                 // add successfully updated events to allUpdatedEvents
                 // collect scopeIds for which events were not found
