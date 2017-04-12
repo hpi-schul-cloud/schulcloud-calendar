@@ -25,8 +25,8 @@ function deleteEvents(eventId, scopeIds) {
 }
 
 function deleteOriginalEventIfNecessary(eventId) {
-    Promise.resolve(getEvents({eventId: eventId})).then(remainedEventsForEventId => {
-        if (remainedEventsForEventId.length === 0)
+    Promise.resolve(getEvents({eventId})).then(remainingEventsForEventId => {
+        if (remainingEventsForEventId.length === 0)
             deleteOriginalEvent([eventId]);
     });
 }
