@@ -61,7 +61,7 @@ CREATE TYPE alarm_action AS ENUM (
 -- event_id, they can still be matched and extracted correctly with the
 -- scope_id.
 CREATE TABLE events (
-  id                TEXT UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
+  id                UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   summary           TEXT                              DEFAULT NULL,
   location          TEXT                              DEFAULT NULL,
   description       TEXT                              DEFAULT NULL,
@@ -84,13 +84,13 @@ CREATE TABLE events (
   repeat_bymonth    INT ARRAY                         DEFAULT NULL,
   repeat_bysetpos   INT ARRAY                         DEFAULT NULL,
   repeat_wkst       weekday_type                      DEFAULT NULL,
-  event_id          TEXT NOT NULL                     DEFAULT uuid_generate_v4(),
+  event_id          UUID NOT NULL                     DEFAULT uuid_generate_v4(),
   x_fields          JSONB                             DEFAULT NULL
 );
 
 CREATE TABLE alarms (
-  id          TEXT UNIQUE PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
-  event_id    TEXT                    NOT NULL REFERENCES events (id) ON DELETE CASCADE,
+  id          UUID UNIQUE PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+  event_id    UUID                    NOT NULL REFERENCES events (id) ON DELETE CASCADE,
   trigger     TEXT                    NOT NULL,              -- when to initially alarm
   repeat      INTEGER                          DEFAULT NULL, -- how many times
   duration    INTERVAL                         DEFAULT NULL, -- interval of repeated (additional) alarms
@@ -102,19 +102,19 @@ CREATE TABLE alarms (
 );
 
 CREATE TABLE exdates (
-  id       TEXT UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
-  event_id TEXT                     NOT NULL REFERENCES events (id) ON DELETE CASCADE,
+  id       UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
+  event_id UUID                     NOT NULL REFERENCES events (id) ON DELETE CASCADE,
   date     TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE subscriptions (
-  id                  TEXT UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
+  id                  UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   ics_url             TEXT                     NOT NULL,
   description         TEXT                              DEFAULT NULL,
   last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
   last_updated_status INTEGER                           DEFAULT NULL,
   scope_id            TEXT                     NOT NULL,
-  subscription_id     TEXT                     NOT NULL DEFAULT uuid_generate_v4()
+  subscription_id     UUID                     NOT NULL DEFAULT uuid_generate_v4()
 );
 
 -- If separateUsers in a POST /events request is set, the event_id is saved with
@@ -125,14 +125,14 @@ CREATE TABLE subscriptions (
 -- scope_id of the person who created or last edited the event.
 -- TODO so far, the original event is only inserted once and not updated nor deleted
 CREATE TABLE original_events (
-  id                    TEXT UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
-  event_id              TEXT                     NOT NULL,
+  id                    UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
+  event_id              UUID                     NOT NULL,
   scope_id              TEXT                     NOT NULL,
   original_event        JSONB                    NOT NULL,
   person_responsible    TEXT                     NOT NULL
 );
 
 CREATE TABLE original_subscriptions (
-  subscription_id       TEXT                     NOT NULL,
+  subscription_id       UUID                     NOT NULL,
   scope_id              TEXT                     NOT NULL
 );
