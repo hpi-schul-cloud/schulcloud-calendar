@@ -67,7 +67,7 @@ CREATE TABLE events (
   description       TEXT                              DEFAULT NULL,
   dtstart           TIMESTAMP WITH TIME ZONE NOT NULL,
   dtend             TIMESTAMP WITH TIME ZONE NOT NULL,
-  scope_id          UUID                     NOT NULL,
+  scope_id          TEXT                     NOT NULL,
   dtstamp           TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "last-modified"   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   repeat_freq       repeat_type                       DEFAULT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE subscriptions (
   description         TEXT                              DEFAULT NULL,
   last_updated        TIMESTAMP WITH TIME ZONE          DEFAULT NULL,
   last_updated_status INTEGER                           DEFAULT NULL,
-  scope_id            UUID                     NOT NULL,
+  scope_id            TEXT                     NOT NULL,
   subscription_id     UUID                     NOT NULL DEFAULT uuid_generate_v4()
 );
 
@@ -126,12 +126,12 @@ CREATE TABLE subscriptions (
 CREATE TABLE original_events (
   id                    UUID UNIQUE PRIMARY KEY  NOT NULL DEFAULT uuid_generate_v4(),
   event_id              UUID                     NOT NULL,
-  scope_id              UUID                     NOT NULL,
+  scope_id              TEXT                     NOT NULL,
   original_event        JSONB                    NOT NULL,
-  person_responsible    UUID                     NOT NULL
+  person_responsible    TEXT                     NOT NULL
 );
 
 CREATE TABLE original_subscriptions (
   subscription_id       UUID                     NOT NULL,
-  scope_id              UUID                     NOT NULL
+  scope_id              TEXT                     NOT NULL
 );
