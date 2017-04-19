@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/schul-cloud/schulcloud-calendar.svg?branch=master)](https://travis-ci.org/schul-cloud/schulcloud-calendar)
+
 # schulcloud-calendar
 
 [Calendar API](https://schul-cloud.github.io/schulcloud-calendar/#/default)
