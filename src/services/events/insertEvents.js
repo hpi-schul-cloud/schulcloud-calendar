@@ -89,8 +89,6 @@ function insertEventPerScope(event, scopeId, externalEventId) {
 
 function insertExdates(event, insertedEvent) {
     return new Promise((resolve, reject) => {
-        // check if exception dates for possible repeat exists
-        // TODO: if so, check if repeat is set because of consistency reasons...
         if (!event.exdates) {
             return resolve(insertedEvent);
         }
