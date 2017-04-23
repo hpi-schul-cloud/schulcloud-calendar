@@ -5,7 +5,7 @@ const acceptedICalVersions = [
 ];
 
 function validateIcs(lines) {
-    if (lines[0] != 'BEGIN:VCALENDAR') {
+    if (lines[0] !== 'BEGIN:VCALENDAR') {
         logger.error('[validateIcs] The begin of the given ics file does not match the expectation!');
         return false;
     }

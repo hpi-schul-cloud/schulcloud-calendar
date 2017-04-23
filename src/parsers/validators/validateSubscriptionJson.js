@@ -1,31 +1,37 @@
-function validateJson(json, isIncoming = true, shouldBeOneSubscriptionOrScopeId = false) {
+function validateJson(json, isIncoming = true, incomingRequestMethod = '') {
+    if (isIncoming === true && incomingRequestMethod === '') {
+        // Using POST as a default for incoming requests if not set
+        incomingRequestMethod = 'POST'
+    }
+
     let errorMessage = null;
 
     if (!Array.isArray(json)) {
         return "The value of 'data' must be an array.";
     }
 
-    if (shouldBeOneSubscriptionOrScopeId && json.length !== 1) {
+    if (incomingRequestMethod && json.length !== 1) {
         return 'Only one subscription is allowed for this operation.';
     }
 
     json.every(function (subscription) {
         // Fields are required by our implementation
 
-        // TODO they are not for PUT, needs to be adapted
+        if (incomingRequestMethod === 'POST'  && typeof subscription.separate_users === 'undefined') {
+            errorMessage = "The attribute 'relationships'.'separate-users' is required for every new subscription.";
+            return false;
+        }
 
-        // if (isIncoming && typeof subscription.separate_users === 'undefined') {
-        //     errorMessage = "The attribute 'relationships'.'separate-users' is required for every subscription.";
-        //     return false;
-        // }
+        if ((incomingRequestMethod === 'POST' || !isIncoming) && !(subscription.scope_ids && Array.isArray(subscription.scope_ids) && subscription.scope_ids.length > 0)) {
+            errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with one ore more entries";
+            return false;
+        }
 
-        // if (isIncoming && !shouldBeOneSubscriptionOrScopeId && !(subscription.scope_ids && Array.isArray(subscription.scope_ids) && subscription.scope_ids.length > 0)) {
-        //     errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with one ore more entries";
-        //     return false;
-        // } else if (isIncoming && shouldBeOneSubscriptionOrScopeId && !(subscription.scope_ids && Array.isArray(subscription.scope_ids) && subscription.scope_ids.length === 1)) {
-        //     errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with exactly one ID";
-        //     return false;
-        // }
+        if ((incomingRequestMethod === 'PUT' || incomingRequestMethod === 'DELETE') &&
+            subscription.scope_ids && !(Array.isArray(subscription.scope_ids) && subscription.scope_ids.length === 1)) {
+            errorMessage = "The attribute 'relationships'.'scope-ids' is optional, but if it is set, it must be an array with one or more scope IDs.";
+            return false;
+        }
 
         if (!subscription.ics_url) {
             errorMessage = "The attribute 'ics-url' is required.";
