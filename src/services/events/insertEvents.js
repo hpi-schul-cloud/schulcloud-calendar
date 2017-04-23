@@ -4,7 +4,7 @@ const insertExdate = require('../../queries/events/exdates/insertExdate');
 const insertAlarm = require('../../queries/events/alarms/insertAlarm');
 const insertOriginalEvent = require('../../queries/original-events/insertOriginalEvent');
 const flatten = require('../../utils/flatten');
-const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
 const prepareOriginalEvent = require('./prepareOriginalEvent');
 const moveScopeIdToArray = require('../_moveScopeIdToArray');
 

@@ -1,5 +1,5 @@
-const getAllUsersForScopeId = require('../../http/getAllUsersForScopeId');
-const flatten = require('../../utils/flatten');
+const getAllUsersForScopeId = require('../http/getAllUsersForScopeId');
+const flatten = require('../utils/flatten');
 
 function getScopeIdsForSeparateUsers(scopeIds, separateUsers) {
     return new Promise((resolve, reject) => {

@@ -1,7 +1,7 @@
 const uuidV4 = require('uuid/v4');
 const insertSubscriptionInDb = require('../../queries/subscriptions/insertSubscription');
 const insertOriginalSubscription = require('../../queries/subscriptions/insertOriginalSubscription');
-const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
 const flatten = require('../../utils/flatten');
 const moveScopeIdToArray = require('../_moveScopeIdToArray');
 

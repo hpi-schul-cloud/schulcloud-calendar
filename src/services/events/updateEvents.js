@@ -10,7 +10,7 @@ const insertExdate = require('../../queries/events/exdates/insertExdate');
 
 const updateOriginalEvent = require('../../queries/original-events/updateOriginalEvent');
 
-const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
 const handleUndefinedEvents = require('../_handleUndefinedObjects');
 const moveScopeIdToArray = require('../_moveScopeIdToArray');
 const compact = require('../../utils/compact');

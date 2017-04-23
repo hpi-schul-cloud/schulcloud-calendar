@@ -1,5 +1,5 @@
 const deleteEventsFromDb = require('../../queries/events/deleteEvents');
-const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
 const compact = require('../../utils/compact');
 const handleUndefinedEvents = require('../_handleUndefinedObjects');
 const getEvents = require('../../queries/events/getRawEvents');

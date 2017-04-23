@@ -1,6 +1,6 @@
 const updateSubscriptionsInDb = require('../../queries/subscriptions/updateSubscriptions');
 const { updateColumns } = require('../../queries/subscriptions/constants');
-const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
 const compact = require('../../utils/compact');
 const handleUndefinedSubscriptions = require('../_handleUndefinedObjects');
 const moveScopeIdToArray = require('../_moveScopeIdToArray');
