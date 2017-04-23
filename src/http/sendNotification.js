@@ -11,7 +11,12 @@ function sendNotification(title, body, scopeIds) {
             if (httpStatus === 201) {
                 resolve();
             } else {
-                reject(JSON.parse(request.responseText));
+                try {
+                    reject(JSON.parse(request.responseText));
+                } catch(exception) {
+                    reject(JSON.parse(`{"name": "Exception", "code": ${request.status}, 
+                        "message": "The error was not JSON formatted so that no detailed error message could be extracted."}`))
+                }
             }
         };
         request.send(JSON.stringify({
