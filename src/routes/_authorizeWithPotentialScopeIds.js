@@ -10,8 +10,8 @@ function authorizeWithPotentialScopeIds(objectId, scopeIds, user, token, getObje
         } else {
             const filter = { objectId };
             getObject(filter, token)
-                .then((existingEvents) =>
-                    authorizeAccessToObjects(user, 'can-write', existingEvents)
+                .then((existingObjects) =>
+                    authorizeAccessToObjects(user, 'can-write', existingObjects)
                 )
                 .then(resolve)
                 .catch(reject);
