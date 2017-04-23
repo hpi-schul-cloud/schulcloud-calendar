@@ -8,12 +8,10 @@ function sendNotification(title, body, scopeIds) {
         request.setRequestHeader('Content-Type', 'application/json');
         request.onload = function() {
             const httpStatus = request.status;
-            if (httpStatus == 201) {
+            if (httpStatus === 201) {
                 resolve();
             } else {
-                // TODO handle rejection and remove resolve, causes UnhandledPromiseRejection errors
-                // reject(httpStatus);
-                resolve();
+                reject(JSON.parse(request.responseText));
             }
         };
         request.send(JSON.stringify({
