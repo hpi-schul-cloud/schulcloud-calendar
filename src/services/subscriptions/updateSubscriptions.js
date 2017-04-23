@@ -3,6 +3,7 @@ const { updateColumns } = require('../../queries/subscriptions/constants');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 const compact = require('../../utils/compact');
 const handleUndefinedSubscriptions = require('../_handleUndefinedObjects');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
 function updateSubscriptions(subscription, subscriptionId) {
     return new Promise((resolve, reject) => {
@@ -15,6 +16,7 @@ function updateSubscriptions(subscription, subscriptionId) {
                 handleUndefinedSubscriptions(updatedSubscriptions, 'deletion', 'Subscription');
                 resolve(compact(updatedSubscriptions));
             })
+            .then(moveScopeIdToArray)
             .then(resolve)
             .catch(reject);
     });

@@ -1,6 +1,7 @@
 const flatten = require('../../utils/flatten');
 const getSubscriptionsFromDb = require('../../queries/subscriptions/getSubscriptions');
 const getScopeIdsForToken = require('../scopes/getScopeIdsForToken');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
 function getSubscriptions(filter, token) {
     return new Promise(function (resolve, reject) {
@@ -23,8 +24,17 @@ function subscriptionsPerScope(scopeIds, filter) {
     return new Promise((resolve, reject) => {
         Promise.all(scopeIds.map((scopeId) => {
             filter.scopeId = scopeId;
-            return getSubscriptionsFromDb(filter);
+            return completeSubscriptions(filter);
         })).then(resolve).catch(reject);
+    });
+}
+
+function completeSubscriptions(filter) {
+    return new Promise((resolve, reject) => {
+        getSubscriptionsFromDb(filter)
+            .then(moveScopeIdToArray)
+            .then(resolve)
+            .catch(reject);
     });
 }
 

@@ -3,6 +3,7 @@ const getExdates = require('../../queries/events/exdates/getExdates');
 const getRawEvents = require('../../queries/events/getRawEvents');
 const flatten = require('../../utils/flatten');
 const getScopeIdsForToken = require('../scopes/getScopeIdsForToken');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
 function getEvents(filter, token) {
     return new Promise(function (resolve, reject) {
@@ -31,6 +32,7 @@ function eventsPerScope(scopeIds, filter) {
 function completeEvents(filter) {
     return new Promise((resolve, reject) => {
         getRawEvents(filter)
+            .then(moveScopeIdToArray)
             .then(appendAlarms)
             .then(appendExdates)
             .then(resolve)

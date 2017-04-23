@@ -12,6 +12,7 @@ const updateOriginalEvent = require('../../queries/original-events/updateOrigina
 
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 const handleUndefinedEvents = require('../_handleUndefinedObjects');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 const compact = require('../../utils/compact');
 
 const getOriginalEvent = require('./getOriginalEvent');
@@ -27,6 +28,7 @@ function updateEvents(event, eventId) {
                 handleUndefinedEvents(updatedEvents, 'modification', 'Event');
                 return compact(updatedEvents);
             })
+            .then(moveScopeIdToArray)
             .then((updatedEvents) => updateAlarms(updatedEvents, event))
             .then((updatedEvents) => updateExdates(updatedEvents, event))
             .then(resolve)

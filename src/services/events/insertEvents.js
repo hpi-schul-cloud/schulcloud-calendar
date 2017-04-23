@@ -6,6 +6,7 @@ const insertOriginalEvent = require('../../queries/original-events/insertOrigina
 const flatten = require('../../utils/flatten');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 const getOriginalEvent = require('./getOriginalEvent');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
 function insertEvents(events, user) {
     return new Promise((resolve, reject) => {
@@ -74,6 +75,7 @@ function insertEventPerScope(event, scopeId, externalEventId) {
             event['x_fields']
         ];
         insertRawEvent(params)
+            .then(moveScopeIdToArray)
             .then((insertedEvent) => {
                 return insertExdates(event, insertedEvent);
             })

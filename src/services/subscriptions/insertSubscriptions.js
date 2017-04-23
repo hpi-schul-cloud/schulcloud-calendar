@@ -3,6 +3,7 @@ const insertSubscriptionInDb = require('../../queries/subscriptions/insertSubscr
 const insertOriginalSubscription = require('../../queries/subscriptions/insertOriginalSubscription');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
 const flatten = require('../../utils/flatten');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
 function insertSubscriptions(subscriptions) {
     return new Promise((resolve, reject) => {
@@ -22,7 +23,8 @@ function insertSubscription(subscription) {
             .then((scopeIds) => {
                 return insertSubscriptions(scopeIds, ics_url, description, subscriptionId);
             })
-            .then((insertedEvents) => insertOriginalSubscriptions(scope_ids, insertedEvents))
+            .then(moveScopeIdToArray)
+            .then((insertedSubscriptions) => insertOriginalSubscriptions(scope_ids, insertedSubscriptions))
             .then(resolve)
             .catch(reject);
 
