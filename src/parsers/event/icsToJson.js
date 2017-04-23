@@ -201,8 +201,6 @@ function lineToJson(line, event) {
                 const realFieldName = fieldName.substr(0, splitPosition2);
                 // const timezone = fieldName.substr(splitPosition2 + 1, fieldName.length);
 
-                // TODO: handle timezone
-
                 switch (realFieldName) {
                     case 'DTSTART':
                         event['dtstart'] = regularDateFormat(fieldValue);
