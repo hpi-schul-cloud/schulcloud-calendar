@@ -11,7 +11,7 @@ function jsonApiToJson(req, res, next) {
         };
     });
 
-    let validationResult = validJson(subscriptions, true, req.method === 'PUT');
+    let validationResult = validJson(subscriptions, true, req.method);
     if (validationResult === true) {
         req.subscriptions = subscriptions;
         next();

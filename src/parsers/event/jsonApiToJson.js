@@ -1,4 +1,4 @@
-const validateJson = require('../validators/validateEventJson');
+const validJson = require('../validators/validateEventJson');
 const returnError = require('../../utils/response/returnError');
 const logger = require('../../infrastructure/logger');
 
@@ -7,7 +7,7 @@ function jsonApiToJson(req, res, next) {
     const events = [];
 
     jsonApiData.forEach(function (event) {
-        if (event.type != 'event') {
+        if (event.type !== 'event') {
             returnError(res, "Only data of type 'event' allowed.", 400, 'Bad Request');
             return;
         }
@@ -59,7 +59,7 @@ function jsonApiToJson(req, res, next) {
         events.push(json);
     });
 
-    let validationResult = validateJson(events, true, req.method === 'PUT');
+    let validationResult = validJson(events, true, req.method);
     if (validationResult === true) {
         req.events = events;
         next();
