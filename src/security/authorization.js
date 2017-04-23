@@ -28,7 +28,7 @@ function authorizeWithPotentialScopeIds(objectId, scopeIds, user, getObject, get
                 .catch(reject);
         } else {
             const filter = { objectId };
-            getObject(filter, user.scope)
+            getObject(filter, user.scopes)
                 .then((existingObjects) =>
                     authorizeAccessToObjects(user, 'can-write', existingObjects)
                 )
@@ -59,9 +59,9 @@ function hasPermission(user, permission, scopeId) {
         return true;
     } else if (user.id === scopeId) {
         return true;
-    } else if (user.scope.hasOwnProperty(scopeId) &&
-        user.scope[scopeId].authorities.hasOwnProperty(permission)) {
-        return user.scope[scopeId].authorities[permission];
+    } else if (user.scopes.hasOwnProperty(scopeId) &&
+        user.scopes[scopeId].authorities.hasOwnProperty(permission)) {
+        return user.scopes[scopeId].authorities[permission];
     }
     return false;
 }

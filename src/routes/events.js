@@ -43,7 +43,7 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
     const user = req.user;
 
     authorizeAccessToScopeId(user, filter.scopeId)
-        .then(() => getEvents(filter, user.scope))
+        .then(() => getEvents(filter, user.scopes))
         .then((events) => authorizeAccessToObjects(user, 'can-read', events))
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })

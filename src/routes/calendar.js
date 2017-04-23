@@ -31,7 +31,7 @@ router.get('/calendar/list', authenticateFromHeaderField, function (req, res) {
     const user = req.user;
     const token = req.token;
 
-    scopesToCalendarList(user.scope, token)
+    scopesToCalendarList(user.scopes, token)
         .then((calendarList) => returnSuccess(res, 200, calendarList))
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
@@ -43,7 +43,7 @@ router.get('/calendar', authenticateFromQueryParameter, function (req, res) {
     const user = req.user;
 
     authorizeAccessToScopeId(user, scopeId)
-        .then(() => getIcs(user.scope, scopeId))
+        .then(() => getIcs(user.scopes, scopeId))
         .then((icsString) => returnIcs(res, icsString))
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);

@@ -38,7 +38,7 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
     const user = req.user;
 
     authorizeAccessToScopeId(user, filter.scopeId)
-        .then(() => getSubscriptions(filter, user.scope))
+        .then(() => getSubscriptions(filter, user.scopes))
         .then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
