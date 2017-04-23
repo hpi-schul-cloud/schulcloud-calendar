@@ -15,9 +15,9 @@ before_install:
   - sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
 
 before_script:
-  - psql -c 'create database schulcloud_calendar_test;' -U postgres
-  - psql -a -f schema.sql -U postgres
-  - psql -a -f example_data.sql -U postgres
+  - psql -a -c 'create database schulcloud_calendar_test;' -U postgres
+  - psql -a -d schulcloud_calendar_test -f schema.sql -U postgres
+  - psql -a -d schulcloud_calendar_test -f example_data.sql -U postgres
 
 script:
   - npm run test_travis
