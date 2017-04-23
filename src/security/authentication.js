@@ -36,15 +36,16 @@ function parseUserInformation(apiResponse) {
         if (scope.type === 'user') {
             user.id = scope.id;
             user.name = scope.attributes.name;
-        } else if (scope.type === 'scope') {
-            user.scope[scope.id] = {};
-            user.scope[scope.id].id = scope.id;
-            user.scope[scope.id].name = scope.attributes.name;
-            user.scope[scope.id].authorities = {};
-            scope.attributes.authorities.forEach(function (authority) {
-                user.scope[scope.id].authorities[authority] = true;
-            });
         }
+
+        // These scopes also include the user ID
+        user.scope[scope.id] = {};
+        user.scope[scope.id].id = scope.id;
+        user.scope[scope.id].name = scope.attributes.name;
+        user.scope[scope.id].authorities = {};
+        scope.attributes.authorities.forEach(function (authority) {
+            user.scope[scope.id].authorities[authority] = true;
+        });
     });
     return user;
 }
