@@ -70,7 +70,7 @@ function icsToJson(req, res, next) {
         });
     });
 
-    let validationResult = validJson(events, true, req.method === 'PUT');
+    let validationResult = validJson(events, true, req.method);
     if (validationResult === true) {
         req.events = events;
         next();
