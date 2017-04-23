@@ -25,6 +25,7 @@ const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
 // content
 const getEvents = require('../services/events/getEvents');
+const getOriginalEvent = require('../queries/original-events/getOriginalEvent');
 const insertEvents = require('../services/events/insertEvents');
 const deleteEvents = require('../services/events/deleteEvents');
 const updateEvents = require('../services/events/updateEvents');
@@ -105,7 +106,7 @@ function handlePut(req, res, outputFormatter) {
     const user = req.user;
     const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents, getOriginalEvent)
         .then(() => doUpdates(event, eventId))
         .then(sendUpdateNotification)
         .then(outputFormatter)
@@ -148,7 +149,7 @@ router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, fu
     const user = req.user;
     const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents, getOriginalEvent)
         .then(() => deleteEvents(eventId, scopeIds))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {

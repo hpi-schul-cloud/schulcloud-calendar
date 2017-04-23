@@ -19,12 +19,13 @@ function authorizeAccessToObjects(user, accessLevel, container) {
 }
 
 // authorization for DELETE and UPDATE
-function authorizeWithPotentialScopeIds(objectId, scopeIds, user, token, getObject) {
+function authorizeWithPotentialScopeIds(objectId, scopeIds, user, token, getObject, getOriginalObject) {
     return new Promise((resolve, reject) => {
         if (scopeIds && scopeIds.length > 0) {
-            Promise.all(scopeIds.map((scopeId) =>
-                authorizeAccessToScopeId(user, scopeId))
-            ).then(resolve).catch(reject);
+            getOriginalObject(objectId)
+                .then((originalEvent) => authorizeAccessToObjects(user, 'can-write', originalEvent))
+                .then(resolve)
+                .catch(reject);
         } else {
             const filter = { objectId };
             getObject(filter, token)

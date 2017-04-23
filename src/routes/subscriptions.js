@@ -23,6 +23,7 @@ const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJ
 
 // content
 const getSubscriptions = require('../services/subscriptions/getSubscriptions');
+const getOriginalSubscription = require('../queries/subscriptions/getOriginalSubscription');
 const insertSubscriptions = require('../services/subscriptions/insertSubscriptions');
 const updateSubscriptions = require('../services/subscriptions/updateSubscriptions');
 const deleteSubscriptions = require('../services/subscriptions/deleteSubscriptions');
@@ -77,7 +78,7 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
     const user = req.user;
     const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions, getOriginalSubscription)
         .then(() => updateSubscriptions(subscription, subscriptionId))
         .then((updatedSubscriptions) => {
             if (updatedSubscriptions.length === 0) {
@@ -108,7 +109,7 @@ router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromH
     const user = req.user;
     const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions, getOriginalSubscription)
         .then(() => deleteSubscriptions(subscriptionId, scopeIds))
         .then((deletedSubscriptions) => {
             if (deletedSubscriptions.length === 0) {
