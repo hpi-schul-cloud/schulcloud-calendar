@@ -7,7 +7,7 @@ function _sendNotification(title, body, scopeIds) {
     }
     sendNotification(title, body, scopeIds)
         .catch((error) => {
-            logger.error(`[SendNotification] ${error.name} (${error.code}): ${error.message}`);
+            logger.warn(`[SendNotification] ${error.name} (${error.code}): ${error.message}`);
         });
 }
 
