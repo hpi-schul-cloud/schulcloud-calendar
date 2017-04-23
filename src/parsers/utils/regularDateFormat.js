@@ -12,10 +12,10 @@ function regularDateFormat(date) {
 
     let timezone = date.slice(15, date.size);
     if (timezone === 'Z') {
-        timezone = 'UTC'
+        timezone = 'UTC';
     }
 
-    return new Date(`${year}/${month-1}/${day} ${hour}:${minute}:${minute} ${timezone}`);
+    return new Date(`${year}/${month-1}/${day} ${hour}:${minute}:${second} ${timezone}`);
 }
 
 module.exports = regularDateFormat;

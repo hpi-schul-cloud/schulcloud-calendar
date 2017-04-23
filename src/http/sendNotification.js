@@ -15,7 +15,7 @@ function sendNotification(title, body, scopeIds) {
                     reject(JSON.parse(request.responseText));
                 } catch(exception) {
                     reject(JSON.parse(`{"name": "Exception", "code": ${request.status}, 
-                        "message": "The error was not JSON formatted so that no detailed error message could be extracted."}`))
+                        "message": "The error was not JSON formatted so that no detailed error message could be extracted."}`));
                 }
             }
         };

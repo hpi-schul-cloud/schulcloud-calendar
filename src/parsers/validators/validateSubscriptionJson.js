@@ -1,7 +1,7 @@
 function validateJson(json, isIncoming = true, incomingRequestMethod = '') {
     if (isIncoming === true && incomingRequestMethod === '') {
         // Using POST as a default for incoming requests if not set
-        incomingRequestMethod = 'POST'
+        incomingRequestMethod = 'POST';
     }
 
     let errorMessage = null;
