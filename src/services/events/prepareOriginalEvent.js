@@ -1,4 +1,4 @@
-function getOriginalEvent(insertedEvent) {
+function prepareOriginalEvent(insertedEvent) {
     let originalEvents = removeIds(insertedEvent);
     if (originalEvents.alarms)
         originalEvents.alarms = originalEvents.alarms.map(removeIds);
@@ -19,4 +19,4 @@ function getOriginalEvent(insertedEvent) {
     }
 }
 
-module.exports = getOriginalEvent;
+module.exports = prepareOriginalEvent;

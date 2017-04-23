@@ -15,7 +15,7 @@ const handleUndefinedEvents = require('../_handleUndefinedObjects');
 const moveScopeIdToArray = require('../_moveScopeIdToArray');
 const compact = require('../../utils/compact');
 
-const getOriginalEvent = require('./getOriginalEvent');
+const prepareOriginalEvent = require('./prepareOriginalEvent');
 
 function updateEvents(event, eventId) {
     return new Promise((resolve, reject) => {
@@ -42,7 +42,7 @@ function updateAllEvents(event, eventId) {
         params = [...params, eventId];
         updateRawEvents(params)
             .then(updatedEvents => {
-                updateOriginalEvent([eventId, getOriginalEvent(updatedEvents[0])]);
+                updateOriginalEvent([eventId, prepareOriginalEvent(updatedEvents[0])]);
                 return updatedEvents;
             })
             .then(resolve)

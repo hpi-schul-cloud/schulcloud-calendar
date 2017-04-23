@@ -5,7 +5,7 @@ const insertAlarm = require('../../queries/events/alarms/insertAlarm');
 const insertOriginalEvent = require('../../queries/original-events/insertOriginalEvent');
 const flatten = require('../../utils/flatten');
 const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
-const getOriginalEvent = require('./getOriginalEvent');
+const prepareOriginalEvent = require('./prepareOriginalEvent');
 const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
 function insertEvents(events, user) {
@@ -138,7 +138,7 @@ function insertOriginalEvents(separateUsers, scopeIds, insertedEvents, user) {
         // all events here should have the same core params so we can just take
         // the first one
         const eventId = insertedEvents[0]['event_id'];
-        const originalEvent = getOriginalEvent(insertedEvents[0]);
+        const originalEvent = prepareOriginalEvent(insertedEvents[0]);
         Promise.all(scopeIds.map((scopeId) => {
             const params = [eventId, scopeId, originalEvent, user.id];
             return insertOriginalEvent(params);
