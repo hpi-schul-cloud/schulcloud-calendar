@@ -139,7 +139,7 @@ paths:
     put:
       summary: >-
         Modify an Event for a list of UUIDs, which has been created by the same
-        service earlier (* doesn't check for ID).
+        service earlier.
       description: >-
         If `scope-ids` is set only the event(s) within that scope(s) will be updated. Conversly all events with the given `event-id` will be updated if there is no scope given. Thereby the `event-id` has to correspond to the database entry `events(event-id)`. 
         The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according events with within that scope. If found, the event can be updated. If not, the same check is done for the users within this scope. Thus both cases are covered.
@@ -165,7 +165,7 @@ paths:
       security:
         - user-token: []
     delete:
-      summary: Delete an Event for a list of UUIDs (* all events are deleted, regardless the UUID).
+      summary: Delete an Event for a list of UUIDs.
       description: >-
         If `scope-ids` is set only the event(s) within that scope(s) will be deleted. Conversly all events with the given `event-id` will be deleted if there is no scope given. Thereby the `event-id` has to correspond to the database entry `events(event-id)`. 
         The checkback for the `separate-users`-field is done implicitly: With a given scope, there is a check for according events with within that scope. If found, the event can be deleted. If not, the same check is done for the users within this scope. Thus both cases are covered.
@@ -188,7 +188,7 @@ paths:
         - user-token: []
   /events/ics:
     post:
-      summary: Create a new Event for a list of UUIDs where the ics is given (* does not check for ID).
+      summary: Create a new Event for a list of UUIDs where the ics is given.
       responses:
         '201':
           description: CreateEventResponse
