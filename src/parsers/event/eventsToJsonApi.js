@@ -38,11 +38,12 @@ function eventToJsonApi(event) {
 
     for (let key in event) {
         if (event.hasOwnProperty(key)) {
+            const fullKey = key;
             if (key.startsWith('repeat'))
                 key = 'repeat';
             switch (key) {
                 case 'repeat':
-                    rrule[key.split('_')[1]] = event[key];
+                    rrule[fullKey.split('_')[1]] = event[fullKey];
                     break;
                 case 'alarms':
                     event[key].forEach(function (alarm) {
