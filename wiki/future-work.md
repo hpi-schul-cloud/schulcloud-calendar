@@ -36,6 +36,3 @@ While creating a new event, the scope ids for the event can be separated. If thi
 Currently the original event stored will be deleted after the last event entry for a series of separated events has been deleted. As long as at least one scope has an entry for the the eventId, the original event will be kept.
 A possible future feature is the modification of a separated event for only a subset of scopes. In this case, it would be necessary to handle the changed events as new ones to avoid an inconsistent database state of multiple, different events with the same eventId. Correspondingly the original event must be duplicated (and changed), too.
 
-// ## Further tasks
-
-// Code TODOs (?)
