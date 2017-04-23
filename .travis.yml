@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+  - "7"
+
+services:
+  - postgresql
+
+before_install:
+  - sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+  - sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+before_script:
+  - psql -c 'create database schulcloud_calendar_test;' -U postgres
+  - psql -a -f schema.sql -U postgres
+  - psql -a -f example_data.sql -U postgres
+
+script:
+  - npm run test_travis
