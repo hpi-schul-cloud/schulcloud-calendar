@@ -36,10 +36,9 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
     const lastUpdateFailed = req.query['last-update-failed'];
     const filter = { scopeId, subscriptionId, lastUpdateFailed };
     const user = req.user;
-    const token = req.get('Authorization');
 
     authorizeAccessToScopeId(user, filter.scopeId)
-        .then(() => getSubscriptions(filter, token))
+        .then(() => getSubscriptions(filter, user.scope))
         .then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -76,9 +75,8 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
     const subscription = req.subscriptions[0];
     const scopeIds = subscription.scope_ids;
     const user = req.user;
-    const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions, getOriginalSubscription)
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription)
         .then(() => updateSubscriptions(subscription, subscriptionId))
         .then((updatedSubscriptions) => {
             if (updatedSubscriptions.length === 0) {
@@ -107,9 +105,8 @@ router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromH
     const subscription = req.subscriptions[0];
     const scopeIds = subscription.scope_ids;
     const user = req.user;
-    const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions, getOriginalSubscription)
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription)
         .then(() => deleteSubscriptions(subscriptionId, scopeIds))
         .then((deletedSubscriptions) => {
             if (deletedSubscriptions.length === 0) {

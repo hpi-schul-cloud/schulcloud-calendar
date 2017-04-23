@@ -41,10 +41,9 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
         all: req.query['all']
     };
     const user = req.user;
-    const token = req.get('Authorization');
 
     authorizeAccessToScopeId(user, filter.scopeId)
-        .then(() => getEvents(filter, token))
+        .then(() => getEvents(filter, user.scope))
         .then((events) => authorizeAccessToObjects(user, 'can-read', events))
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -104,9 +103,8 @@ function handlePut(req, res, outputFormatter) {
     const event = req.events[0];
     const scopeIds = event.scope_ids;
     const user = req.user;
-    const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents, getOriginalEvent)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent)
         .then(() => doUpdates(event, eventId))
         .then(sendUpdateNotification)
         .then(outputFormatter)
@@ -147,9 +145,8 @@ router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, fu
     const event = req.events[0];
     const scopeIds = event.scope_ids;
     const user = req.user;
-    const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents, getOriginalEvent)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent)
         .then(() => deleteEvents(eventId, scopeIds))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {

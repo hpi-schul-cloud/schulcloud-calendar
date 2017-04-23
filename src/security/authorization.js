@@ -19,7 +19,7 @@ function authorizeAccessToObjects(user, accessLevel, container) {
 }
 
 // authorization for DELETE and UPDATE
-function authorizeWithPotentialScopeIds(objectId, scopeIds, user, token, getObject, getOriginalObject) {
+function authorizeWithPotentialScopeIds(objectId, scopeIds, user, getObject, getOriginalObject) {
     return new Promise((resolve, reject) => {
         if (scopeIds && scopeIds.length > 0) {
             getOriginalObject(objectId)
@@ -28,7 +28,7 @@ function authorizeWithPotentialScopeIds(objectId, scopeIds, user, token, getObje
                 .catch(reject);
         } else {
             const filter = { objectId };
-            getObject(filter, token)
+            getObject(filter, user.scope)
                 .then((existingObjects) =>
                     authorizeAccessToObjects(user, 'can-write', existingObjects)
                 )

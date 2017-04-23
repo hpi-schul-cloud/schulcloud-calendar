@@ -41,7 +41,6 @@ router.get('/calendar/list', authenticateFromHeaderField, function (req, res) {
 router.get('/calendar', authenticateFromQueryParameter, function (req, res) {
     const scopeId = req.query['scope-id'];
     const user = req.user;
-    const token = req.token;
 
     authorizeAccessToScopeId(user, scopeId)
         .then(() => getIcs(user.scope, scopeId))
