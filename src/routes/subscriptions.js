@@ -72,9 +72,9 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 });
 
 router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
+    const subscriptionId = req.params.subscriptionId;
     const subscription = req.subscriptions[0];
     const scopeIds = subscription.scope_ids;
-    const subscriptionId = req.params.subscriptionId;
     const user = req.user;
     const token = req.get('Authorization');
 
@@ -102,11 +102,10 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
         });
 });
 
-router.delete('/subscriptions/:subscriptionId', authenticateFromHeaderField, function (req, res) {
+router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
-    // TODO somehow parse in beforehand to get the scopeIds in a nicer way
-    const scopeIds = req.body.data[0].relationships
-        && req.body.data[0].relationships['scope-ids'];
+    const subscription = req.subscriptions[0];
+    const scopeIds = subscription.scope_ids;
     const user = req.user;
     const token = req.get('Authorization');
 

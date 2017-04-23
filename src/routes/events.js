@@ -142,11 +142,10 @@ function sendUpdateNotification(updatedEvents) {
     return updatedEvents;
 }
 
-router.delete('/events/:eventId', authenticateFromHeaderField, function (req, res) {
+router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
     const eventId = req.params.eventId;
-    // TODO somehow parse in beforehand to get the scopeIds in a nicer way
-    const scopeIds = req.body.data[0].relationships
-        && req.body.data[0].relationships['scope-ids'];
+    const event = req.events[0];
+    const scopeIds = event.scope_ids;
     const user = req.user;
     const token = req.get('Authorization');
 
