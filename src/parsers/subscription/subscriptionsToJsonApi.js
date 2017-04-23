@@ -26,12 +26,12 @@ function subscriptionToJsonApi(subscription) {
         id: subscription.id,
         attributes: {},
         relationships: {
-            'scope-ids': [subscription.scope_id]
+            'scope-ids': subscription.scope_ids
         }
     };
 
     delete subscription.id;
-    delete subscription.scope_id;
+    delete subscription.scope_ids;
 
     for (let key in subscription) {
         if (subscription.hasOwnProperty(key)) {

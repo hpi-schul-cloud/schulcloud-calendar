@@ -54,8 +54,8 @@ function eventToJsonApi(event) {
                         addExDateToJsonApi(jsonApiEvent.included, exdate);
                     });
                     break;
-                case 'scope_id':
-                    jsonApiEvent.relationships['scope-ids'] = [event[key]];
+                case 'scope_ids':
+                    jsonApiEvent.relationships['scope-ids'] = event[key];
                     break;
                 case 'separate_users':
                     jsonApiEvent.relationships['separate-users'] = event[key];
