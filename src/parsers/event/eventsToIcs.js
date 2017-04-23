@@ -35,12 +35,47 @@ function eventToIcs(event) {
     }
 
     if (event.repeat_freq) {
-        // TODO: Refactor event repetition to add support for other repeat types
+        let rrule = 'RRULE:FREQ=' + event.repeat_freq;
+
+        if (event.repeat_until)
+            rrule += ';UNTIL=' + iCalendarDateFormat(event.repeat_until);
+
+        if (event.repeat_count)
+            rrule += ';COUNT=' + event.repeat_count;
+
+        if (event.repeat_interval)
+            rrule += ';INTERVAL=' + event.repeat_interval;
+
+        if (event.repeat_bysecond)
+            rrule += ';BYSECOND=' + event.repeat_bysecond.join(',');
+
+        if (event.repeat_byminute)
+            rrule += ';BYMINUTE=' + event.repeat_byminute.join(',');
+
+        if (event.repeat_byhour)
+            rrule += ';BYHOUR=' + event.repeat_byhour.join(',');
+
         if (event.repeat_byday)
-            ics += 'RRULE:FREQ=' + event.repeat_freq + ';INTERVAL=' + event.repeat_interval + ';BYDAY=' + event.repeat_byday + '\n';
-        else
-            ics += 'RRULE:FREQ=' + event.repeat_freq + ';INTERVAL=' + event.repeat_interval + '\n';
+            rrule += ';BYDAY=' + event.repeat_byday.join(',');
+
+        if (event.repeat_bymonthday)
+            rrule += ';BYMONTHDAY=' + event.repeat_bymonthday.join(',');
+
+        if (event.repeat_byyearday)
+            rrule += ';BYYEARDAY=' + event.repeat_byyearday.join(',');
+
+        if (event.repeat_byweekno)
+            rrule += ';BYWEEKNO=' + event.repeat_byweekno.join(',');
+
+        if (event.repeat_bysetpos)
+            rrule += ';BYSETPOS=' + event.repeat_bysetpos.join(',');
+
+        if (event.repeat_wkst)
+            rrule += ';WKST=' + event.repeat_wkst;
+
+        ics += rrule + '\n';
     }
+
     ics += 'DTSTART:' + iCalendarDateFormat(event.dtstart) + '\n';
     ics += 'DTEND:' + iCalendarDateFormat(event.dtend) + '\n';
     ics += 'DTSTAMP:' + iCalendarDateFormat(event.dtstamp) + '\n';
