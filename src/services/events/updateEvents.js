@@ -10,11 +10,12 @@ const insertExdate = require('../../queries/events/exdates/insertExdate');
 
 const updateOriginalEvent = require('../../queries/original-events/updateOriginalEvent');
 
-const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
 const handleUndefinedEvents = require('../_handleUndefinedObjects');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 const compact = require('../../utils/compact');
 
-const getOriginalEvent = require('./getOriginalEvent');
+const prepareOriginalEvent = require('./prepareOriginalEvent');
 
 function updateEvents(event, eventId) {
     return new Promise((resolve, reject) => {
@@ -27,6 +28,7 @@ function updateEvents(event, eventId) {
                 handleUndefinedEvents(updatedEvents, 'modification', 'Event');
                 return compact(updatedEvents);
             })
+            .then(moveScopeIdToArray)
             .then((updatedEvents) => updateAlarms(updatedEvents, event))
             .then((updatedEvents) => updateExdates(updatedEvents, event))
             .then(resolve)
@@ -40,7 +42,7 @@ function updateAllEvents(event, eventId) {
         params = [...params, eventId];
         updateRawEvents(params)
             .then(updatedEvents => {
-                updateOriginalEvent([eventId, getOriginalEvent(updatedEvents[0])]);
+                updateOriginalEvent([eventId, prepareOriginalEvent(updatedEvents[0])]);
                 return updatedEvents;
             })
             .then(resolve)

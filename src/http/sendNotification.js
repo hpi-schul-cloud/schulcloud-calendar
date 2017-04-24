@@ -8,12 +8,15 @@ function sendNotification(title, body, scopeIds) {
         request.setRequestHeader('Content-Type', 'application/json');
         request.onload = function() {
             const httpStatus = request.status;
-            if (httpStatus == 201) {
+            if (httpStatus === 201) {
                 resolve();
             } else {
-                // TODO handle rejection and remove resolve, causes UnhandledPromiseRejection errors
-                // reject(httpStatus);
-                resolve();
+                try {
+                    reject(JSON.parse(request.responseText));
+                } catch(exception) {
+                    reject(JSON.parse(`{"name": "Exception", "code": ${request.status}, 
+                        "message": "The error was not JSON formatted so that no detailed error message could be extracted."}`));
+                }
             }
         };
         request.send(JSON.stringify({

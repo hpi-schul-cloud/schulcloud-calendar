@@ -1,11 +1,11 @@
 const config = require('../../config');
-const validJson = require('../validators/validateEventJson');
+const validateJson = require('../validators/validateEventJson');
 const logger = require('../../infrastructure/logger');
 const removeNullValues = require('../../utils/removeNullValues');
 
 function eventsToJsonApi(eventJson) {
     eventJson = removeNullValues(eventJson);
-    let validationResult = validJson(eventJson, false);
+    let validationResult = validateJson(eventJson, false);
     if (validationResult !== true) {
         logger.error(`[jsonToJsonApi] Got invalid events JSON: ${validationResult}`);
         return;
@@ -38,11 +38,12 @@ function eventToJsonApi(event) {
 
     for (let key in event) {
         if (event.hasOwnProperty(key)) {
+            const fullKey = key;
             if (key.startsWith('repeat'))
                 key = 'repeat';
             switch (key) {
                 case 'repeat':
-                    rrule[key.split('_')[1]] = event[key];
+                    rrule[fullKey.split('_')[1]] = event[fullKey];
                     break;
                 case 'alarms':
                     event[key].forEach(function (alarm) {
@@ -54,8 +55,8 @@ function eventToJsonApi(event) {
                         addExDateToJsonApi(jsonApiEvent.included, exdate);
                     });
                     break;
-                case 'scope_id':
-                    jsonApiEvent.relationships['scope-ids'] = [event[key]];
+                case 'scope_ids':
+                    jsonApiEvent.relationships['scope-ids'] = event[key];
                     break;
                 case 'separate_users':
                     jsonApiEvent.relationships['separate-users'] = event[key];

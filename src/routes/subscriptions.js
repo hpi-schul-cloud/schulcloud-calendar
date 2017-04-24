@@ -12,8 +12,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
-const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
-const authorizeWithPotentialScopeIds = require('./_authorizeWithPotentialScopeIds');
+const { authorizeAccessToScopeId, authorizeAccessToObjects, authorizeWithPotentialScopeIds } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
@@ -24,6 +23,7 @@ const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJ
 
 // content
 const getSubscriptions = require('../services/subscriptions/getSubscriptions');
+const getOriginalSubscription = require('../queries/subscriptions/getOriginalSubscription');
 const insertSubscriptions = require('../services/subscriptions/insertSubscriptions');
 const updateSubscriptions = require('../services/subscriptions/updateSubscriptions');
 const deleteSubscriptions = require('../services/subscriptions/deleteSubscriptions');
@@ -36,10 +36,9 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
     const lastUpdateFailed = req.query['last-update-failed'];
     const filter = { scopeId, subscriptionId, lastUpdateFailed };
     const user = req.user;
-    const token = req.get('Authorization');
 
     authorizeAccessToScopeId(user, filter.scopeId)
-        .then(() => getSubscriptions(filter, token))
+        .then(() => getSubscriptions(filter, user.scopes))
         .then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
         .then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -72,13 +71,12 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 });
 
 router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
+    const subscriptionId = req.params.subscriptionId;
     const subscription = req.subscriptions[0];
     const scopeIds = subscription.scope_ids;
-    const subscriptionId = req.params.subscriptionId;
     const user = req.user;
-    const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription)
         .then(() => updateSubscriptions(subscription, subscriptionId))
         .then((updatedSubscriptions) => {
             if (updatedSubscriptions.length === 0) {
@@ -102,15 +100,13 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
         });
 });
 
-router.delete('/subscriptions/:subscriptionId', authenticateFromHeaderField, function (req, res) {
+router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
     const subscriptionId = req.params.subscriptionId;
-    // TODO somehow parse in beforehand to get the scopeIds in a nicer way
-    const scopeIds = req.body.data[0].relationships
-        && req.body.data[0].relationships['scope-ids'];
+    const subscription = req.subscriptions[0];
+    const scopeIds = subscription.scope_ids;
     const user = req.user;
-    const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, token, getSubscriptions)
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription)
         .then(() => deleteSubscriptions(subscriptionId, scopeIds))
         .then((deletedSubscriptions) => {
             if (deletedSubscriptions.length === 0) {

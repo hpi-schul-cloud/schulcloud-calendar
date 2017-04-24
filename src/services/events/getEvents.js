@@ -2,26 +2,25 @@ const getAlarms = require('../../queries/events/alarms/getAlarms');
 const getExdates = require('../../queries/events/exdates/getExdates');
 const getRawEvents = require('../../queries/events/getRawEvents');
 const flatten = require('../../utils/flatten');
-const getScopeIdsForToken = require('../scopes/getScopeIdsForToken');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
-function getEvents(filter, token) {
+function getEvents(filter, scopes) {
     return new Promise(function (resolve, reject) {
         if (filter.scopeId || filter.eventId) {
             completeEvents(filter)
                 .then(resolve)
                 .catch(reject);
         } else {
-            getScopeIdsForToken(token)
-                .then((scopeIds) => { return eventsPerScope(scopeIds, filter); })
+            eventsPerScope(scopes, filter)
                 .then((events) => { resolve(flatten(events)); })
                 .catch(reject);
         }
     });
 }
 
-function eventsPerScope(scopeIds, filter) {
+function eventsPerScope(scopes, filter) {
     return new Promise((resolve, reject) => {
-        Promise.all(scopeIds.map((scopeId) => {
+        Promise.all(Object.keys(scopes).map((scopeId) => {
             filter.scopeId = scopeId;
             return completeEvents(filter);
         })).then(resolve).catch(reject);
@@ -31,6 +30,7 @@ function eventsPerScope(scopeIds, filter) {
 function completeEvents(filter) {
     return new Promise((resolve, reject) => {
         getRawEvents(filter)
+            .then(moveScopeIdToArray)
             .then(appendAlarms)
             .then(appendExdates)
             .then(resolve)

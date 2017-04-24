@@ -5,7 +5,7 @@ function scopesToCalendarList(scopes, token) {
         links: {
             self: `${config.ROOT_URL}/calendar/list`
         },
-        data: scopes.map((scope) => scopeToJsonApi(scope, token))
+        data: Object.keys(scopes).map((scopeKey) => scopeToJsonApi(scopes[scopeKey], token))
     };
 }
 

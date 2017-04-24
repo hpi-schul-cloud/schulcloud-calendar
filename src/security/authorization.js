@@ -18,6 +18,26 @@ function authorizeAccessToObjects(user, accessLevel, container) {
     });
 }
 
+// authorization for DELETE and UPDATE
+function authorizeWithPotentialScopeIds(objectId, scopeIds, user, getObject, getOriginalObject) {
+    return new Promise((resolve, reject) => {
+        if (scopeIds && scopeIds.length > 0) {
+            getOriginalObject(objectId)
+                .then((originalEvent) => authorizeAccessToObjects(user, 'can-write', originalEvent))
+                .then(resolve)
+                .catch(reject);
+        } else {
+            const filter = { objectId };
+            getObject(filter, user.scopes)
+                .then((existingObjects) =>
+                    authorizeAccessToObjects(user, 'can-write', existingObjects)
+                )
+                .then(resolve)
+                .catch(reject);
+        }
+    });
+}
+
 function hasPermissionForAll(user, container, accessLevel) {
     let valid = true;
     container.forEach(function (element) {
@@ -39,9 +59,9 @@ function hasPermission(user, permission, scopeId) {
         return true;
     } else if (user.id === scopeId) {
         return true;
-    } else if (user.scope.hasOwnProperty(scopeId) &&
-        user.scope[scopeId].authorities.hasOwnProperty(permission)) {
-        return user.scope[scopeId].authorities[permission];
+    } else if (user.scopes.hasOwnProperty(scopeId) &&
+        user.scopes[scopeId].authorities.hasOwnProperty(permission)) {
+        return user.scopes[scopeId].authorities[permission];
     }
     return false;
 }
@@ -55,5 +75,6 @@ function accessDenied() {
 
 module.exports = {
     authorizeAccessToScopeId,
-    authorizeAccessToObjects
+    authorizeAccessToObjects,
+    authorizeWithPotentialScopeIds
 };

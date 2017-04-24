@@ -1,10 +1,14 @@
 const sendNotification = require('../http/sendNotification');
+const logger = require('../infrastructure/logger');
 
 function _sendNotification(title, body, scopeIds) {
     if (!(scopeIds instanceof Array)) {
         scopeIds = [scopeIds];
     }
-    sendNotification(title, body, scopeIds);
+    sendNotification(title, body, scopeIds)
+        .catch((error) => {
+            logger.warn(`[SendNotification] ${error.name} (${error.code}): ${error.message}`);
+        });
 }
 
 function forNewEvent(scopeId, summary, start, end) {

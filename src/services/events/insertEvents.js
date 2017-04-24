@@ -4,8 +4,9 @@ const insertExdate = require('../../queries/events/exdates/insertExdate');
 const insertAlarm = require('../../queries/events/alarms/insertAlarm');
 const insertOriginalEvent = require('../../queries/original-events/insertOriginalEvent');
 const flatten = require('../../utils/flatten');
-const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
-const getOriginalEvent = require('./getOriginalEvent');
+const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
+const prepareOriginalEvent = require('./prepareOriginalEvent');
+const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
 function insertEvents(events, user) {
     return new Promise((resolve, reject) => {
@@ -74,6 +75,7 @@ function insertEventPerScope(event, scopeId, externalEventId) {
             event['x_fields']
         ];
         insertRawEvent(params)
+            .then(moveScopeIdToArray)
             .then((insertedEvent) => {
                 return insertExdates(event, insertedEvent);
             })
@@ -87,8 +89,6 @@ function insertEventPerScope(event, scopeId, externalEventId) {
 
 function insertExdates(event, insertedEvent) {
     return new Promise((resolve, reject) => {
-        // check if exception dates for possible repeat exists
-        // TODO: if so, check if repeat is set because of consistency reasons...
         if (!event.exdates) {
             return resolve(insertedEvent);
         }
@@ -138,7 +138,7 @@ function insertOriginalEvents(separateUsers, scopeIds, insertedEvents, user) {
         // all events here should have the same core params so we can just take
         // the first one
         const eventId = insertedEvents[0]['event_id'];
-        const originalEvent = getOriginalEvent(insertedEvents[0]);
+        const originalEvent = prepareOriginalEvent(insertedEvents[0]);
         Promise.all(scopeIds.map((scopeId) => {
             const params = [eventId, scopeId, originalEvent, user.id];
             return insertOriginalEvent(params);

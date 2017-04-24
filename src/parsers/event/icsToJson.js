@@ -1,5 +1,5 @@
-const validIcs = require('../validators/validateIcs');
-const validJson = require('../validators/validateEventJson');
+const validateIcs = require('../validators/validateIcs');
+const validateJson = require('../validators/validateEventJson');
 const regularDateFormat = require('./../utils/regularDateFormat');
 const returnError = require('../../utils/response/returnError');
 const logger = require('../../infrastructure/logger');
@@ -21,7 +21,7 @@ function icsToJson(req, res, next) {
 
         const lines = event.attributes.ics.replace('\n ', '').replace(/^\s+|\s+$/g, '').split('\n');
 
-        if (!validIcs(lines)) {
+        if (!validateIcs(lines)) {
             returnError(res, 'Invalid ICS file', 400, 'Bad Request');
             return;
         }
@@ -70,7 +70,7 @@ function icsToJson(req, res, next) {
         });
     });
 
-    let validationResult = validJson(events, true, req.method === 'PUT');
+    let validationResult = validateJson(events, true, req.method);
     if (validationResult === true) {
         req.events = events;
         next();
@@ -200,8 +200,6 @@ function lineToJson(line, event) {
                 }
                 const realFieldName = fieldName.substr(0, splitPosition2);
                 // const timezone = fieldName.substr(splitPosition2 + 1, fieldName.length);
-
-                // TODO: handle timezone
 
                 switch (realFieldName) {
                     case 'DTSTART':

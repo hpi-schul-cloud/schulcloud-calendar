@@ -5,12 +5,16 @@ const weekday_regex = new RegExp(['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SO'].join
 const alarm_action_regex = new RegExp(['DISPLAY', 'AUDIO', 'EMAIL'].join('|'));
 
 
-function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
+function validateJson(json, isIncoming = true, incomingRequestMethod = '') {
+    if (isIncoming === true && incomingRequestMethod === '') {
+        // Using POST as a default for incoming requests if not set
+        incomingRequestMethod = 'POST';
+    }
+
     let errorMessage = null;
 
     if (!Array.isArray(json)) {
-        errorMessage = "The value of 'data' must be an array.";
-        return false;
+        return "The value of 'data' must be an array.";
     }
 
     let event_uids = new Set();
@@ -18,20 +22,27 @@ function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
     json.every((event) => {
         // Fields are required by our implementation
 
-        // TODO the following two checks are not required for PUT, either
-        // change validation or take out
+        if (incomingRequestMethod === 'POST' && typeof event.separate_users === 'undefined') {
+            errorMessage = "The attribute 'relationships'.'separate-users' is required for every new event.";
+            return false;
+        }
 
-        // if (isIncoming && typeof event.separate_users === 'undefined') {
-        //     errorMessage = "The attribute 'relationships'.'separate-users' is required for every event.";
-        //     return false;
-        // }
+        if ((incomingRequestMethod === 'POST' || !isIncoming) && !(event.scope_ids && Array.isArray(event.scope_ids) && event.scope_ids.length > 0)) {
+            errorMessage = "The attribute 'relationships'.'scope-ids' is required and must be an array with one or more scope IDs.";
+            return false;
+        }
 
-        // if (isIncoming && !(event.scope_ids && Array.isArray(event.scope_ids) && event.scope_ids.length > 0)) {
-        //     errorMessage = "The attribute 'relationships'.'scope-ids' must be an array with one or more scope IDs.";
-        //     return false;
-        // }
+        if ((incomingRequestMethod === 'PUT' || incomingRequestMethod === 'DELETE') &&
+            event.scope_ids && !(Array.isArray(event.scope_ids) && event.scope_ids.length > 0)) {
+            errorMessage = "The attribute 'relationships'.'scope-ids' is optional, but if it is set, it must be an array with one or more scope IDs.";
+            return false;
+        }
 
-        // Fields are required by the iCalendar standard
+        if (incomingRequestMethod === 'DELETE') {
+            return true;
+        }
+
+        // Fields are required by the iCalendar standard for POST and PUT only
         if (!event.dtstamp) {
             errorMessage = "The attribute 'dtstamp' is required.";
             return false;
@@ -94,7 +105,7 @@ function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
             }
 
             // Constrains as defined in the iCalendar standard
-            if (event.repeat_byweekno && event.repeat_freq != 'YEARLY') {
+            if (event.repeat_byweekno && event.repeat_freq !== 'YEARLY') {
                 errorMessage = "The attribute 'byweekno' and the given yearly frequency in the 'rrule' cannot be combined.";
                 return false;
             }
@@ -250,7 +261,8 @@ function validateJson(json, isIncoming = true, shouldBeOneEvent = false) {
 
     if (errorMessage) return errorMessage;
 
-    if (shouldBeOneEvent && event_uids.size !== 1) {
+    if ((incomingRequestMethod === 'PUT' && event_uids.size !== 1) ||
+        (incomingRequestMethod === 'DELETE' && json.length > 1)) {
         errorMessage = 'Only one event is allowed for this operation.';
     }
 

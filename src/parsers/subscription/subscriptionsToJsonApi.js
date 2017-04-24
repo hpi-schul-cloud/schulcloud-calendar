@@ -1,11 +1,11 @@
 const config = require('./../../config');
-const validJson = require('../validators/validateSubscriptionJson');
+const validateJson = require('../validators/validateSubscriptionJson');
 const logger = require('../../infrastructure/logger');
 const removeNullValues = require('../../utils/removeNullValues');
 
 function subscriptionsToJsonApi(subscriptionJson) {
     subscriptionJson = removeNullValues(subscriptionJson);
-    let validationResult = validJson(subscriptionJson, false);
+    let validationResult = validateJson(subscriptionJson, false);
     if (validationResult !== true) {
         logger.error(`[jsonToJsonApi] Got invalid subscriptions JSON: ${validationResult}`);
         return;
@@ -26,12 +26,12 @@ function subscriptionToJsonApi(subscription) {
         id: subscription.id,
         attributes: {},
         relationships: {
-            'scope-ids': [subscription.scope_id]
+            'scope-ids': subscription.scope_ids
         }
     };
 
     delete subscription.id;
-    delete subscription.scope_id;
+    delete subscription.scope_ids;
 
     for (let key in subscription) {
         if (subscription.hasOwnProperty(key)) {

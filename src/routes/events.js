@@ -12,8 +12,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
-const { authorizeAccessToScopeId, authorizeAccessToObjects } = require('../security/authorization');
-const authorizeWithPotentialScopeIds = require('./_authorizeWithPotentialScopeIds');
+const { authorizeAccessToScopeId, authorizeAccessToObjects, authorizeWithPotentialScopeIds } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/event/jsonApiToJson');
 const icsToJson = require('../parsers/event/icsToJson');
 
@@ -26,6 +25,7 @@ const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
 // content
 const getEvents = require('../services/events/getEvents');
+const getOriginalEvent = require('../queries/original-events/getOriginalEvent');
 const insertEvents = require('../services/events/insertEvents');
 const deleteEvents = require('../services/events/deleteEvents');
 const updateEvents = require('../services/events/updateEvents');
@@ -41,10 +41,9 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
         all: req.query['all']
     };
     const user = req.user;
-    const token = req.get('Authorization');
 
     authorizeAccessToScopeId(user, filter.scopeId)
-        .then(() => getEvents(filter, token))
+        .then(() => getEvents(filter, user.scopes))
         .then((events) => authorizeAccessToObjects(user, 'can-read', events))
         .then(eventsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
@@ -104,9 +103,8 @@ function handlePut(req, res, outputFormatter) {
     const event = req.events[0];
     const scopeIds = event.scope_ids;
     const user = req.user;
-    const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent)
         .then(() => doUpdates(event, eventId))
         .then(sendUpdateNotification)
         .then(outputFormatter)
@@ -142,15 +140,13 @@ function sendUpdateNotification(updatedEvents) {
     return updatedEvents;
 }
 
-router.delete('/events/:eventId', authenticateFromHeaderField, function (req, res) {
+router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
     const eventId = req.params.eventId;
-    // TODO somehow parse in beforehand to get the scopeIds in a nicer way
-    const scopeIds = req.body.data[0].relationships
-        && req.body.data[0].relationships['scope-ids'];
+    const event = req.events[0];
+    const scopeIds = event.scope_ids;
     const user = req.user;
-    const token = req.get('Authorization');
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, token, getEvents)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent)
         .then(() => deleteEvents(eventId, scopeIds))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {

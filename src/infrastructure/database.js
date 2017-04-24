@@ -6,20 +6,26 @@ const INTERVAL_OID = 1186;
 const config = require('../config');
 
 let db;
-if (app.get('env') === 'production') {
+if (app.get('env') === 'production' || app.get('env') === 'test') {
     const db_username = config.DB_USERNAME;
     const db_password = config.DB_PASSWORD;
     const db_host = config.DB_HOST;
     const db_port = config.DB_PORT;
     const db_database = config.DB_DATABASE;
 
-    if (!db_username || !db_password || !db_host || !db_port || !db_database) {
+    if (!db_username ||
+        (app.get('env') === 'production' && !db_password) ||
+        !db_host ||
+        !db_port ||
+        !db_database) {
         throw new Error('expected database credentials but incomplete specified');
     }
 
-    db = `postgres://${db_username}:${db_password}@${db_host}:${db_port}/${db_database}`;
-} else if (app.get('env') === 'test') {
-    db = 'postgres://node:node@localhost:5432/schulcloud_calendar_test';
+    if (db_password) {
+        db = `postgres://${db_username}:${db_password}@${db_host}:${db_port}/${db_database}`;
+    } else {
+        db = `postgres://${db_username}@${db_host}:${db_port}/${db_database}`;
+    }
 } else {
     db = 'postgres://node:node@localhost:5432/schulcloud_calendar';
 }

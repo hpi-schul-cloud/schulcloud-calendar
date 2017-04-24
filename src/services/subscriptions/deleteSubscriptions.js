@@ -1,5 +1,5 @@
 const deleteSubscriptionsFromDb = require('../../queries/subscriptions/deleteSubscriptions');
-const getScopeIdsForSeparateUsers = require('../scopes/getScopeIdsForSeparateUsers');
+const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
 const compact = require('../../utils/compact');
 const handleUndefinedSubscriptions = require('../_handleUndefinedObjects');
 const getSubscriptions = require('../../queries/subscriptions/getSubscriptions');

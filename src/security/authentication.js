@@ -31,20 +31,21 @@ function parseUserInformation(apiResponse) {
     apiResponse = JSON.parse(apiResponse);
 
     let user = {};
-    user.scope = {};
+    user.scopes = {};
     apiResponse.data.forEach(function (scope) {
         if (scope.type === 'user') {
             user.id = scope.id;
             user.name = scope.attributes.name;
-        } else if (scope.type === 'scope') {
-            user.scope[scope.id] = {};
-            user.scope[scope.id].id = scope.id;
-            user.scope[scope.id].name = scope.attributes.name;
-            user.scope[scope.id].authorities = {};
-            scope.attributes.authorities.forEach(function (authority) {
-                user.scope[scope.id].authorities[authority] = true;
-            });
         }
+
+        // These scopes also include the user ID
+        user.scopes[scope.id] = {};
+        user.scopes[scope.id].id = scope.id;
+        user.scopes[scope.id].name = scope.attributes.name;
+        user.scopes[scope.id].authorities = {};
+        scope.attributes.authorities.forEach(function (authority) {
+            user.scopes[scope.id].authorities[authority] = true;
+        });
     });
     return user;
 }
