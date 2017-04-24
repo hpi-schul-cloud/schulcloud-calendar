@@ -31,8 +31,8 @@ router.get('/calendar/list', authenticateFromHeaderField, function (req, res) {
     const user = req.user;
     const token = req.token;
 
-    scopesToCalendarList(user.scopes, token)
-        .then((calendarList) => returnSuccess(res, 200, calendarList))
+    const calendarList = scopesToCalendarList(user.scopes, token);
+    returnSuccess(res, 200, calendarList)
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });

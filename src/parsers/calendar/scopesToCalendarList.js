@@ -1,14 +1,12 @@
 const config = require('../../config');
 
 function scopesToCalendarList(scopes, token) {
-    return new Promise((resolve) => {
-        resolve({
-            links: {
-                self: `${config.ROOT_URL}/calendar/list`
-            },
-            data: Object.keys(scopes).map((scopeKey) => scopeToJsonApi(scopes[scopeKey], token))
-        });
-    });
+    return {
+        links: {
+            self: `${config.ROOT_URL}/calendar/list`
+        },
+        data: Object.keys(scopes).map((scopeKey) => scopeToJsonApi(scopes[scopeKey], token))
+    };
 }
 
 function scopeToJsonApi(scope, token) {
