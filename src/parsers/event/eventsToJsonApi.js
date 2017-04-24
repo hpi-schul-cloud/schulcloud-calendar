@@ -1,11 +1,11 @@
 const config = require('../../config');
-const validJson = require('../validators/validateEventJson');
+const validateJson = require('../validators/validateEventJson');
 const logger = require('../../infrastructure/logger');
 const removeNullValues = require('../../utils/removeNullValues');
 
 function eventsToJsonApi(eventJson) {
     eventJson = removeNullValues(eventJson);
-    let validationResult = validJson(eventJson, false);
+    let validationResult = validateJson(eventJson, false);
     if (validationResult !== true) {
         logger.error(`[jsonToJsonApi] Got invalid events JSON: ${validationResult}`);
         return;

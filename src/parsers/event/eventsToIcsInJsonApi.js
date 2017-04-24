@@ -1,10 +1,10 @@
 const config = require('./../../config');
-const validJson = require('../validators/validateEventJson');
+const validateJson = require('../validators/validateEventJson');
 const logger = require('../../infrastructure/logger');
 const eventsToIcs = require('./eventsToIcs');
 
 function eventsToIcsInJsonApi(eventJson) {
-    let validationResult = validJson(eventJson, false);
+    let validationResult = validateJson(eventJson, false);
     if (validationResult !== true) {
         logger.error(`[jsonToIcsInJsonApi] Got invalid events JSON: ${validationResult}`);
         return;

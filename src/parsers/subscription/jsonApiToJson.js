@@ -1,4 +1,4 @@
-const validJson = require('../validators/validateSubscriptionJson');
+const validateJson = require('../validators/validateSubscriptionJson');
 const returnError = require('../../utils/response/returnError');
 
 function jsonApiToJson(req, res, next) {
@@ -11,7 +11,7 @@ function jsonApiToJson(req, res, next) {
         };
     });
 
-    let validationResult = validJson(subscriptions, true, req.method);
+    let validationResult = validateJson(subscriptions, true, req.method);
     if (validationResult === true) {
         req.subscriptions = subscriptions;
         next();
