@@ -95,7 +95,7 @@ function eventToIcs(event) {
     if (event.x_fields) {
         for (let x_field in event.x_fields) {
             if (event.x_fields.hasOwnProperty(x_field))
-                ics += x_field + (event.x_fields[x_field].includes(':') ? ';' : ':') + event.x_fields[x_field] + '\n';
+                ics += x_field.toUpperCase() + (event.x_fields[x_field].includes(':') ? ';' : ':') + event.x_fields[x_field] + '\n';
         }
     }
 

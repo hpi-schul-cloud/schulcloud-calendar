@@ -65,7 +65,7 @@ function eventToJsonApi(event) {
                     const x_fields = event[key];
                     for (let x_field in x_fields) {
                         if (x_fields.hasOwnProperty(x_field))
-                            jsonApiEvent.attributes[x_field] = x_fields[x_field];
+                            jsonApiEvent.attributes[x_field.toLowerCase()] = x_fields[x_field];
                     }
                 }
                     break;
