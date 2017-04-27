@@ -897,8 +897,8 @@ definitions:
       recurrence-id:
         type: string
         example: 20170108T133600Z
-      x-sc-...:
-        description: custom Schul-Cloud specific fields, MUST have a 'x-sc-' prefix
+      x-...:
+        description: custom Schul-Cloud specific fields, MUST have a 'x-' prefix
         type: string
 
   EventJSONattributesResponse:
@@ -1297,8 +1297,8 @@ definitions:
       completed:
         type: string
         example: 20170201T081700Z
-      x-sc-...:
-        description: custom Schul-Cloud specific fields, MUST have a 'x-sc-' prefix
+      x-...:
+        description: custom Schul-Cloud specific fields, MUST have a 'x-' prefix
         type: string
 
   GetExternalFeedResponse:
