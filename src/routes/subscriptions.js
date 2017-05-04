@@ -76,7 +76,7 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
     const scopeIds = subscription.scope_ids;
     const user = req.user;
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription)
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
         .then(() => updateSubscriptions(subscription, subscriptionId))
         .then((updatedSubscriptions) => {
             if (updatedSubscriptions.length === 0) {
@@ -106,7 +106,7 @@ router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromH
     const scopeIds = subscription.scope_ids;
     const user = req.user;
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription)
+    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
         .then(() => deleteSubscriptions(subscriptionId, scopeIds))
         .then((deletedSubscriptions) => {
             if (deletedSubscriptions.length === 0) {

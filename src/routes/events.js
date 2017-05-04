@@ -104,7 +104,7 @@ function handlePut(req, res, outputFormatter) {
     const scopeIds = event.scope_ids;
     const user = req.user;
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent, 'eventId')
         .then(() => doUpdates(event, eventId))
         .then(sendUpdateNotification)
         .then(outputFormatter)
@@ -146,7 +146,7 @@ router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, fu
     const scopeIds = event.scope_ids;
     const user = req.user;
 
-    authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent)
+    authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent, 'eventId')
         .then(() => deleteEvents(eventId, scopeIds))
         .then((deletedEvents) => {
             if (deletedEvents.length > 0) {
