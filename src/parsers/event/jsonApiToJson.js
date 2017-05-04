@@ -18,8 +18,10 @@ function jsonApiToJson(req, res, next) {
 
         let json = {};
 
-        json.id = eventAttributes.uid;
-        delete eventAttributes.uid;
+        if (req.method !== 'DELETE') {
+            json.id = eventAttributes.uid;
+            delete eventAttributes.uid;
+        }
 
         for (let key in eventAttributes) {
             if (eventAttributes.hasOwnProperty(key)) {
