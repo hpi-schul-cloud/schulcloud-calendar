@@ -10,7 +10,7 @@ function validateJson(json, isIncoming = true, incomingRequestMethod = '') {
         return "The value of 'data' must be an array.";
     }
 
-    if (incomingRequestMethod && json.length !== 1) {
+    if ((incomingRequestMethod === 'PUT' || incomingRequestMethod === 'DELETE') && json.length !== 1) {
         return 'Only one subscription is allowed for this operation.';
     }
 
@@ -31,6 +31,10 @@ function validateJson(json, isIncoming = true, incomingRequestMethod = '') {
             subscription.scope_ids && !(Array.isArray(subscription.scope_ids) && subscription.scope_ids.length === 1)) {
             errorMessage = "The attribute 'relationships'.'scope-ids' is optional, but if it is set, it must be an array with one or more scope IDs.";
             return false;
+        }
+
+        if (incomingRequestMethod === 'DELETE') {
+            return true;
         }
 
         if (!subscription.ics_url) {
