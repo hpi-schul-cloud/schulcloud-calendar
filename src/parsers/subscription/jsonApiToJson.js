@@ -3,12 +3,16 @@ const returnError = require('../../utils/response/returnError');
 
 function jsonApiToJson(req, res, next) {
     const subscriptions = req.body.data.map((subscription) => {
-        return {
-            ics_url: subscription.attributes['ics-url'],
-            description: subscription.attributes['description'],
-            separate_users: subscription.relationships['separate-users'],
-            scope_ids: subscription.relationships['scope-ids']
-        };
+        let json = {};
+        if (req.method !== 'DELETE') {
+            json.ics_url = subscription.attributes['ics-url'];
+            json.description = subscription.attributes['description'];
+            json.separate_users = subscription.relationships['separate-users'];
+        }
+        if (subscription.relationships) {
+            json.scope_ids = subscription.relationships['scope-ids'];
+        }
+        return json;
     });
 
     let validationResult = validateJson(subscriptions, true, req.method);
