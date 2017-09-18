@@ -10,6 +10,7 @@ exports.DB_PORT = process.env.DB_PORT || 5432;
 exports.DB_USERNAME = process.env.DB_USERNAME;
 exports.DB_PASSWORD = process.env.DB_PASSWORD;
 exports.DB_DATABASE = process.env.DB_DATABASE;
+exports.API_KEY = process.env.API_KEY || 'example';
 
 /**
  * Base Paths
