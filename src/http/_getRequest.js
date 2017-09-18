@@ -5,6 +5,7 @@ function _getRequest(url) {
         const request = new XMLHttpRequest();
         request.open('GET', url, true);
         request.responseType = 'json';
+        request.setRequestHeader('x-api-key', (process.env.API_KEY || 'example'));
         request.onload = function() {
             const httpStatus = request.status;
             if (httpStatus === 200) {
