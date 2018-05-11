@@ -5,11 +5,20 @@
 /**
  * Database settings for production environment
  */
+
+// START switch comment blocks to switch local development
 exports.DB_HOST = process.env.DB_HOST;
-exports.DB_PORT = process.env.DB_PORT || 5432;
+exports.DB_DATABASE = process.env.DB_DATABASE;
 exports.DB_USERNAME = process.env.DB_USERNAME;
 exports.DB_PASSWORD = process.env.DB_PASSWORD;
-exports.DB_DATABASE = process.env.DB_DATABASE;
+// use following lines for local development
+/*exports.DB_HOST = 'localhost';
+exports.DB_USERNAME = 'node';
+exports.DB_DATABASE = 'schulcloud_calendar';
+exports.DB_PASSWORD = 'node';*/
+// END switch to local environment
+
+exports.DB_PORT = process.env.DB_PORT || 5432;
 exports.API_KEY = process.env.API_KEY || 'example';
 
 /**
@@ -21,10 +30,16 @@ exports.DOMAIN_NAME = process.env.DOMAIN_NAME || 'schul-cloud.org';
 exports.ROOT_URL = process.env.ROOT_URL || `https://${exports.DOMAIN_NAME}:3000`;
 
 /**
- * API Paths
- */
+* API Paths
+*/
+// START switch comment blocks to switch local development
 exports.SCHULCLOUD_ALL_USERS_FOR_UUID = process.env.SCHULCLOUD_ALL_USERS_FOR_UUID || SCHULCLOUD_BASE_PATH + '/api/all_users/';
 exports.SCHULCLOUD_ALL_SCOPES_FOR_TOKEN = process.env. SCHULCLOUD_ALL_SCOPES_FOR_TOKEN || SCHULCLOUD_BASE_PATH + '/api/all_scopes/';
+// use following lines for local development
+/*exports.SCHULCLOUD_ALL_USERS_FOR_UUID = process.env.SCHULCLOUD_ALL_USERS_FOR_UUID || 'http://localhost:3030/resolve/users/';
+exports.SCHULCLOUD_ALL_SCOPES_FOR_TOKEN = process.env. SCHULCLOUD_ALL_SCOPES_FOR_TOKEN || 'http://localhost:3030/resolve/scopes/';*/
+// END switch to local environment
+
 exports.NOTIFICATION_SERVICE_NEW_NOTIFICATION = process.env.NOTIFICATION_SERVICE_NEW_NOTIFICATION || NOTIFICATION_SERVICE_BASE_PATH + '/messages';
 
 /**
