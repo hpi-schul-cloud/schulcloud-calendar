@@ -29,6 +29,7 @@ PostgreSQL/bin/* folder must be accessable through shell/cmd (check environment 
    `npm start` for production environment
    `npm run start_local` for local unix environment
    `npm run start_local_win` for local windows environment
+
 Alternative install instructions here: [Kalender Setup](https://docs.schul-cloud.org/display/SCDOK/Setup#Setup-Kalender)
 
 ### Example database data
