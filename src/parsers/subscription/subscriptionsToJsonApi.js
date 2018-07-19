@@ -16,7 +16,8 @@ function subscriptionsToJsonApi(subscriptionJson) {
         links: {
             self: `${config.ROOT_URL}/subscriptions`
         },
-        data: subscriptionJson.map(subscriptionToJsonApi)
+        data: subscriptionJson.map(subscriptionToJsonApi),
+		total:subscriptionJson.total
     };
 }
 

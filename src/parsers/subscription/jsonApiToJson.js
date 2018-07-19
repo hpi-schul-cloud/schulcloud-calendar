@@ -4,6 +4,7 @@ const returnError = require('../../utils/response/returnError');
 function jsonApiToJson(req, res, next) {
     const subscriptions = req.body.data.map((subscription) => {
         let json = {};
+
         if (req.method !== 'DELETE') {
             json.ics_url = subscription.attributes['ics-url'];
             json.description = subscription.attributes['description'];
