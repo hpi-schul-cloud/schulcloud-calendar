@@ -31,10 +31,13 @@ const deleteSubscriptions = require('../services/subscriptions/deleteSubscriptio
 /* routes */
 
 router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
+
     const scopeId = req.query['scope-id'];
-    const subscriptionId = req.query['subscription-id'];
+    const subscriptionId = req.query['subscription-id'] || req.query['subscriptionId'];
     const lastUpdateFailed = req.query['last-update-failed'];
-    const filter = { scopeId, subscriptionId, lastUpdateFailed };
+	const $limit = req.query['$limit'];
+	const $offset = req.query['$offset'];
+    const filter = { scopeId, subscriptionId, lastUpdateFailed, $limit, $offset };
     const user = req.user;
 
     authorizeAccessToScopeId(user, filter.scopeId)
@@ -71,11 +74,11 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 });
 
 router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const subscriptionId = req.params.subscriptionId;
+	const subscriptionId = req.params.subscriptionId;
     const subscription = req.subscriptions[0];
     const scopeIds = subscription.scope_ids;
     const user = req.user;
-
+	
     authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
         .then(() => updateSubscriptions(subscription, subscriptionId))
         .then((updatedSubscriptions) => {
