@@ -3,7 +3,8 @@ const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
 
 function getSubscriptions(filter) {
-    return new Promise((resolve, reject) => {
+
+	return new Promise((resolve, reject) => {
         if (noParamsGiven(filter)) {
             reject('No filter params for subscription selection given');
         }
@@ -12,15 +13,21 @@ function getSubscriptions(filter) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
-            } else {
-                resolve(result.rows);
-            }
+            } else if( filter['$offset'] && filter['$limit'] ) {
+				result.total=result.rows.length;
+				resolve(result.rows.slice(
+						filter['$offset'],
+						filter['$offset']+(filter['$limit']-1)
+				));
+            }else{
+				resolve(result.rows);
+			}
         });
     });
 }
 
 function buildQuery(filter) {
-    const { scopeId, subscriptionId, lastUpdateFailed } = filter;
+    const { scopeId, subscriptionId, lastUpdateFailed } = filter; /*$limit, $offset */
     let query = `SELECT ${allColumns} FROM subscriptions WHERE`;
     let params = [];
     let paramCount = 1;
@@ -48,7 +55,21 @@ function buildQuery(filter) {
         paramCount += 1;
     }
 
-    query = `${query} ORDER BY id ASC;`;
+    query = `${query} ORDER BY description ASC;`;		//later per sql request
+	
+	/*if($limit && $limit>=1){
+		query = `${query} LIMIT $${paramCount}`;
+		params = [ ...params, ($limit-1) ];
+		paramCount += 1;
+	} 
+	
+	if($offset && $offset>=0){
+		query = `${query} OFFSET $${paramCount}`;
+		params = [ ...params, $offset ];
+		paramCount += 1;
+	}
+	
+	query = `${query};`;*/
     return { query, params };
 }
 
