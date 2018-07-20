@@ -14,7 +14,7 @@ function getSubscriptions(filter, scopes) {
 			//route is used for find get request 
             subscriptionsPerScope(scopes, filter)
                 .then((subscriptions) => { 
-					resolve(flatten(subscriptions)); 
+					resolve(flatten(subscriptions,filter)); 
 				})
                 .catch(reject);
         }
@@ -25,7 +25,7 @@ function subscriptionsPerScope(scopes, filter) {
     return new Promise((resolve, reject) => {
         Promise.all(Object.keys(scopes).map((scopeId) => {
             filter.scopeId = scopeId;
-            return completeSubscriptions(filter);
+            return completeSubscriptions(filter)
         })).then(resolve).catch(reject);
     });
 }

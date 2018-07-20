@@ -13,12 +13,6 @@ function getSubscriptions(filter) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
-            } else if( filter['$offset'] && filter['$limit'] ) {
-				result.total=result.rows.length;
-				resolve(result.rows.slice(
-						filter['$offset'],
-						filter['$offset']+(filter['$limit']-1)
-				));
             }else{
 				resolve(result.rows);
 			}

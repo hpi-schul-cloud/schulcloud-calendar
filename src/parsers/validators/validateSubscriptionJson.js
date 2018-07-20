@@ -14,7 +14,6 @@ function validateJson(json, isIncoming = true, incomingRequestMethod = '') {
         return 'Only one subscription is allowed for this operation.';
     }
 
-	console.log('#1',json[0]);
     json.every(function (subscription) {
         // Fields are required by our implementation
 

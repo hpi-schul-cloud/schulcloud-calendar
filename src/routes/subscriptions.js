@@ -31,7 +31,6 @@ const deleteSubscriptions = require('../services/subscriptions/deleteSubscriptio
 /* routes */
 
 router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
-
     const scopeId = req.query['scope-id'];
     const subscriptionId = req.query['subscription-id'] || req.query['subscriptionId'];
     const lastUpdateFailed = req.query['last-update-failed'];
@@ -43,7 +42,7 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
     authorizeAccessToScopeId(user, filter.scopeId)
         .then(() => getSubscriptions(filter, user.scopes))
         .then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
-        .then(subscriptionsToJsonApi)
+		.then(subscriptionsToJsonApi)
         .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
@@ -51,7 +50,7 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
 });
 
 router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const user = req.user;
+	const user = req.user;
     const subscriptions = req.subscriptions;
 
     authorizeAccessToObjects(user, 'can-write', subscriptions)
@@ -104,7 +103,7 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
 });
 
 router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const subscriptionId = req.params.subscriptionId;
+	const subscriptionId = req.params.subscriptionId;
     const subscription = req.subscriptions[0];
     const scopeIds = subscription.scope_ids;
     const user = req.user;
@@ -112,6 +111,7 @@ router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromH
     authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
         .then(() => deleteSubscriptions(subscriptionId, scopeIds))
         .then((deletedSubscriptions) => {
+			console.log('deletedSubscriptions',deletedSubscriptions);
             if (deletedSubscriptions.length === 0) {
                 const message = 'Given subscriptionId or scopeIds not found';
                 const status = 404;
@@ -126,6 +126,8 @@ router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromH
                 return deletedSubscriptions;
             }
         })
+		.then(subscriptionsToJsonApi)
+		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
         .catch(({ message, status, title }) => {
             returnError(res, message, status, title);
         });
