@@ -77,9 +77,10 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
     const subscription = req.subscriptions[0];
     const scopeIds = subscription.scope_ids;
     const user = req.user;
-	
+
     authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
-        .then(() => updateSubscriptions(subscription, subscriptionId))
+        .then((data)=>{console.log(data); return data})
+		.then(() => updateSubscriptions(subscription, subscriptionId))
         .then((updatedSubscriptions) => {
             if (updatedSubscriptions.length === 0) {
                 const error = 'Given subscriptionId or scopeIds not found';
@@ -111,7 +112,6 @@ router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromH
     authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
         .then(() => deleteSubscriptions(subscriptionId, scopeIds))
         .then((deletedSubscriptions) => {
-			console.log('deletedSubscriptions',deletedSubscriptions);
             if (deletedSubscriptions.length === 0) {
                 const message = 'Given subscriptionId or scopeIds not found';
                 const status = 404;

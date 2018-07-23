@@ -11,7 +11,7 @@ function flatten(collections,filter) {
             : flattened;
     }, []);
 	
-	if( filter['$offset'] && filter['$limit'] ){
+	if( filter && filter['$offset'] && filter['$limit'] ){
 		const total=data.length;
 		data=data.slice(filter['$offset'],filter['$offset']+filter['$limit']);
 		data[0].total=total;

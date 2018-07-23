@@ -18,12 +18,19 @@ function udpdateSubscription(params) {
             query += `AND scope_id = $${scopeIdIndex} `;
         }
         query += `RETURNING ${allColumns}`;
+
         client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
             } else {
-                resolve(result.rows);
+				if(result.rows.length<=0){
+					console.error('No query target found!');
+					errorMessage(query, error);
+					reject(error)
+				}		
+				else						
+					resolve(result.rows);
             }
         });
     });

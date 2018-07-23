@@ -2,6 +2,11 @@ const validateJson = require('../validators/validateSubscriptionJson');
 const returnError = require('../../utils/response/returnError');
 
 function jsonApiToJson(req, res, next) {
+	if(req.body.data===undefined){	
+		returnError(res, 'Invalid request body', 400, 'Bad Request');
+		return
+	}
+
     const subscriptions = req.body.data.map((subscription) => {
         let json = {};
 
