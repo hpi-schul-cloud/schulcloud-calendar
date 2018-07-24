@@ -2,13 +2,13 @@ const client = require('../../infrastructure/database');
 const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
 
-function getSubscriptions(filter) {
+function getSubscriptions(filter,getAll=false) {
 
 	return new Promise((resolve, reject) => {
-        if (noParamsGiven(filter)) {
+        if ( !getAll && noParamsGiven(filter)) {
             reject('No filter params for subscription selection given');
         }
-        const { query, params } = buildQuery(filter);
+        const { query, params } = buildQuery(filter,getAll);
         client.query(query, params, (error, result) => {
             if (error) {
                 errorMessage(query, error);
@@ -20,11 +20,17 @@ function getSubscriptions(filter) {
     });
 }
 
-function buildQuery(filter) {
+function buildQuery(filter,getAll) {
     const { scopeId, subscriptionId, lastUpdateFailed } = filter; /*$limit, $offset */
     let query = `SELECT ${allColumns} FROM subscriptions WHERE`;
     let params = [];
     let paramCount = 1;
+	
+	if( getAll ){
+		query = query.replace(' WHERE',';');
+		console.log('query=',query);
+		return { query, params }
+	}
 
     if (scopeId) {
         query = `${query} scope_id = $${paramCount}`;
