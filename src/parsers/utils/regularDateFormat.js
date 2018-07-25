@@ -1,5 +1,5 @@
 function regularDateFormat(date) {
-
+	console.log('date>',date);
     // YYYYMMDD'T'hhmmss'Z'
 
     const year = date.slice(0, 4);
@@ -9,13 +9,13 @@ function regularDateFormat(date) {
     const hour = date.slice(9, 11);
     const minute = date.slice(11, 13);
     const second = date.slice(13, 15);
-
+	console.log('=>',year,month,day,hour,minute,second);
     let timezone = date.slice(15, date.size);
     if (timezone === 'Z') {
         timezone = 'UTC';
     }
 
-    return new Date(`${year}/${month-1}/${day} ${hour}:${minute}:${second} ${timezone}`);
+    return new Date(`${year}/${month}/${day} ${hour}:${minute}:${second} ${timezone}`);
 }
 
 module.exports = regularDateFormat;
