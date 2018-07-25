@@ -1,5 +1,4 @@
 function regularDateFormat(date) {
-	console.log('date>',date);
     // YYYYMMDD'T'hhmmss'Z'
 
     const year = date.slice(0, 4);
@@ -9,12 +8,12 @@ function regularDateFormat(date) {
     const hour = date.slice(9, 11);
     const minute = date.slice(11, 13);
     const second = date.slice(13, 15);
-	console.log('=>',year,month,day,hour,minute,second);
     let timezone = date.slice(15, date.size);
     if (timezone === 'Z') {
         timezone = 'UTC';
     }
-
+	// month should be 1 to 12 (https://tools.ietf.org/html/rfc5545#page-31) 
+	// Date() transform month string from 1 to 12 too. 
     return new Date(`${year}/${month}/${day} ${hour}:${minute}:${second} ${timezone}`);
 }
 
