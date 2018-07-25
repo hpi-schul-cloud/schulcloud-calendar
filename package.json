@@ -12,7 +12,8 @@
     "linter": "eslint src",
     "test": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --recursive --reporter nyan",
     "test_travis": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=postgres DB_DATABASE=schulcloud_calendar_test mocha --recursive --reporter nyan",
-    "coverage": "cross-env NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha test/*/*.js"
+    "coverage": "cross-env NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha test/*/*.js",
+	"subscriptions_update": "node ./src/services/dbimporter/start"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
