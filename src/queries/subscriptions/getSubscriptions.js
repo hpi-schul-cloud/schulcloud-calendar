@@ -2,10 +2,10 @@ const client = require('../../infrastructure/database');
 const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
 
-function getSubscriptions(filter,getAll=false) {
+function getSubscriptions(filter,getAll) {
 
 	return new Promise((resolve, reject) => {
-        if ( !getAll && noParamsGiven(filter)) {
+        if ( getAll==undefined && noParamsGiven(filter)) {
             reject('No filter params for subscription selection given');
         }
         const { query, params } = buildQuery(filter,getAll);
@@ -26,9 +26,23 @@ function buildQuery(filter,getAll) {
     let params = [];
     let paramCount = 1;
 	
-	if( getAll ){
-		query = query.replace(' WHERE',';');
-		console.log('query=',query);
+	if( typeof getAll=='object' ){
+		query = 'SELECT * FROM subscriptions';
+	
+		if(getAll.time){
+			const timestamp = new Date( new Date().getTime() - getAll.time )
+							 .toISOString()
+							 .replace('T',' ')
+							 .split('.')[0]; 
+			query+=" WHERE last_updated < TO_TIMESTAMP('"+timestamp+"', 'YYYY-MM-DD HH24:MI:SS') OR last_updated IS NULL";
+		}
+		
+		query+=' ORDER BY last_updated '+(getAll.order||'DESC');
+		
+		if(getAll.limit)
+			query+=' LIMIT '+getAll.limit;
+		
+		query+=';';
 		return { query, params }
 	}
 
