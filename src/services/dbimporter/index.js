@@ -4,38 +4,58 @@ const getSubscriptions = require('../../queries/subscriptions/getSubscriptions')
 const icsToJson = require('../../parsers/event/icsToJsonPromise');
 //const icsToJson2 = require('./parser/ics');
 const logger = require('../../infrastructure/logger');
-const TIMEOUT = 4000;
 const insertEvents = require('../events/insertEvents');
+const querySQL = require('../../queries/subscriptions/querySQL');
 
+const REQUEST_TIMEOUT = 4000;
+const LAST_UPDATE_FAIL_STATUS = 500;
+const LAST_UPDATE_SUCCESS_STATUS = 200;
 
-/**
-*	@description Stand alone service to load and update subscriptions.
-*				 The service request the database and load all subscriptions.
-*				 After this they start for each subscription url a request load ressource,
-*				 parse it (only ics at the moment) and put the results with scope-ids into
-*				 the calendar database to events.
+const queryStatus = 'UPDATE subscriptions SET last_updated_status = $1 WHERE '+
+					'subscription_id = $2 AND scope_id = $3 RETURNING id, last_updated_status;'
+					
+const updateDate = 	"UPDATE subscriptions SET last_updated = (TO_TIMESTAMP_TZ( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SSXFF')) WHERE "+
+					'subscription_id = $1 AND scope_id = $2 RETURNING id, last_updated;'
+
+/**	'YYYY-MM-DD HH24:MI:SS'
+*	@description 
+*		Stand alone service to load and update subscriptions.
+*		The service request the database and load all subscriptions.
+*		After this they start for each subscription url a request load ressource,
+*		parse it (only ics at the moment) and put the results with scope-ids into
+*		the calendar database to events.
 **/
-
-function subscriptionUrlDbImporter(){	
-	getSubscriptions({},true).then(subscriptions=>{
+function subscriptionUrlDbImporter(){
+	const queryOptions={
+		limit:10,
+		time: 2*60*60*1000
+	};
+	getSubscriptions({},queryOptions)
+	.then(subscription=>updateTimeStamp(subscription))
+	.then(subscriptions=>{
 		let requestList=subscriptions.map(subscription => {	
 			return new Promise((resolve, reject) => {
 				singleRequest(subscription,resolve,reject,icsToJson);
 			})
 			.then(events => add_dtend(events))
-			.then(events => doInserts(events))
+			.then(events => doInserts(events,subscription))
 			.catch(err=>{
-				console.log('error [Task]', err);
+				querySQL(queryStatus,[LAST_UPDATE_FAIL_STATUS,subscription.subscription_id,subscription.scope_id]);
+				console.log('error [Task]',subscriptions.ics_url,err);
 			});
 		});
 		
-		Promise.all(requestList).then( values => {
-			
-			//set all reject to 500 and all resolved
+		Promise.all(requestList).then( values => {		
 			console.log('ready!');
 			return true
 		});
 	});
+}
+
+function updateTimeStamp(subscription){
+	console.log(subscription);
+	querySQL(updateDate,[subscription.subscription_id,subscription.scope_id]);
+	return subscription
 }
 
 function singleRequest(subscription,resolve,reject,parser=icsToJson){
@@ -43,7 +63,7 @@ function singleRequest(subscription,resolve,reject,parser=icsToJson){
 	const options = {
 		uri : subscription.ics_url,
 		method: 'GET',
-		timeout: TIMEOUT,
+		timeout: REQUEST_TIMEOUT,
 		headers:{
 			"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 			"Accept-Encoding":"gzip, deflate, br"
@@ -56,8 +76,7 @@ function singleRequest(subscription,resolve,reject,parser=icsToJson){
 		console.log('load',subscription.ics_url);
 		resolve( parser(data,reject,relationships,false) );
 	}).catch(err=>{
-		console.log('error [Request] '+subscription.ics_url,err);  //err
-		reject(err);
+		reject('error [Request] '+subscription.ics_url);
 	});
 }
 
@@ -69,15 +88,17 @@ function add_dtend(events){
 	});			
 }
 
-function doInserts(events) {
+function doInserts(events,subscription) {	
 	const user=undefined;
     return new Promise(function (resolve, reject) {
         insertEvents(events, user)
-            .then(resolve)
+            .then(()=>{
+				querySQL(queryStatus,[LAST_UPDATE_SUCCESS_STATUS,subscription.subscription_id,subscription.scope_id]);
+				resolve();
+			})
             .catch(reject);
     }); 
 }
-
 module.exports = subscriptionUrlDbImporter;
 
 /* @example alarm
