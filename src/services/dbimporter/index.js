@@ -21,10 +21,14 @@ const updateDate = 	"UPDATE subscriptions SET last_updated = (CURRENT_TIMESTAMP)
 /**	
 *	@description 
 *		Stand alone service to load and update subscriptions.
-*		The service request the database and load all subscriptions.
-*		After this they start for each subscription url a request load ressource,
+*		The service request the database and load some of the oldest subscriptions.
+*		After this they start for each subscription url a request to load ressource,
 *		parse it (only ics at the moment) and put the results with scope-ids into
 *		the calendar database to events.
+*	@multiple instances of Calendar-Services
+*		Every service catch in time some of the oldest request and mark it instant as updated.
+*		After they is done with this stack, the service try again to search, if open update subscriptions.
+*		If all done, all services stopped and start over cron job after some time again.
 *	@todo	
 *		Service can not interpret ics.xml files 
 **/
@@ -55,16 +59,19 @@ function subscriptionUrlDbImporter(opt){
 				else 				success++;
 			});
 			console.log('ready! [total='+values.length+' / Query.limit='+queryOptions.limit+' | miss='+miss+' | success='+success+']');
-			return true
+			
 		});
+		return subscriptions
+	}).then(subscriptions=>{		//start recursive  
+		if(subscriptions.length>0)	//condition if it posible that any not updated subscription exist start again
+			subscriptionUrlDbImporter(opt);
 	});
 }
 
 function updateTimeStamp(subscriptions){
-	subscriptions.forEach(subscription=>{	
-		querySQL(updateDate,[subscription.subscription_id,subscription.scope_id]).then(()=>{
-			console.log('execute',subscription.ics_url);
-		});
+	subscriptions.forEach(subscription=>{		//!bad performance reduce to one request over or
+		console.log('execute',subscription.ics_url);
+		querySQL(updateDate,[subscription.subscription_id,subscription.scope_id]);
 	});
 	return subscriptions
 }
