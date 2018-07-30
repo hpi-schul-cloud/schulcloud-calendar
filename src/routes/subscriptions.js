@@ -38,8 +38,7 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
 	const $offset = req.query['$offset'];
     const filter = { scopeId, subscriptionId, lastUpdateFailed, $limit, $offset };
     const user = req.user;
-
-    authorizeAccessToScopeId(user, filter.scopeId)
+	authorizeAccessToScopeId(user, filter.scopeId)
         .then(() => getSubscriptions(filter, user.scopes))
         .then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
 		.then(subscriptionsToJsonApi)
