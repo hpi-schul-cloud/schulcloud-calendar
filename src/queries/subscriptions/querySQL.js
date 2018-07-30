@@ -3,7 +3,6 @@ const errorMessage = require('../utils/errorMessage');
 
 function querySQL(query,params) {
     return new Promise(function(resolve, reject) {
-		console.log( query, params );
 		client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);

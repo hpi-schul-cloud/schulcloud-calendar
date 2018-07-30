@@ -11,7 +11,7 @@ function moveScopeIdToArray(json) {
                 object.scope_ids = [object.scope_id];
                 delete object.scope_id;
             });
-        } else {
+        } else if(typeof json=='object' && json!=null) {
             json.scope_ids = [json.scope_id];
             delete json.scope_id;
         }

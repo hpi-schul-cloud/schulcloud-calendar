@@ -1,37 +1,40 @@
 const request = require('request-promise-native');
-const getSubscriptions = require('../../queries/subscriptions/getSubscriptions');
 //const xml2js = require('xml2js');
+const getSubscriptions = require('../../queries/subscriptions/getSubscriptions');
 const icsToJson = require('../../parsers/event/icsToJsonPromise');
-//const icsToJson2 = require('./parser/ics');
-const logger = require('../../infrastructure/logger');
 const insertEvents = require('../events/insertEvents');
 const querySQL = require('../../queries/subscriptions/querySQL');
 
+//config
 const REQUEST_TIMEOUT = 4000;
 const LAST_UPDATE_FAIL_STATUS = 500;
 const LAST_UPDATE_SUCCESS_STATUS = 200;
+const QUERY_LIMIT = 10;
+const QUERY_TIME = 2*60*60*1000; //in ms = 2h
 
 const queryStatus = 'UPDATE subscriptions SET last_updated_status = $1 WHERE '+
 					'subscription_id = $2 AND scope_id = $3 RETURNING id, last_updated_status;'
 					
-const updateDate = 	"UPDATE subscriptions SET last_updated = (TO_TIMESTAMP_TZ( CURRENT_TIMESTAMP ,'YYYY-MM-DD HH24:MI:SSXFF')) WHERE "+
+const updateDate = 	"UPDATE subscriptions SET last_updated = (CURRENT_TIMESTAMP) WHERE "+
 					'subscription_id = $1 AND scope_id = $2 RETURNING id, last_updated;'
 
-/**	'YYYY-MM-DD HH24:MI:SS'
+/**	
 *	@description 
 *		Stand alone service to load and update subscriptions.
 *		The service request the database and load all subscriptions.
 *		After this they start for each subscription url a request load ressource,
 *		parse it (only ics at the moment) and put the results with scope-ids into
 *		the calendar database to events.
+*	@todo	
+*		Service can not interpret ics.xml files 
 **/
-function subscriptionUrlDbImporter(){
-	const queryOptions={
-		limit:10,
-		time: 2*60*60*1000
+function subscriptionUrlDbImporter(opt){
+	const queryOptions=opt||{
+		limit:QUERY_LIMIT,
+		time: QUERY_TIME 
 	};
 	getSubscriptions({},queryOptions)
-	.then(subscription=>updateTimeStamp(subscription))
+	.then(subscriptions=>updateTimeStamp(subscriptions))
 	.then(subscriptions=>{
 		let requestList=subscriptions.map(subscription => {	
 			return new Promise((resolve, reject) => {
@@ -45,21 +48,28 @@ function subscriptionUrlDbImporter(){
 			});
 		});
 		
-		Promise.all(requestList).then( values => {		
-			console.log('ready!');
+		Promise.all(requestList).then( values => {	
+			let miss=0, success=0;
+			values.forEach(arr=>{
+				if(arr==undefined)	miss++; 	//maybe logic must be replace later
+				else 				success++;
+			});
+			console.log('ready! [total='+values.length+' / Query.limit='+queryOptions.limit+' | miss='+miss+' | success='+success+']');
 			return true
 		});
 	});
 }
 
-function updateTimeStamp(subscription){
-	console.log(subscription);
-	querySQL(updateDate,[subscription.subscription_id,subscription.scope_id]);
-	return subscription
+function updateTimeStamp(subscriptions){
+	subscriptions.forEach(subscription=>{	
+		querySQL(updateDate,[subscription.subscription_id,subscription.scope_id]).then(()=>{
+			console.log('execute',subscription.ics_url);
+		});
+	});
+	return subscriptions
 }
 
 function singleRequest(subscription,resolve,reject,parser=icsToJson){
-	console.log('start',subscription.ics_url);
 	const options = {
 		uri : subscription.ics_url,
 		method: 'GET',
@@ -72,8 +82,7 @@ function singleRequest(subscription,resolve,reject,parser=icsToJson){
 	//double adding 
 	const relationships = { 'scope-ids':[subscription['scope_id']], 'separate-users':false };	
 	
-	request(options).then(data => {
-		console.log('load',subscription.ics_url);
+	request(options).then(data => {	
 		resolve( parser(data,reject,relationships,false) );
 	}).catch(err=>{
 		reject('error [Request] '+subscription.ics_url);
@@ -92,29 +101,12 @@ function doInserts(events,subscription) {
 	const user=undefined;
     return new Promise(function (resolve, reject) {
         insertEvents(events, user)
-            .then(()=>{
+            .then(data=>{
 				querySQL(queryStatus,[LAST_UPDATE_SUCCESS_STATUS,subscription.subscription_id,subscription.scope_id]);
-				resolve();
+				console.log(subscription.ics_url,' insert '+data.length+' Events');
+				resolve(data.length);
 			})
             .catch(reject);
     }); 
 }
 module.exports = subscriptionUrlDbImporter;
-
-/* @example alarm
-			"included": [
-				{
-				  "type": "alarm",
-				  "id": "24897696-ee2a-4dcc-ba14-6d8dc1107fb5",
-				  "attributes": {
-					"trigger": "-PT5M",
-					"repeat": 2,
-					"duration": "PT15M",
-					"action": "DISPLAY",
-					"attach": ";FMTTYPE=audio/basic:ftp://example.com/pub/sounds/bell-01.aud",
-					"description": "Prepare for summer party // Email body",
-					"attendee": "mailto:user@example.org",
-					"summary": "Email subject"
-				  }
-				}
-			] */

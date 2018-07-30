@@ -21,7 +21,7 @@ function insertEvent(event, user) {
     return new Promise((resolve, reject) => {
         const {separate_users, scope_ids} = event;
         // the eventId that is returned (different to the internal, unique id)
-        const eventId = uuidV4();
+        const eventId = event.uid || uuidV4();	//uid is parse from ics subscriptions
         getScopeIdsForSeparateUsers(scope_ids, separate_users)
             .then((allScopeIds) => {
                 return insertEventForScopes(event, allScopeIds, eventId);
@@ -74,7 +74,7 @@ function insertEventPerScope(event, scopeId, externalEventId) {
             externalEventId,
             event['x_fields']
         ];
-        insertRawEvent(params)
+        insertRawEvent(params,event.uid)
             .then(moveScopeIdToArray)
             .then((insertedEvent) => {
                 return insertExdates(event, insertedEvent);

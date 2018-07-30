@@ -81,8 +81,10 @@ function lineToJson(line, event,log) {
             const splittedUid = fieldValue.split('@');
             if (splittedUid.length === 2) {
                 event['id'] = splittedUid[0];
+                event['uid'] = splittedUid[0];		//uid must be set to use it for insert event as id
             } else if (splittedUid.length ===1) {
                 event['id'] = fieldValue;
+                event['uid'] = fieldValue;
             } else {
                 if(log) logger.error('[icsToJson] Invalid UID.');
             }

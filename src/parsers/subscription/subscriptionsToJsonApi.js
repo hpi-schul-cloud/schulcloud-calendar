@@ -17,7 +17,7 @@ function subscriptionsToJsonApi(subscriptionJson) {
             self: `${config.ROOT_URL}/subscriptions`
         },
         data: subscriptionJson.map(subscriptionToJsonApi),
-		total:subscriptionJson[0].total||1
+		total:subscriptionJson.length>0 ? subscriptionJson[0].total||1 : 0
     };
 }
 
