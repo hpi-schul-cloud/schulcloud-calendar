@@ -33,9 +33,9 @@ const updateDate = 	"UPDATE subscriptions SET last_updated = (CURRENT_TIMESTAMP)
 *		Service can not interpret ics.xml files 
 **/
 function subscriptionUrlDbImporter(opt){
-	const queryOptions=opt||{
-		limit:QUERY_LIMIT,
-		time: QUERY_TIME 
+	const queryOptions={
+		limit:opt.limit||QUERY_LIMIT,
+		time: opt.time||QUERY_TIME 
 	};
 	getSubscriptions({},queryOptions)
 	.then(subscriptions=>updateTimeStamp(subscriptions))
@@ -65,6 +65,8 @@ function subscriptionUrlDbImporter(opt){
 	}).then(subscriptions=>{		//start recursive  
 		if(subscriptions.length>0)	//condition if it posible that any not updated subscription exist start again
 			subscriptionUrlDbImporter(opt);
+		else
+			process.exit(0);
 	});
 }
 
