@@ -1,10 +1,10 @@
 const { spawn } = require('child_process');
 const delay=getRandomInt(60*1000);	//ms 
-const QUERY_TIME = 2*60*60*1000;
+const QUERY_TIME = 2*60*60*1000; //ms = 2h
 const QUERY_LIMIT = 10;
 
 (function init(){
-	setInterval(startProcess,QUERY_TIME+delay);	//ms = 2h
+	setInterval(startProcess,QUERY_TIME+delay);	
 })();
 
 function startProcess(){

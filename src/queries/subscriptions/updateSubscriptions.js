@@ -18,7 +18,7 @@ function udpdateSubscription(params) {
             query += `AND scope_id = $${scopeIdIndex} `;
         }
         query += `RETURNING ${allColumns}`;
-		console.log(query,params);
+
         client.query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);

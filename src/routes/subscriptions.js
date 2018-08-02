@@ -78,7 +78,6 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
     const user = req.user;
 
     authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
-        .then((data)=>{console.log(data); return data})
 		.then(() => updateSubscriptions(subscription, subscriptionId))
         .then((updatedSubscriptions) => {
             if (updatedSubscriptions.length === 0) {
