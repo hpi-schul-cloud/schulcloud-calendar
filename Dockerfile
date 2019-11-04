@@ -1,7 +1,7 @@
-FROM node:8.12.0
+FROM node:8.16.0
 
 WORKDIR /schulcloud-calendar
 COPY . .
-RUN npm install
+RUN chown -R 1000:1000 /schulcloud-calendar && npm install
 
 CMD npm start
