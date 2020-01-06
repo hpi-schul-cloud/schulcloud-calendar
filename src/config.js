@@ -15,7 +15,7 @@ exports.API_KEY = process.env.API_KEY || 'example';
 /**
  * Base Paths
  */
-const SCHULCLOUD_BASE_PATH = process.env.SCHULCLOUD_BASE_PATH || 'https://schulcloud-api-mock.herokuapp.com';
+const SCHULCLOUD_BASE_PATH = process.env.SCHULCLOUD_BASE_PATH || 'http://localhost:3030';
 const NOTIFICATION_SERVICE_BASE_PATH = process.env.NOTIFICATION_SERVICE_BASE_PATH || 'https://schul-cloud.org:3030';
 exports.DOMAIN_NAME = process.env.DOMAIN_NAME || 'schul-cloud.org';
 exports.ROOT_URL = process.env.ROOT_URL || `https://${exports.DOMAIN_NAME}:3000`;

@@ -9,8 +9,8 @@
     "watch": "nodemon ./src/infrastructure/server",
     "debug": "node debug ./src/infrastructure/server",
     "linter": "eslint src",
-    "test": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --recursive --reporter nyan",
-    "test_travis": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=postgres DB_DATABASE=schulcloud_calendar_test mocha --recursive --reporter nyan"
+    "test": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --recursive",
+    "test_travis": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=postgres DB_DATABASE=schulcloud_calendar_test mocha --recursive"
   },
   "dependencies": {
     "body-parser": "^1.15.2",

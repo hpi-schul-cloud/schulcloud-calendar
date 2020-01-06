@@ -1,4 +1,3 @@
-const expect = require('chai').expect;
 const request = require('supertest');
 const app = require('../../src/app');
 const dbClient = require('../../src/infrastructure/database');
@@ -21,6 +20,7 @@ describe('routes/subscription', function() {
                 .send(withSingleScopeId)
                 .expect(200, done);
         });
+        
 
     });
 });
