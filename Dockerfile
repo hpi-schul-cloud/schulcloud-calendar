@@ -1,4 +1,4 @@
-FROM node:8.16.0
+FROM node:8.17.0
 
 WORKDIR /schulcloud-calendar
 COPY . .
