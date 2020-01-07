@@ -6,7 +6,7 @@ const fillDatabase = require('../_testutils/fillDatabase');
 const DatabaseCleaner = require('database-cleaner');
 const databaseCleaner = new DatabaseCleaner('postgresql');
 
-describe('routes/calendar', function() {
+describe.skip('routes/calendar', function() {
 
     beforeEach(function(done) {
         nock('http://localhost:3030')

@@ -20,6 +20,21 @@ BEGIN
       NULL, NULL, NULL, NULL),
     (uuid_generate_v4(), 'Termin den keiner besuchen darf', 'HPI, Potsdam', NULL, '2016-11-22 09:00:00.000000',
      '2016-11-23 18:30:00.000000', '8b0753ab-6fa8-4f42-80bd-700fe8f7d66f', NOW(), NOW(), NULL, NULL, NULL, NULL, NULL,
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+    (uuid_generate_v4(), 'user scope description', 'user scope name', NULL, '2016-11-22 09:00:00.000000',
+     '2016-11-23 18:30:00.000000', '59898b4a26ffc20c510cfcf0', NOW(), NOW(), NULL, NULL, NULL, NULL, NULL,
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+    (uuid_generate_v4(), 'class read scope description', 'class read scope name', NULL, '2020-01-07 09:00:00.000000',
+     '2016-11-23 18:30:00.000000', '5db838ff8517be0028847d1d', NOW(), NOW(), NULL, NULL, NULL, NULL, NULL,
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+    (uuid_generate_v4(), 'class write scope description', 'class write scope name', NULL, '2020-01-07 09:00:00.000000',
+     '2016-11-23 18:30:00.000000', '5d63d2738e9031001a53f82f', NOW(), NOW(), NULL, NULL, NULL, NULL, NULL,
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+    (uuid_generate_v4(), 'course read scope description', 'course read scope name', NULL, '2020-01-07 09:00:00.000000',
+     '2016-11-23 18:30:00.000000', '58f735e4014bbf45f0be2502', NOW(), NOW(), NULL, NULL, NULL, NULL, NULL,
+      NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+    (uuid_generate_v4(), 'course write scope description', 'course write scope name', NULL, '2020-01-07 09:00:00.000000',
+     '2016-11-23 18:30:00.000000', '5b51d6a582cf210011bedcb1', NOW(), NOW(), NULL, NULL, NULL, NULL, NULL,
       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
   INSERT INTO exdates VALUES
