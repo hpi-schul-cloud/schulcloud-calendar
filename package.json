@@ -33,6 +33,7 @@
     "database-cleaner": "^1.2.0",
     "eslint": "^3.14.1",
     "mocha": "^7.0.0",
+    "nock": "^11.7.1",
     "nodemon": "^1.11.0",
     "supertest": "^4.0.2"
   }
