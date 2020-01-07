@@ -5,7 +5,7 @@
  */
 
 const app = require('../app');
-const debug = require('debug')('schulcloud-calendar:server');
+// const debug = require('debug')('schulcloud-calendar:server');
 const http = require('http');
 const logger = require('../infrastructure/logger');
 
@@ -41,7 +41,7 @@ server.listen(port, (err) => {
     }
 });
 server.on('error', onError);
-server.on('listening', onListening);
+// server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -94,11 +94,12 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
+ /*
 function onListening() {
     const addr = server.address();
-    const bind = typeof addr === 'string'
+   const bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    debug('Listening on ' + bind);
+    debug('Listening on ' + bind); 
 }
+*/
