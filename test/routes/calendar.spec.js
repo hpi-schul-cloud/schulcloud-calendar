@@ -2,9 +2,7 @@ const request = require('supertest');
 const app = require('../../src/app');
 const nock = require('nock');
 const dbClient = require('../../src/infrastructure/database');
-const fillDatabase = require('../_testutils/fillDatabase');
-const DatabaseCleaner = require('database-cleaner');
-const databaseCleaner = new DatabaseCleaner('postgresql');
+const fillDatabase = require('../_testutils/dbUtils');
 
 describe.skip('routes/calendar', function() {
 
@@ -16,7 +14,8 @@ describe.skip('routes/calendar', function() {
     });
 
     afterEach(function(done) {
-        databaseCleaner.clean(dbClient, done);
+      //  databaseCleaner.clean(dbClient, done);
+        done();
     });
 
     describe('GET calendar/', function() {
