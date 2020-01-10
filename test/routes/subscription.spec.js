@@ -28,7 +28,6 @@ describe.skip('routes/subscription', function() {
                 .expect(200, done);
         });
         
-
     });
 });
 
