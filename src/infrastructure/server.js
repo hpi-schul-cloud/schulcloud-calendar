@@ -1,39 +1,16 @@
 #!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
 const app = require('../app');
-const debug = require('debug')('schulcloud-calendar:server');
 const http = require('http');
 const logger = require('../infrastructure/logger');
 
-/**
- * Get port from environment and store in Express.
- */
-
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
-
-/**
- * actions for all requests:
- * - print request to console log
- */
 
 const requestHandler = (request, response) => { // eslint-disable-line no-unused-vars
     logger.log(request.url);
 };
 
-/**
- * Create HTTP server.
- */
-
 const server = http.createServer(app, requestHandler);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
 
 server.listen(port, (err) => {
     if (err) {
@@ -41,31 +18,20 @@ server.listen(port, (err) => {
     }
 });
 server.on('error', onError);
-server.on('listening', onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
 
 function normalizePort(val) {
     const port = parseInt(val, 10);
 
     if (isNaN(port)) {
-        // named pipe
         return val;
     }
 
     if (port >= 0) {
-        // port number
         return port;
     }
 
     return false;
 }
-
-/**
- * Event listener for HTTP server "error" event.
- */
 
 function onError(error) {
     if (error.syscall !== 'listen') {
@@ -89,16 +55,4 @@ function onError(error) {
         default:
             throw error;
     }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-    const addr = server.address();
-    const bind = typeof addr === 'string'
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
-    debug('Listening on ' + bind);
 }

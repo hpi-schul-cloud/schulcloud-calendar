@@ -15,16 +15,21 @@ exports.API_KEY = process.env.API_KEY || 'example';
 /**
  * Base Paths
  */
-const SCHULCLOUD_BASE_PATH = process.env.SCHULCLOUD_BASE_PATH || 'https://schulcloud-api-mock.herokuapp.com';
+const SCHULCLOUD_BASE_PATH = process.env.SCHULCLOUD_BASE_PATH || 'http://localhost:3030';
 const NOTIFICATION_SERVICE_BASE_PATH = process.env.NOTIFICATION_SERVICE_BASE_PATH || 'https://schul-cloud.org:3030';
+exports.SCHULCLOUD_BASE_PATH = SCHULCLOUD_BASE_PATH;
 exports.DOMAIN_NAME = process.env.DOMAIN_NAME || 'schul-cloud.org';
 exports.ROOT_URL = process.env.ROOT_URL || `https://${exports.DOMAIN_NAME}:3000`;
 
 /**
 * API Paths
 */
-exports.SCHULCLOUD_ALL_USERS_FOR_UUID = process.env.SCHULCLOUD_ALL_USERS_FOR_UUID || SCHULCLOUD_BASE_PATH + '/api/all_users/';
-exports.SCHULCLOUD_ALL_SCOPES_FOR_TOKEN = process.env.SCHULCLOUD_ALL_SCOPES_FOR_TOKEN || SCHULCLOUD_BASE_PATH + '/api/all_scopes/';
+const SERVER_USERS_URI = '/resolve/users/';
+const SERVER_SCOPES_URI = '/resolve/scopes/';
+exports.SERVER_USERS_URI = SERVER_USERS_URI;
+exports.SERVER_SCOPES_URI = SERVER_SCOPES_URI;
+exports.SCHULCLOUD_ALL_USERS_FOR_UUID = process.env.SCHULCLOUD_ALL_USERS_FOR_UUID || SCHULCLOUD_BASE_PATH + SERVER_USERS_URI;
+exports.SCHULCLOUD_ALL_SCOPES_FOR_TOKEN = process.env.SCHULCLOUD_ALL_SCOPES_FOR_TOKEN || SCHULCLOUD_BASE_PATH + SERVER_SCOPES_URI;
 exports.NOTIFICATION_SERVICE_NEW_NOTIFICATION = process.env.NOTIFICATION_SERVICE_NEW_NOTIFICATION || NOTIFICATION_SERVICE_BASE_PATH + '/messages';
 
 /**
