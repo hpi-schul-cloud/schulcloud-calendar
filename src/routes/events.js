@@ -40,6 +40,13 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
         until: req.query['until'],
         all: req.query['all']
     };
+
+    if (['1', 1, 'true'].includes(filter.all)) {
+        filter.all = true;
+    } else if(['0', 0, 'false'].includes(filter.all)) {
+        filter.all = false;
+    }
+
     const user = req.user;
 
     authorizeAccessToScopeId(user, filter.scopeId)
