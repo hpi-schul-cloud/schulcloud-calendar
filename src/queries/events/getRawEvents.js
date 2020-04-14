@@ -25,7 +25,7 @@ function getRawEvents(filter) {
 }
 
 function buildQuery(filter, reject) {
-    let { scopeId, eventId, from, until } = filter;
+    let { scopeId, eventId, from, until, all } = filter;
     let query;
     let params;
 
@@ -34,16 +34,21 @@ function buildQuery(filter, reject) {
     }
 
     if (scopeId) {
-        from = isoDateFormat(from || FROM());
-        until = isoDateFormat(until || UNTIL());
-        query = `SELECT ${allColumns} FROM events WHERE scope_id = $1 AND dtstart > $2 AND dtstart < $3`;
-        params = [ scopeId, from, until ];
+        query = `SELECT ${allColumns} FROM events WHERE scope_id = $1`;
+        params = [ scopeId ];
     } 
 
     if (eventId) {
         query = `SELECT ${allColumns} FROM events WHERE event_id = $1`;
         params = [ eventId ];
     } 
+
+    if (!all) {
+        from = isoDateFormat(from || FROM());
+        until = isoDateFormat(until || UNTIL());
+        query = `${query} AND dtstart > $2 AND dtstart < $3`;
+        params = [ ...params, from, until ];
+    }
 
     query = `${query} ORDER BY id ASC;`;
     return { query, params };
