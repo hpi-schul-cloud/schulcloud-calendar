@@ -3,19 +3,15 @@ const isoDateFormat = require('../../utils/isoDateFormat');
 const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
 
-const THREE_WEEKS = 1000 * 60 * 60 * 24 * 21;
-const FROM = new Date(new Date().getTime() - THREE_WEEKS);
-const UNTIL = new Date(new Date().getTime() + THREE_WEEKS);
+const DAY = 1000 * 60 * 60 * 24;
+const WEEK = DAY * 7;
+const YEAR = DAY * 365;
+const FROM = () => new Date(new Date().getTime() - WEEK * 3);
+const UNTIL = () => new Date(new Date().getTime() + YEAR * 2);
 
 function getRawEvents(filter) {
     return new Promise((resolve, reject) => {
-        const { scopeId, eventId } = filter;
-
-        if (!scopeId && !eventId) {
-            reject('No scopeId or eventId for event selection given');
-        }
-
-        const { query, params } = buildQuery(filter);
+        const { query, params } = buildQuery(filter, reject);
 
         client.query(query, params, (error, result) => {
             if (error) {
@@ -28,31 +24,29 @@ function getRawEvents(filter) {
     });
 }
 
-function buildQuery(filter) {
-    let { scopeId, eventId, from = FROM, until = UNTIL, all } = filter;
+function buildQuery(filter, reject) {
+    let { scopeId, eventId, from, until } = filter;
     let query;
     let params;
 
-    // ensure common date format
-    from = isoDateFormat(from);
-    until = isoDateFormat(until);
+    if (!scopeId && !eventId) {
+        reject('No scopeId or eventId for event selection given');
+    }
 
-    // filter either by scopeId or eventId
+    // filter either by scopeId or eventId -> existing is forced by getRawEvents()
     if (scopeId) {
-        query = `SELECT ${allColumns} FROM events WHERE scope_id = $1`;
-        params = [ scopeId ];
-    } else {
+        from = isoDateFormat(from || FROM());
+        until = isoDateFormat(until || UNTIL());
+        query = `SELECT ${allColumns} FROM events WHERE scope_id = $1 AND dtstart > $2 AND dtstart < $3`;
+        params = [ scopeId, from, until ];
+    } 
+
+    if (eventId) {
         query = `SELECT ${allColumns} FROM events WHERE event_id = $1`;
         params = [ eventId ];
         // always return all events when eventId is given
-        all = true;
-    }
-
-    // if all is not set, filter by timespan
-    if (!all) {
-        query = `${query} AND dtstart > $2 AND dtstart < $3`;
-        params = [ ...params, from, until ];
-    }
+        // all = true;
+    } 
 
     query = `${query} ORDER BY id ASC;`;
     return { query, params };
