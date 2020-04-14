@@ -2,12 +2,11 @@ const client = require('../../infrastructure/database');
 const isoDateFormat = require('../../utils/isoDateFormat');
 const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
+const { SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS, SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS } = require('../../config');
 
 const DAY = 1000 * 60 * 60 * 24;
-const WEEK = DAY * 7;
-const YEAR = DAY * 365;
-const FROM = () => new Date(new Date().getTime() - WEEK * 3);
-const UNTIL = () => new Date(new Date().getTime() + YEAR * 2);
+const FROM = () => new Date(new Date().getTime() - DAY * SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS);
+const UNTIL = () => new Date(new Date().getTime() + DAY * SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS);
 
 function getRawEvents(filter) {
     return new Promise((resolve, reject) => {
