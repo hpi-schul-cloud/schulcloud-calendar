@@ -33,7 +33,6 @@ function buildQuery(filter, reject) {
         reject('No scopeId or eventId for event selection given');
     }
 
-    // filter either by scopeId or eventId -> existing is forced by getRawEvents()
     if (scopeId) {
         from = isoDateFormat(from || FROM());
         until = isoDateFormat(until || UNTIL());
@@ -44,8 +43,6 @@ function buildQuery(filter, reject) {
     if (eventId) {
         query = `SELECT ${allColumns} FROM events WHERE event_id = $1`;
         params = [ eventId ];
-        // always return all events when eventId is given
-        // all = true;
     } 
 
     query = `${query} ORDER BY id ASC;`;
