@@ -47,3 +47,10 @@ exports.CORS_ORIGIN = process.env.CORS_ORIGIN || 'https://schulcloud.github.io';
  * Logging
  */
 exports.LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
+
+/**
+ * Setttings
+ */
+exports.DAY_IN_MS = 1000 * 60 * 60 * 24;
+exports.SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS = 21;
+exports.SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS = 365 * 2;
