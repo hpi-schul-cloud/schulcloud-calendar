@@ -22,12 +22,29 @@ if (app.get('env') === 'production' || app.get('env') === 'test') {
     }
 
     if (db_password) {
-        db = `postgres://${db_username}:${db_password}@${db_host}:${db_port}/${db_database}`;
+        db = {
+            user: db_username,
+            password: db_password,
+            host: db_host,
+            port: db_port,
+            database: db_database,
+        };
     } else {
-        db = `postgres://${db_username}@${db_host}:${db_port}/${db_database}`;
+        db = {
+            user: db_username,
+            host: db_host,
+            port: db_port,
+            database: db_database,
+        };
     }
 } else {
-    db = 'postgres://node:node@localhost:5432/schulcloud_calendar';
+    db = {
+        user: 'node',
+        password: 'node',
+        host: 'localhost',
+        port: 5432,
+        database: 'schulcloud_calendar',
+    };
 }
 
 const client = new pg.Client(db);
