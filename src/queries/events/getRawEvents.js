@@ -48,8 +48,8 @@ function buildQuery(filter, reject) {
     if (!all) {
         from = isoDateFormat(from || FROM());
         until = isoDateFormat(until || UNTIL());
-        query = `${query} AND dtstart > $2 AND dtstart < $3`;
-        params = [ ...params, from, until ];
+        query = `${query} AND dtstart < $2 AND dtend > $3`;
+        params = [ ...params, until, from ];
     }
 
     query = `${query} ORDER BY id ASC;`;
