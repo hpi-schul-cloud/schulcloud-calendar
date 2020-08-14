@@ -9,7 +9,7 @@ let client = null;
 const connect = (db) => {
 	const c = new pg.Client(db);
 
-    c.connect()
+   return c.connect()
     .then(() => {
 		console.log('Postgres DB connected.');
 		client = c;
@@ -24,7 +24,7 @@ const connect = (db) => {
 		});
 
 		client.query("SET intervalstyle = 'iso_8601';");
-
+		return client;
     }).catch((err) => {
         console.log('Postgres DB can not connected.', err);
 	});
@@ -72,10 +72,10 @@ if (app.get('env') === 'production' || app.get('env') === 'test') {
     };
 }
 
-connect(db);
+const prom = connect(db);
 
 types.setTypeParser(INTERVAL_OID, function(val) {
     return val.toString();
 });
 
-module.exports = () => client;
+module.exports = (promise = false) => promise ? prom : client;

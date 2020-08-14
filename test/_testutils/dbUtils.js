@@ -49,33 +49,56 @@ function clearSQL(str) {
 }
 
 const fillDatabase = (client) => (done) => {
-    console.log('execute fillDatabase >'); // , exampleDataQuery);
-    return client.query(exampleDataQuery, function() {
+	console.log('execute fillDatabase >'); // , exampleDataQuery);
+	return client.query(exampleDataQuery)
+		.then((result) => {
+			// console.log('fillDatabase result=', result);
+			if(done) {done();}
+		}).catch((err) => {
+			console.log(new Error(err));
+		});
+   /* return client.query(exampleDataQuery, function() {
         console.log('done!');
         if(done) {done();}
     }).catch((err) => {
         console.log(new Error(err));
-    });
+    }); */
 };
 
 const clearData = (client) => (done) =>  {
-    console.log('execute clearData >'); //, dropTablesQuery);
-    return client.query(dropTablesQuery, function() {
+	console.log('execute clearData >');
+	return client.query(dropTablesQuery)
+		.then((result) =>{
+			// console.log('clearData result=', result);
+			if (done){ done(); }
+		})
+		.catch((err) => {
+			console.log(new Error(err));
+		});
+   /* return client.query(dropTablesQuery, function() {
         console.log('done!');
         if(done) {done();}  
     }).catch((err) => {
         console.log(new Error(err));
-    });
+    });*/
 };
 
 const setSchema = (client) => (done) =>  {
-    console.log('execute setSchema >'); //, schemaQuery);
-    return client.query(schemaQuery, function() {
+	console.log('execute setSchema >'); //, schemaQuery);
+	return client.query(schemaQuery)
+		.then((result) => {
+			// console.log('schemaQuery result=', result);
+			if(done) {done();}  
+		})
+    	.catch((err) => {
+        	console.log(new Error(err));
+   		 });
+   /* return client.query(schemaQuery, function() {
         console.log('done!');
         if(done) {done();}  
     }).catch((err) => {
         console.log(new Error(err));
-    });
+    }); */
 };
 
 const resetDB = (client) => (done) => {
