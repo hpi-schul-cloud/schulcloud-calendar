@@ -1,4 +1,4 @@
-const client = require('../../../infrastructure/database');
+const getClient = require('../../../infrastructure/database');
 const errorMessage = require('../../utils/errorMessage');
 const { allColumns } = require('./constants');
 
@@ -7,7 +7,7 @@ function deleteAlarms(eventId) {
         const query = 'DELETE FROM alarms '
             + 'WHERE event_id = $1 '
             + `RETURNING ${allColumns}`;
-        client.query(query, [eventId], function (error, result) {
+        getClient().query(query, [eventId], function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);

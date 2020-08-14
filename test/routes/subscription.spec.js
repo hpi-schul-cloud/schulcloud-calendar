@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../../src/app');
 const nock = require('nock');
-const dbClient = require('../../src/infrastructure/database');
+const getClient = require('../../src/infrastructure/database');
 
 describe.skip('routes/subscription', function() {
 
@@ -13,7 +13,7 @@ describe.skip('routes/subscription', function() {
     });
 
     afterEach(function(done) {
-		// databaseCleaner.clean(dbClient, done);
+		// databaseCleaner.clean(getClient(), done);
         done();
     });
 

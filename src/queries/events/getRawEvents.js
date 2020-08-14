@@ -1,4 +1,4 @@
-const client = require('../../infrastructure/database');
+const getClient = require('../../infrastructure/database');
 const isoDateFormat = require('../../utils/isoDateFormat');
 const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
@@ -15,7 +15,7 @@ function getRawEvents(filter) {
     return new Promise((resolve, reject) => {
         const { query, params } = buildQuery(filter, reject);
 
-        client.query(query, params, (error, result) => {
+        getClient().query(query, params, (error, result) => {
             if (error) {
                 errorMessage(query, error);
                 reject(error);

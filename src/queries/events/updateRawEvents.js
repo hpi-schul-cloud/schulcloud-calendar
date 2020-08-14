@@ -1,4 +1,4 @@
-const client = require('../../infrastructure/database');
+const getClient = require('../../infrastructure/database');
 const errorMessage = require('../utils/errorMessage');
 const {
     allColumns,
@@ -18,7 +18,7 @@ function udpdateRawEvent(params) {
             query += `AND scope_id = $${scopeIdIndex} `;
         }
         query += `RETURNING ${allColumns}`;
-        client.query(query, params, function (error, result) {
+        getClient().query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
