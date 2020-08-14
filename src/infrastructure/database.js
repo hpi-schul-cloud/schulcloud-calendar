@@ -5,6 +5,17 @@ const types = require('pg').types;
 const INTERVAL_OID = 1186;
 const config = require('../config');
 
+const connect = (db) => {
+	const client = new pg.Client(db)
+    client.connect()
+    .then(() => {
+        console.log('Postgres DB connected.');
+    }).catch((err) => {
+        console.log('Postgres DB can not connected.', err);
+	});
+	return client;
+}
+
 let db;
 if (app.get('env') === 'production' || app.get('env') === 'test') {
     const db_username = config.DB_USERNAME;
@@ -47,14 +58,21 @@ if (app.get('env') === 'production' || app.get('env') === 'test') {
     };
 }
 
-const client = new pg.Client(db);
+let client = connect(db);
+/*
 client.on('connect', () => {
     console.log('Postgres DB connected.');
-})
+}) */
 client.on('error', (err) => {
-    console.log('[Error]', err);
+    console.log('[PostGresError]', err);
+    if (err.severity === 'FATAL') {
+        client.end().then(() => {
+			let client = connect(db);
+		});  
+    }
 });
-client.connect();
+
+
 
 client.query("SET intervalstyle = 'iso_8601';");
 
@@ -62,4 +80,4 @@ types.setTypeParser(INTERVAL_OID, function(val) {
     return val.toString();
 });
 
-module.exports = client;
+module.exports = () => client;
