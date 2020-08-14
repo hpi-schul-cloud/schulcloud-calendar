@@ -80,11 +80,9 @@ const setSchema = (client) => (done) =>  {
 
 const resetDB = (client) => (done) => {
     return clearData(client)().then(() => {
-       // return setSchema(client)().then(() => {
         return fillDatabase(client)().then(() => {
             if(done) {done();}  
         });
-      //   });
     });
 };
 
