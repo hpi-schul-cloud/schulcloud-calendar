@@ -48,6 +48,12 @@ if (app.get('env') === 'production' || app.get('env') === 'test') {
 }
 
 const client = new pg.Client(db);
+client.on('connect', () => {
+    console.log('Postgres DB connected.');
+})
+client.on('error', (err) => {
+    console.log('[Error]', err);
+});
 client.connect();
 
 client.query("SET intervalstyle = 'iso_8601';");
