@@ -14,7 +14,7 @@
     "debug": "nodemon --inspect=4949 src",
     "debug:container": "nodemon --inspect=0.0.0.0:4949 src",
     "linter": "eslint src",
-    "test": "cross-env NODE_ENV=test DB_DATABASE=schulcloud_calendar_test mocha --exit --t 10000 './test/**/*.test.js'"
+    "test": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --exit --t 10000 './test/**/*.test.js'"
   },
   "dependencies": {
     "body-parser": "^1.15.2",

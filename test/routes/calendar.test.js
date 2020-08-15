@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../src/app');
 const nock = require('nock');
 const getClient = require('../../src/infrastructure/database');
-const fillDatabase = require('../_testutils/dbUtils');
+const fillDatabase = require('../testutils/dbUtils');
 
 describe.skip('routes/calendar', function() {
 

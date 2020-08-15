@@ -9,10 +9,8 @@ const {
     dbUtils,
     serverMockData: { createOverlayWithDefaultScopes, addCourseScope },
     convertEventToJsonApi,
-} = require('../_testutils/');
-
-/** helpers */
-const getDate = (minOffset) => new Date(new Date().getTime() + (minOffset * 1000 * 60)).toISOString();
+    getDate,
+} = require('../testutils');
 
 /** tests */
 describe('routes/events', () => {
@@ -22,13 +20,14 @@ describe('routes/events', () => {
     let server;
     const resolvedServerScopes = createOverlayWithDefaultScopes();
 
-    const addTestEvents = async ({scopeId = '59cce16281297026d02cde123',  userId = '59898b4a26ffc20c510cfcf0', courseName = 'test'}, optionalData = {}) => {
-        const needed = {
+    const addTestEvents = async ({ scopeId = '59cce16281297026d02cde123', courseName = 'test', startDate, endDate }) => {
+        const data = {
             courseId: scopeId,
             scopeId,
             summary: courseName,
+            startDate, 
+            endDate,
         };
-        const eventData = convertEventToJsonApi({ ...needed, ...optionalData });
 
         await nock(SCHULCLOUD_BASE_PATH)
             .get(uri => uri.includes(SERVER_SCOPES_URI))
@@ -38,10 +37,10 @@ describe('routes/events', () => {
     
         const result = await request(app)
             .post('/events')
-            .send(eventData)
+            .send(convertEventToJsonApi(data))
             .set('Authorization', userId);
 
-            console.log('Request:', result.body.data);
+            // console.log('Request:', result.body.data);
 
             return result.body.data;
     }
@@ -103,7 +102,7 @@ describe('routes/events', () => {
             });
         });
     
-        describe('GET', () => {
+        describe('FIND all', () => {
             it('get all for this user', async () => {
                const result = await request(app)
                     .get('/events')
@@ -114,34 +113,23 @@ describe('routes/events', () => {
 
                 expect(result.body.data).to.be.an('array').to.have.lengthOf(5);
             });
-    
-            it('get one specific event by scope-id for this user', async () => {
-                const result = await request(app)
-                    .get('/events')
-                    .query({
-                        'scopeId': '5db838ff8517be0028847d1d',
-                    })
-                    .set('Authorization', userId)
-
-                expect(result.body.data).to.be.an('array').to.have.lengthOf(1);
-            });
         });
     
-        describe('FIND', () => {
+        describe('FIND with scope and timebox', () => {
             const scopeId = '59cce16281297026d02abc123';
             const courseName = 'find time box test';
             let events;
             before(async () => {
-                await addCourseScope(resolvedServerScopes, scopeId, courseName, true);
+                addCourseScope(resolvedServerScopes, scopeId, courseName, true);
 
                 events = await Promise.all([
-                    addTestEvents({ scopeId }, { startDate: getDate(-30), endDate: getDate(30)}), // touched start
-                    addTestEvents({ scopeId }, { startDate: getDate(15), endDate: getDate(45)}), // in time
-                    addTestEvents({ scopeId }, { startDate: getDate(30), endDate: getDate(90)}), // touched end
-                    addTestEvents({ scopeId }, { startDate: getDate(-30), endDate: getDate(90)}), // start before and end after
-                    addTestEvents({ scopeId }, { startDate: getDate(-60), endDate: getDate(-30)}), // end before - should not found
-                    addTestEvents({ scopeId }, { startDate: getDate(90), endDate: getDate(120)}),// start after - should not found
-                    addTestEvents({ scopeId: '59cce16281297026d02xyz999' }, { startDate: getDate(15), endDate: getDate(45)}), // other scope - should not found
+                    addTestEvents({ scopeId, startDate: getDate(-30), endDate: getDate(30)}), // touched start
+                    addTestEvents({ scopeId, startDate: getDate(15), endDate: getDate(45)}), // in time
+                    addTestEvents({ scopeId, startDate: getDate(30), endDate: getDate(90)}), // touched end
+                    addTestEvents({ scopeId, startDate: getDate(-30), endDate: getDate(90)}), // start before and end after
+                    addTestEvents({ scopeId, startDate: getDate(-60), endDate: getDate(-30)}), // end before - should not found
+                    addTestEvents({ scopeId, startDate: getDate(90), endDate: getDate(120)}),// start after - should not found
+                    addTestEvents({ scopeId: '59cce16281297026d02xyz999', startDate: getDate(15), endDate: getDate(45)}), // other scope - should not found
                 ]);
             });
 
@@ -150,7 +138,7 @@ describe('routes/events', () => {
                 await resetDB();
             }); 
 
-            it('find all events that touched by requested time box', async () => {
+            it('find all events that touched by requested time box and scope', async () => {
                 const result = await request(app)
                     .get('/events')
                     .query({
