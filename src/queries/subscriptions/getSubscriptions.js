@@ -1,4 +1,4 @@
-const client = require('../../infrastructure/database');
+const getClient = require('../../infrastructure/database');
 const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
 
@@ -8,7 +8,7 @@ function getSubscriptions(filter) {
             reject('No filter params for subscription selection given');
         }
         const { query, params } = buildQuery(filter);
-        client.query(query, params, (error, result) => {
+        getClient().query(query, params, (error, result) => {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
