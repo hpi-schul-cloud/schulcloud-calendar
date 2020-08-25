@@ -1,6 +1,6 @@
 {
   "name": "schulcloud-calendar",
-  "version": "24.2.0",
+  "version": "24.3.0",
   "homepage": "https://schul-cloud.org",
   "main": "src/",
   "keywords": [
@@ -11,13 +11,10 @@
   "license": "AGPL-3.0",
   "scripts": {
     "start": "node src",
-    "start_local": "DB_HOST=localhost DB_DATABASE=schulcloud_calendar SCHULCLOUD_ALL_USERS_FOR_UUID=http://localhost:3030/resolve/users/ SCHULCLOUD_ALL_SCOPES_FOR_TOKEN=http://localhost:3030/resolve/scopes/&& npm run debug",
-    "start_local_win": "set DB_HOST=localhost&& set DB_USERNAME=node&& set DB_DATABASE=schulcloud_calendar&& set SCHULCLOUD_ALL_USERS_FOR_UUID=http://localhost:3030/resolve/users/&& set SCHULCLOUD_ALL_SCOPES_FOR_TOKEN=http://localhost:3030/resolve/scopes/&& npm run debug",
     "debug": "nodemon --inspect=4949 src",
     "debug:container": "nodemon --inspect=0.0.0.0:4949 src",
     "linter": "eslint src",
-    "test": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --recursive --exit",
-    "test_travis": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=postgres DB_DATABASE=schulcloud_calendar_test mocha --recursive --exit"
+    "test": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --exit --t 10000 './test/**/*.test.js'"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

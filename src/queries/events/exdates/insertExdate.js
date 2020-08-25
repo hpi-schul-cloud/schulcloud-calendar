@@ -1,4 +1,4 @@
-const client = require('../../../infrastructure/database');
+const getClient = require('../../../infrastructure/database');
 const errorMessage = require('../../utils/errorMessage');
 const {
     allColumns,
@@ -11,7 +11,7 @@ function insertExdate(params) {
         const query = `INSERT INTO exdates ${insertColumns} `
             + `VALUES ${insertTemplate} `
             + `RETURNING ${allColumns}`;
-        client.query(query, params, function (error, result) {
+        getClient().query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
                 reject(error);
