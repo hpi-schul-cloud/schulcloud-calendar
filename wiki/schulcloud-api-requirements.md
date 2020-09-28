@@ -1,4 +1,4 @@
-## Schul-Cloud API Requirements
+## HPI Schul-Cloud API Requirements
 
 ### Endpoints
 
