@@ -11,6 +11,8 @@ function insertRawEvent(params) {
         const query = `INSERT INTO events ${insertColumns} `
             + `VALUES ${insertTemplate} `
             + `RETURNING ${allColumns}`;
+        console.log(`Query>>>>> ${query}`);
+        console.log(`Params>>>>> ${params}`);
         getClient().query(query, params, function (error, result) {
             if (error) {
                 errorMessage(query, error);
