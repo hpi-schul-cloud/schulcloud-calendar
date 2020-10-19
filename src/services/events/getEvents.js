@@ -8,7 +8,6 @@ const moveScopeIdToArray = require('../_moveScopeIdToArray');
 function getEvents(filter, scopes) {
     return new Promise(function (resolve, reject) {
         if (filter.scopeId || filter.eventId || scopes) {
-            console.log("get complete");
             completeEvents(filter, scopes)
                 .then(resolve)
                 .catch(reject);
