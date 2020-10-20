@@ -20,13 +20,16 @@ describe('routes/events', () => {
 	let server;
 	const resolvedServerScopes = createOverlayWithDefaultScopes();
 
-	const addTestEvents = async ({ scopeId = '59cce16281297026d02cde123', summary, startDate, endDate }) => {
+	const addTestEvents = async ({ scopeId = '59cce16281297026d02cde123', summary, startDate, endDate, repeat_freq, repeat_until, repeat_wkst}) => {
 		const data = {
 			courseId: scopeId,
 			scopeId,
 			summary,
-			startDate, 
+			startDate,
 			endDate,
+			repeat_freq,
+			repeat_until,
+			repeat_wkst
 		};
 
 		await nock(SCHULCLOUD_BASE_PATH)
@@ -34,7 +37,7 @@ describe('routes/events', () => {
 			.reply(200, () => {
 				return resolvedServerScopes;
 			});
-	
+
 		const result = await request(app)
 			.post('/events')
 			.send(convertEventToJsonApi(data))
@@ -129,18 +132,20 @@ describe('routes/events', () => {
 					addTestEvents({ scopeId, startDate: getDate(-30), endDate: getDate(30), summary: 'touched start'}),
 					addTestEvents({ scopeId, startDate: getDate(15), endDate: getDate(45), summary: 'in time'}),
 					addTestEvents({ scopeId, startDate: getDate(30), endDate: getDate(90), summary: 'touched end'}),
-					addTestEvents({ scopeId, startDate: getDate(-30), endDate: getDate(90), summary: 'start before and end after'}), 
+					addTestEvents({ scopeId, startDate: getDate(-30), endDate: getDate(90), summary: 'start before and end after'}),
 					addTestEvents({ scopeId, startDate: getDate(-60), endDate: getDate(-30), summary: 'end before - should not found'}),
 					addTestEvents({ scopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
-					addTestEvents({ scopeId: scopeIdThatIsNotRequested, startDate: getDate(15), endDate: getDate(45), summary: 'other scope - should not found'}), 
-					addTestEvents({ scopeId: scopeIdWithoutReadPermissions, startDate: getDate(15), endDate: getDate(45), summary: 'no permissions - should not found'}), 
+					addTestEvents({ scopeId: scopeIdThatIsNotRequested, startDate: getDate(15), endDate: getDate(45), summary: 'other scope - should not found'}),
+					addTestEvents({ scopeId: scopeIdWithoutReadPermissions, startDate: getDate(15), endDate: getDate(45), summary: 'no permissions - should not found'}),
+					addTestEvents({ scopeId, startDate: getDate(-7200), endDate: getDate(-7140), summary: 'weekly every monday', repeat_freq: 'weekly', repeat_until: getDate(3600), repeat_wkst: ['mo']}),
+					addTestEvents({ scopeId, startDate: getDate(-7200), endDate: getDate(-7140), summary: 'weekly every monday', repeat_freq: 'weekly', repeat_until: getDate(-3600), repeat_wkst: ['mo']}),
 				]);
 			});
 
 			after(async () => {
 				resolvedServerScopes.data = resolvedServerScopes.data.filter(scope => scope.id !== scopeId);
 				await resetDB();
-			}); 
+			});
 
 			it('find all events that touched by requested time box and scope', async () => {
 				const result = await request(app)
@@ -152,11 +157,11 @@ describe('routes/events', () => {
 						'scope-id': scopeId
 					})
 					.set('Authorization', userId)
-				
-				expect(result.body.data).to.be.an('array').to.have.lengthOf(4);
+
+				expect(result.body.data).to.be.an('array').to.have.lengthOf(5);
 			});
 		});
-	
+
 		describe('DELETE', () => {
 	
 		});
