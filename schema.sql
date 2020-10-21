@@ -88,6 +88,9 @@ CREATE TABLE events (
   x_fields          JSONB                             DEFAULT NULL
 );
 
+CREATE INDEX ON events (scope_id);
+CREATE INDEX ON events (event_id);
+
 CREATE TABLE alarms (
   id          UUID UNIQUE PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
   event_id    UUID                    NOT NULL REFERENCES events (id) ON DELETE CASCADE,
