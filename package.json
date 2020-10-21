@@ -1,7 +1,7 @@
 {
   "name": "schulcloud-calendar",
-  "version": "24.3.0",
-  "homepage": "https://schul-cloud.org",
+  "version": "25.1.0",
+  "homepage": "https://hpi-schul-cloud.de",
   "main": "src/",
   "keywords": [
     "postgres",
@@ -24,7 +24,7 @@
     "express": "^4.17.1",
     "moment": "^2.22.2",
     "morgan": "^1.10.0",
-    "pg": "^7.18.0",
+    "pg": "^8.4.1",
     "serve-favicon": "^2.5.0",
     "uuid": "~3.0.1",
     "winston": "^2.4.4",
