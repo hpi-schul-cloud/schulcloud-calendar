@@ -71,8 +71,8 @@ tags:: DOCKER_TAG_OPTIONS +=
 tags::
 	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME):$(DOCKER_VERSION_TAG)
 	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME):$(DOCKER_SHA_TAG)
-	ifeq ($(GIT_BRANCH), develop)
-	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME)_latest
+	ifeq ($(GIT_BRANCH),develop)
+	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) develop_latest
 	endif
 
 .PHONY: push
@@ -80,8 +80,8 @@ push:: DOCKER_PUSH_OPTIONS ?=
 push:: tags
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):$(DOCKER_VERSION_TAG)
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):$(DOCKER_SHA_TAG)
-	ifeq ($(GIT_BRANCH), develop)
-	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME)_latest
+	ifeq ($(GIT_BRANCH),develop)
+	docker push $(DOCKER_PUSH_OPTIONS) develop_latest
 	endif
 
 .PHONY: deploy
@@ -103,3 +103,5 @@ exec:: DOCKER_EXEC_OPTIONS += --interactive --tty
 exec:: DOCKER_EXEC_COMMAND ?= /bin/sh
 exec::
 	docker exec $(DOCKER_EXEC_OPTIONS) $(DOCKER_CONTAINER_NAME) $(DOCKER_EXEC_COMMAND)
+
+
