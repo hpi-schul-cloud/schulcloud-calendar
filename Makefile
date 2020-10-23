@@ -103,5 +103,3 @@ exec:: DOCKER_EXEC_OPTIONS += --interactive --tty
 exec:: DOCKER_EXEC_COMMAND ?= /bin/sh
 exec::
 	docker exec $(DOCKER_EXEC_OPTIONS) $(DOCKER_CONTAINER_NAME) $(DOCKER_EXEC_COMMAND)
-
-
