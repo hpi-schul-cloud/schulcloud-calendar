@@ -1,4 +1,3 @@
-/* eslint-disable no-logger */
 // initialize dummy events
 const path = require('path');
 const fs = require('fs');
