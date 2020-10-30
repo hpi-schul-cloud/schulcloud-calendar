@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 const pg = require('pg');
 const express = require('express');
 const app = express();
 const types = require('pg').types;
 const INTERVAL_OID = 1186;
 const config = require('../config');
+const logger = require('../infrastructure/logger');
 
 let client = null;
 const connect = (db) => {
@@ -12,16 +12,16 @@ const connect = (db) => {
 
 	return c.connect()
 		.then(() => {
-			console.log('Postgres DB connected.');
+			logger.info('Postgres DB connected.');
 			client = c;
 
 			client.on('error', (err) => {
-				console.log('[PostGresError]', err);
+				logger.error('[PostGresError]', err);
 				if (err.severity === 'FATAL') {
 					client.end().then(() => {
 						client = connect(db);
 					}).catch((err) => {
-						console.log('Can not stop the connection', err);
+						logger.error('Can not stop the connection', err);
 					});  
 				}
 			});
@@ -29,7 +29,7 @@ const connect = (db) => {
 			client.query("SET intervalstyle = 'iso_8601';");
 			return client;
 		}).catch((err) => {
-			console.log('Postgres DB can not connected.', err);
+			logger.error('Postgres DB can not connected.', err);
 		});
 }
 

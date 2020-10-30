@@ -1,34 +1,20 @@
-const winston = require('winston');
-require('winston-daily-rotate-file');
-const config = require('../config');
-const fs = require('fs');
+const { LOG_LEVEL, NODE_ENV } = require('../config');
+const { createLogger, getDevelopFormat, getTestFormat, getProductionFormat } = require('./loggerUtils');
 
-const logDir = __dirname + '/../../' + 'logs';
-
-const consoleLog = new (winston.transports.Console)({
-    level: config.LOG_LEVEL,
-    json: false,
-    handleExceptions: true,
-    humanReadableUnhandledException: true
-});
-
-const fileLog = new winston.transports.DailyRotateFile({
-    filename: config.LOG_LEVEL + '.log',
-    datePattern: 'yyyy-MM-dd.',
-    prepend: true,
-    dirname: logDir,
-    handleExceptions: true,
-    humanReadableUnhandledException: true,
-    level: config.LOG_LEVEL,
-    json: false
-});
-
-function checkIfFolderExistsAndReturnLogger() {
-    if (!fs.existsSync(logDir))
-        fs.mkdirSync(logDir);
-    return new (winston.Logger)({
-        transports: (process.env.NODE_ENV !== 'test') ? [consoleLog, fileLog] : []
-    });
+let selectedFormat;
+switch (NODE_ENV) {
+	case 'test':
+		selectedFormat = getTestFormat();
+		break;
+	case 'production':
+		selectedFormat = getProductionFormat();
+		break;
+	case 'develop':
+	default:
+		selectedFormat = getDevelopFormat();
 }
 
-module.exports = checkIfFolderExistsAndReturnLogger();
+const logger = createLogger(selectedFormat, LOG_LEVEL);
+
+module.exports = logger;
+

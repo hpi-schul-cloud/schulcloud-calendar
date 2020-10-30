@@ -15,7 +15,7 @@ function handleUndefinedObjects(processedEvents, action, object) {
         const deletions = processedEvents.length - undefinedEvents.length;
         const warning = `${object} ${action} incomplete, ${deletions} of `
             + `${processedEvents.length} queries successful`;
-        logger.warn(warning);
+        logger.warning(warning);
     }
 }
 
