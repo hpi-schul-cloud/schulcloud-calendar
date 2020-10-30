@@ -43,8 +43,6 @@ describe('routes/events', () => {
 			.send(convertEventToJsonApi(data))
 			.set('Authorization', userId);
 
-			// console.log('Request:', result.body.data);
-
 			return result.body.data;
 	}
 

@@ -1,7 +1,7 @@
-/* eslint-disable no-console */
 // initialize dummy events
 const path = require('path');
 const fs = require('fs');
+const logger = require('../../src/infrastructure/logger');
 
 const dropTablesPath = path.join(__dirname, '..', '..','dropTables.sql');
 const dropTablesQueryString = clearSQL(fs.readFileSync(dropTablesPath).toString());
@@ -49,34 +49,34 @@ function clearSQL(str) {
 }
 
 const fillDatabase = (client) => (done) => {
-	console.log('execute fillDatabase >');
+	logger.debug('execute fillDatabase >');
 	return client.query(exampleDataQuery)
 		.then((result) => {
 			if(done) {done();}
 		}).catch((err) => {
-			console.log(new Error(err));
+			logger.error(new Error(err));
 		});
 };
 
 const clearData = (client) => (done) =>  {
-	console.log('execute clearData >');
+	logger.debug('execute clearData >');
 	return client.query(dropTablesQuery)
 		.then((result) =>{
 			if (done){ done(); }
 		})
 		.catch((err) => {
-			console.log(new Error(err));
+			logger.error(new Error(err));
 		});
 };
 
 const setSchema = (client) => (done) =>  {
-	console.log('execute setSchema >');
+	logger.debug('execute setSchema >');
 	return client.query(schemaQuery)
 		.then((result) => {
 			if(done) {done();}  
 		})
 		.catch((err) => {
-			console.log(new Error(err));
+			logger.error(new Error(err));
    		 });
 };
 
