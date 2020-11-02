@@ -10,6 +10,7 @@ GIT_SHA ?= $(shell git rev-parse HEAD)
 GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD | tr -s "[:punct:]" "-" | tr -s "[:upper:]" "[:lower:]")
 GIT_CURRENT_VERSION_TAG ?= $(shell git tag --list "[0-9]*" --sort="-version:refname" --points-at HEAD | head -n 1)
 GIT_LATEST_VERSION_TAG ?= $(shell git tag --list "[0-9]*" --sort="-version:refname" | head -n 1)
+DEVELOP_BRANCH = develop
 
 ifeq ($(GIT_BRANCH),head)
 ifneq ($(GIT_CURRENT_VERSION_TAG),)
@@ -71,7 +72,7 @@ tags:: DOCKER_TAG_OPTIONS +=
 tags::
 	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME):$(DOCKER_VERSION_TAG)
 	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME):$(DOCKER_SHA_TAG)
-	ifeq "$(GIT_BRANCH)","develop"
+	ifeq ($(GIT_BRANCH),$(DEVELOP_BRANCH))
 	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME):develop_latest
 	endif
 
@@ -80,7 +81,7 @@ push:: DOCKER_PUSH_OPTIONS ?=
 push:: tags
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):$(DOCKER_VERSION_TAG)
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):$(DOCKER_SHA_TAG)
-	ifeq "$(GIT_BRANCH)","develop"
+	ifeq ($(GIT_BRANCH),$(DEVELOP_BRANCH))
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):develop_latest
 	endif
 
