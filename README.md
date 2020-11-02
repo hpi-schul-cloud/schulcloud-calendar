@@ -8,7 +8,7 @@
 
 [Research of Caldav Modules for Node](https://github.com/hpi-schulcloud/schulcloud-calendar/blob/master/wiki/node-caldav-research.md)
 
-[Future work](https://github.com/schulcloud/schulcloud-calendar/blob/master/wiki/future-work.md)
+[Future work](https://github.com/hpi-schulcloud/schulcloud-calendar/blob/master/wiki/future-work.md)
 
 ## Setup
 ### Installation
