@@ -4,9 +4,9 @@
 
 [Calendar API](https://schul-cloud.github.io/schulcloud-calendar/#/default)
 
-[HPI Schul-Cloud API Requirements](https://github.com/hpi-chulcloud/schulcloud-calendar/blob/master/wiki/schulcloud-api-requirements.md)
+[HPI Schul-Cloud API Requirements](https://github.com/hpi-schulcloud/schulcloud-calendar/blob/master/wiki/schulcloud-api-requirements.md)
 
-[Research of Caldav Modules for Node](https://github.com/schulcloud/hpi-schulcloud-calendar/blob/master/wiki/node-caldav-research.md)
+[Research of Caldav Modules for Node](https://github.com/hpi-schulcloud/schulcloud-calendar/blob/master/wiki/node-caldav-research.md)
 
 [Future work](https://github.com/schulcloud/schulcloud-calendar/blob/master/wiki/future-work.md)
 
