@@ -80,7 +80,7 @@ push:: DOCKER_PUSH_OPTIONS ?=
 push:: tags
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):$(DOCKER_VERSION_TAG)
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):$(DOCKER_SHA_TAG)
-	ifeq "$(GIT_BRANCH),develop"
+	ifeq "$(GIT_BRANCH)","develop"
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):develop_latest
 	endif
 
