@@ -6,6 +6,25 @@ const INTERVAL_OID = 1186;
 const config = require('../config');
 const logger = require('../infrastructure/logger');
 
+/*
+pg-promise solve the issue with version 10.5.0
+https://github.com/vitaly-t/pg-promise/issues/680
+{
+   message: 'Client has encountered a connection error and is not queryable',
+   level: 'error',
+   logType: 'error'
+}
+*/
+
+const restart = (client, connect) => {
+	client.end().then(() => {
+		client = connect(db);
+	}).catch((err) => {
+		logger.error('Can not stop the connection', err);
+		// process.exit(3) 
+	});  
+}
+
 let client = null;
 const connect = (db) => {
 	const c = new pg.Client(db);
@@ -18,11 +37,7 @@ const connect = (db) => {
 			client.on('error', (err) => {
 				logger.error('[PostGresError]', err);
 				if (err.severity === 'FATAL') {
-					client.end().then(() => {
-						client = connect(db);
-					}).catch((err) => {
-						logger.error('Can not stop the connection', err);
-					});  
+					restart(client, connect);
 				}
 			});
 
@@ -30,6 +45,7 @@ const connect = (db) => {
 			return client;
 		}).catch((err) => {
 			logger.error('Postgres DB can not connected.', err);
+			// process.exit(3) 
 		});
 }
 
