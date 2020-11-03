@@ -2,6 +2,8 @@
  * Global Settings fot the Schul-Cloud Calendar Service
  */
 
+exports.NODE_ENV = process.env.NODE_ENV;
+
 /**
  * Database settings for production environment
  */
