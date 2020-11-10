@@ -31,11 +31,11 @@ app.use('/', events);
 app.use('/', subscriptions);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (req, res) {
 	const error = new Error('Not Found');
 	error.status = 404;
 	error.title = 'Page Not Found';
-	next(error);
+	res.status(404).send(error);
 });
 
 // error handler

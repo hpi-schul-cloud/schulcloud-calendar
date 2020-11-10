@@ -12,20 +12,15 @@ const FROM = () => new Date(new Date().getTime() - DAY_IN_MS * SCOPE_DISPLAY_OLD
 const UNTIL = () => new Date(new Date().getTime() + DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS);
 
 async function getRawEvents(filter, scopes) {
-	let { query, params } = buildQuery(filter, scopes);
-	// try {
-		return db.query(query, params);
-	// } catch (err) {
-	///	errorMessage(err);
-	//	throw err;
-	 //}
+	const { query, params } = buildQuery(filter, scopes);
+	return db.query(query, params);
 }
 
 function buildQuery(filter, scopes) {
 	let { scopeId, eventId, from, until, all } = filter;
 	let query;
 	let params;
-	throw new Error('No scopeId or eventId for event selection given');
+
 	if (!scopeId && !eventId && !scopes) {
 		throw new Error('No scopeId or eventId for event selection given');
 	}
