@@ -4,7 +4,7 @@ const request = require('supertest');
 
 const app = require('../../src/app');
 const { SERVER_SCOPES_URI, SCHULCLOUD_BASE_PATH } = require('../../src/config');
-const getClient = require('../../src/infrastructure/database');
+const db = require('../../src/infrastructure/databasePromise');
 const {
 	dbUtils,
 	serverMockData: { createOverlayWithDefaultScopes, addCourseScope },
@@ -55,8 +55,7 @@ describe('routes/events', () => {
 	});
 
 	before(async () => {
-		const client = await getClient(true);
-		({ resetDB, clearData } = dbUtils(client));
+		({ resetDB, clearData } = dbUtils(db));
 		await resetDB();
 		server = await app.listen(3001);
 	});
