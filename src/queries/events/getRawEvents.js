@@ -1,4 +1,5 @@
 const getClient = require('../../infrastructure/database');
+const db = require('../../infrastructure/databasePromise');
 const isoDateFormat = require('../../utils/isoDateFormat');
 const errorMessage = require('../utils/errorMessage');
 const { allColumns } = require('./constants');
@@ -7,32 +8,24 @@ const {
 	SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS,
 	DAY_IN_MS,
 } = require('../../config');
+const logger = require('../../infrastructure/logger');
 
 const FROM = () => new Date(new Date().getTime() - DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS);
 const UNTIL = () => new Date(new Date().getTime() + DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS);
 
-function getRawEvents(filter, scopes) {
-	return new Promise((resolve, reject) => {
-		const { query, params } = buildQuery(filter, scopes, reject);
-
-		getClient().query(query, params, (error, result) => {
-			if (error) {
-				errorMessage(query, error);
-				reject(error);
-			} else {
-				resolve(result.rows);
-			}
-		});
-	});
+async function getRawEvents(filter, scopes) {
+	const { query, params } = buildQuery(filter, scopes);
+	const result = await db.query(query, params);
+	return result;
 }
 
-function buildQuery(filter, scopes, reject) {
+function buildQuery(filter, scopes) {
 	let { scopeId, eventId, from, until, all } = filter;
 	let query;
 	let params;
 
 	if (!scopeId && !eventId && !scopes) {
-		reject('No scopeId or eventId for event selection given');
+		throw new Error('No scopeId or eventId for event selection given');
 	}
 
 	if (scopeId) {
