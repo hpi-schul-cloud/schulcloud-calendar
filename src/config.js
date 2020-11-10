@@ -2,6 +2,8 @@
  * Global Settings fot the Schul-Cloud Calendar Service
  */
 
+const { proc } = require("./infrastructure/databasePromise");
+
 exports.NODE_ENV = process.env.NODE_ENV;
 
 /**
@@ -13,6 +15,7 @@ exports.DB_USERNAME = process.env.DB_USERNAME;
 exports.DB_PASSWORD = process.env.DB_PASSWORD;
 exports.DB_PORT = process.env.DB_PORT || 5432;
 exports.API_KEY = process.env.API_KEY || 'example';
+exports.CONNECTION_POOL_SIZE = process.env.CONNECTION_POOL_SIZE || 10;
 
 /**
  * Base Paths

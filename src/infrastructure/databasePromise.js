@@ -44,8 +44,7 @@ const resolveDBCredentials = () => {
 		};
 	}
 	// https://github.com/vitaly-t/pg-promise/wiki/Connection-Syntax#configuration-object
-	// db.max= 30;  // use up to 30 connections
-	// db.keepAlive = true;
+	db.max = config.CONNECTION_POOL_SIZE;
 	return db;
 }
 
