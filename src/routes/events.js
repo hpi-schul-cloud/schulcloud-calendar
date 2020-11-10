@@ -17,7 +17,6 @@ const jsonApiToJson = require('../parsers/event/jsonApiToJson');
 const icsToJson = require('../parsers/event/icsToJson');
 
 // response
-const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
 const sendNotification = require('../services/sendNotification');
 const eventsToJsonApi = require('../parsers/event/eventsToJsonApi');
@@ -32,7 +31,7 @@ const updateEvents = require('../services/events/updateEvents');
 
 /* routes */
 
-router.get('/events', authenticateFromHeaderField, function (req, res) {
+router.get('/events', authenticateFromHeaderField, function (req, res, next) {
 	const filter = {
 		scopeId: req.query['scope-id'],
 		eventId: req.query['event-id'],
@@ -54,20 +53,18 @@ router.get('/events', authenticateFromHeaderField, function (req, res) {
 		.then((events) => authorizeAccessToObjects(user, 'can-read', events))
 		.then(eventsToJsonApi)
 		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-		.catch(({ message, status, title }) => {
-			returnError(res, message, status, title);
-		});
+		.catch(next);
 });
 
-router.post('/events', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-	handlePost(req, res, eventsToJsonApi);
+router.post('/events', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
+	handlePost(req, res, next, eventsToJsonApi);
 });
 
-router.post('/events/ics', icsToJson, authenticateFromHeaderField, function (req, res) {
-	handlePost(req, res, eventsToIcsInJsonApi);
+router.post('/events/ics', icsToJson, authenticateFromHeaderField, function (req, res, next) {
+	handlePost(req, res, next, eventsToIcsInJsonApi);
 });
 
-function handlePost(req, res, outputFormatter) {
+function handlePost(req, res, next, outputFormatter) {
 	const user = req.user;
 	const events = req.events;
 
@@ -76,9 +73,7 @@ function handlePost(req, res, outputFormatter) {
 		.then(sendInsertNotification)
 		.then(outputFormatter)
 		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-		.catch(({ message, status, title }) => {
-			returnError(res, message, status, title);
-		});
+		.catch(next);
 }
 
 function doInserts(events, user) {
@@ -97,15 +92,15 @@ function sendInsertNotification(insertedEvents) {
 	return insertedEvents;
 }
 
-router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-	handlePut(req, res, eventsToJsonApi);
+router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
+	handlePut(req, res, next, eventsToJsonApi);
 });
 
-router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, function(req, res) {
-	handlePut(req, res, eventsToIcsInJsonApi);
+router.put('/events/ics/:eventId', icsToJson, authenticateFromHeaderField, function(req, res, next) {
+	handlePut(req, res, next, eventsToIcsInJsonApi);
 });
 
-function handlePut(req, res, outputFormatter) {
+function handlePut(req, res, next, outputFormatter) {
 	const eventId = req.params.eventId;
 	const event = req.events[0];
 	const scopeIds = event.scope_ids;
@@ -116,9 +111,7 @@ function handlePut(req, res, outputFormatter) {
 		.then(sendUpdateNotification)
 		.then(outputFormatter)
 		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-		.catch(({ message, status, title }) => {
-			returnError(res, message, status, title);
-		});
+		.catch(next);
 }
 
 function doUpdates(event, eventId) {
@@ -147,7 +140,7 @@ function sendUpdateNotification(updatedEvents) {
 	return updatedEvents;
 }
 
-router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
+router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
 	const eventId = req.params.eventId;
 	const event = req.events[0];
 	const scopeIds = event.scope_ids;
@@ -167,16 +160,15 @@ router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, fu
 					);
 				});
 			} else {
-				const message = 'Given eventId or scopeIds not found '
-					+ 'for event deletion';
-				const status = 404;
-				const title = 'Query Error';
-				returnError(res, message, status, title);
+				const err = {
+					message: 'Given eventId or scopeIds not found for event deletion',
+					status: 404,
+					title: 'Query Error',
+				};
+				next(err);
 			}
 		})
-		.catch(({ message, status, title }) => {
-			returnError(res, message, status, title);
-		});
+		.catch(next);
 });
 
 module.exports = router;

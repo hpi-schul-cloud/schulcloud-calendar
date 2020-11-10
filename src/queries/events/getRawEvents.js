@@ -1,4 +1,3 @@
-const getClient = require('../../infrastructure/database');
 const db = require('../../infrastructure/databasePromise');
 const isoDateFormat = require('../../utils/isoDateFormat');
 const errorMessage = require('../utils/errorMessage');
@@ -8,22 +7,25 @@ const {
 	SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS,
 	DAY_IN_MS,
 } = require('../../config');
-const logger = require('../../infrastructure/logger');
 
 const FROM = () => new Date(new Date().getTime() - DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS);
 const UNTIL = () => new Date(new Date().getTime() + DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS);
 
 async function getRawEvents(filter, scopes) {
-	const { query, params } = buildQuery(filter, scopes);
-	const result = await db.query(query, params);
-	return result;
+	let { query, params } = buildQuery(filter, scopes);
+	// try {
+		return db.query(query, params);
+	// } catch (err) {
+	///	errorMessage(err);
+	//	throw err;
+	 //}
 }
 
 function buildQuery(filter, scopes) {
 	let { scopeId, eventId, from, until, all } = filter;
 	let query;
 	let params;
-
+	throw new Error('No scopeId or eventId for event selection given');
 	if (!scopeId && !eventId && !scopes) {
 		throw new Error('No scopeId or eventId for event selection given');
 	}
