@@ -1,4 +1,4 @@
-const getClient = require('../../../infrastructure/databasePromise');
+const db = require('../../../infrastructure/databasePromise');
 const { allColumns } = require('./constants');
 
 async function deleteAlarms(eventId) {

@@ -28,7 +28,7 @@ function getUser(req, res, next, token) {
 			});
 	} else {
 		const err = {
-			message: 'Invalid Authorization token!',
+			message: 'Missing Authorization token!',
 			status: 401,
 			title: 'Unauthorized',
 		};

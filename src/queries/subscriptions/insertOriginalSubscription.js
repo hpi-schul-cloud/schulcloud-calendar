@@ -5,7 +5,8 @@ async function insertOriginalSubscription(subscriptionId, scopeId) {
         + '(subscription_id, scope_id) '
         + 'VALUES ($1, $2) '
         + 'RETURNING subscription_id, scope_id';
-    return db.query(query, [subscriptionId, scopeId]);
+    const result = await db.query(query, [subscriptionId, scopeId]);
+    return result[0];
 }
 
 module.exports = insertOriginalSubscription;
