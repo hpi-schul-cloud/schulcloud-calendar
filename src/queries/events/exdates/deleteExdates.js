@@ -1,21 +1,12 @@
-const getClient = require('../../../infrastructure/database');
+const db = require('../../../infrastructure/databasePromise');
 const errorMessage = require('../../utils/errorMessage');
 const { allColumns } = require('./constants');
 
 function deleteAlarms(eventId) {
-    return new Promise(function (resolve, reject) {
-        const query = 'DELETE FROM exdates '
-            + 'WHERE event_id = $1 '
-            + `RETURNING ${allColumns}`;
-        getClient().query(query, [eventId], function (error, result) {
-            if (error) {
-                errorMessage(query, error);
-                reject(error);
-            } else {
-                resolve(result.rows);
-            }
-        });
-    });
+    const query = 'DELETE FROM exdates '
+        + 'WHERE event_id = $1 '
+        + `RETURNING ${allColumns}`;
+    return db.query(query, [eventId]);
 }
 
 module.exports = deleteAlarms;

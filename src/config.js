@@ -2,7 +2,9 @@
  * Global Settings fot the Schul-Cloud Calendar Service
  */
 
-exports.NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+exports.NODE_ENV;
+exports.REQUEST_LOGGING_ENABLED = process.env.REQUEST_LOGGING_ENABLED || NODE_ENV === 'development';
 
 /**
  * Database settings for production environment
@@ -13,6 +15,7 @@ exports.DB_USERNAME = process.env.DB_USERNAME;
 exports.DB_PASSWORD = process.env.DB_PASSWORD;
 exports.DB_PORT = process.env.DB_PORT || 5432;
 exports.API_KEY = process.env.API_KEY || 'example';
+exports.CONNECTION_POOL_SIZE = process.env.CONNECTION_POOL_SIZE || 10;
 
 /**
  * Base Paths

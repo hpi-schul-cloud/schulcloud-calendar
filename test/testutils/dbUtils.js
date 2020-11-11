@@ -48,9 +48,9 @@ function clearSQL(str) {
 	.filter(function(el) {return el.length != 0;}); // remove any empty ones
 }
 
-const fillDatabase = (client) => (done) => {
+const fillDatabase = (db) => (done) => {
 	logger.debug('execute fillDatabase >');
-	return client.query(exampleDataQuery)
+	return db.query(exampleDataQuery)
 		.then((result) => {
 			if(done) {done();}
 		}).catch((err) => {
@@ -58,9 +58,9 @@ const fillDatabase = (client) => (done) => {
 		});
 };
 
-const clearData = (client) => (done) =>  {
+const clearData = (db) => (done) =>  {
 	logger.debug('execute clearData >');
-	return client.query(dropTablesQuery)
+	return db.query(dropTablesQuery)
 		.then((result) =>{
 			if (done){ done(); }
 		})
@@ -69,9 +69,9 @@ const clearData = (client) => (done) =>  {
 		});
 };
 
-const setSchema = (client) => (done) =>  {
+const setSchema = (db) => (done) =>  {
 	logger.debug('execute setSchema >');
-	return client.query(schemaQuery)
+	return db.query(schemaQuery)
 		.then((result) => {
 			if(done) {done();}  
 		})
@@ -80,17 +80,17 @@ const setSchema = (client) => (done) =>  {
    		 });
 };
 
-const resetDB = (client) => (done) => {
-	return clearData(client)().then(() => {
-		return fillDatabase(client)().then(() => {
+const resetDB = (db) => (done) => {
+	return clearData(db)().then(() => {
+		return fillDatabase(db)().then(() => {
 			if(done) {done();}  
 		});
 	});
 };
 
-module.exports = (client) => ({
-	fillDatabase: fillDatabase(client),
-	clearData: clearData(client),
-	setSchema: setSchema(client),
-	resetDB: resetDB(client),
+module.exports = (db) => ({
+	fillDatabase: fillDatabase(db),
+	clearData: clearData(db),
+	setSchema: setSchema(db),
+	resetDB: resetDB(db),
 });

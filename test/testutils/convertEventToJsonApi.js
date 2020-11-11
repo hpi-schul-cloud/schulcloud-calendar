@@ -31,7 +31,7 @@ const convertEventToJsonApi = ({
             sequence: 0,
             repeat_freq: frequency,
             repeat_wkst: weekday,
-            repeat_until: repeat_until,
+            repeat_until,
             'x-sc-courseId': courseId,
             'x-sc-teamId': teamId,
             'x-sc-courseTimeId': courseTimeId,
