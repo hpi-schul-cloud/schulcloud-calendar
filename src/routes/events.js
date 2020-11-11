@@ -26,7 +26,7 @@ const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 const getEvents = require('../services/events/getEvents');
 const getOriginalEvent = require('../queries/original-events/getOriginalEvent');
 const insertEvents = require('../services/events/insertEvents');
-const deleteEvents = require('../services/events/deleteEvents');
+const deleteEventWithScope = require('../services/events/deleteEventWithScope');
 const updateEvents = require('../services/events/updateEvents');
 
 /* routes */
@@ -47,7 +47,6 @@ router.get('/events', authenticateFromHeaderField, function (req, res, next) {
 	}
 
 	const user = req.user;
-
 	authorizeAccessToScopeId(user, filter.scopeId)
 		.then(() => getEvents(filter, user.scopes))
 		.then((events) => authorizeAccessToObjects(user, 'can-read', events))
@@ -142,12 +141,11 @@ function sendUpdateNotification(updatedEvents) {
 
 router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
 	const eventId = req.params.eventId;
-	const event = req.events[0];
-	const scopeIds = event.scope_ids;
 	const user = req.user;
+	const scopeIds = user.scopes;
 
 	authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent, 'eventId')
-		.then(() => deleteEvents(eventId, scopeIds))
+		.then(() => deleteEventWithScope(eventId, scopeIds))
 		.then((deletedEvents) => {
 			if (deletedEvents.length > 0) {
 				returnSuccess(res, 204);
