@@ -135,8 +135,8 @@ describe('routes/events', () => {
 					addTestEvents({ scopeId: scopeIdThatIsNotRequested, startDate: getDate(15), endDate: getDate(45), summary: 'other scope - should not found'}),
 					// can not create at the moment -> fix over mock
 					// addTestEvents({ scopeId: scopeIdWithoutReadPermissions, startDate: getDate(15), endDate: getDate(45), summary: 'no permissions - should not found'}),
-					addTestEvents({ scopeId, startDate: getDate(-7200), endDate: getDate(-7140), summary: 'weekly every monday', repeat_freq: 'weekly', repeat_until: getDate(3600), repeat_wkst: ['mo']}),
-					addTestEvents({ scopeId, startDate: getDate(-7200), endDate: getDate(-7140), summary: 'weekly every monday', repeat_freq: 'weekly', repeat_until: getDate(-3600), repeat_wkst: ['mo']}),
+					addTestEvents({ scopeId, startDate: getDate(-7200), endDate: getDate(-7140), summary: 'weekly every monday', frequency: 'WEEKLY', repeat_until: getDate(3600), weekday: ['MO']}),
+					addTestEvents({ scopeId, startDate: getDate(-7200), endDate: getDate(-7140), summary: 'weekly every monday - should not found', frequency: 'WEEKLY', repeat_until: getDate(-3600), weekday: ['MO']}),
 				]);
 			});
 
@@ -156,11 +156,17 @@ describe('routes/events', () => {
 					.set('Authorization', userId)
 
 					// shoud.include
-				expect(result.body.data.some((e) => e.attributes.summary === 'touched start')).to.be.true;
-				expect(result.body.data.some((e) => e.attributes.summary === 'in time')).to.be.true;
-				expect(result.body.data.some((e) => e.attributes.summary === 'touched end')).to.be.true;
-				expect(result.body.data.some((e) => e.attributes.summary === 'start before and end after')).to.be.true;
-				expect(result.body.data.some((e) => e.attributes.summary === 'touched start')).to.be.true;
+				expect(result.body.data.some((e) => e.attributes.summary === 'touched start'), 'touched start').to.be.true;
+				expect(result.body.data.some((e) => e.attributes.summary === 'in time'), 'in time').to.be.true;
+				expect(result.body.data.some((e) => e.attributes.summary === 'touched end'), 'touched end').to.be.true;
+				expect(result.body.data.some((e) => e.attributes.summary === 'start before and end after'), 'start before and end after').to.be.true;
+				expect(result.body.data.some((e) => e.attributes.summary === 'touched start'), 'touched start').to.be.true;
+				expect(result.body.data.some((e) => e.attributes.summary === 'weekly every monday'), 'weekly every monday').to.be.true;
+
+				expect(result.body.data.some((e) => e.attributes.summary === 'end before - should not found'), 'end before - should not found').to.be.false;
+				expect(result.body.data.some((e) => e.attributes.summary === 'start after - should not found'), 'start after - should not found').to.be.false;
+				expect(result.body.data.some((e) => e.attributes.summary === 'other scope - should not found'), 'other scope - should not found').to.be.false;
+				expect(result.body.data.some((e) => e.attributes.summary === 'weekly every monday - should not found'), 'weekly every monday - should not found').to.be.false;
 			});
 		});
 
