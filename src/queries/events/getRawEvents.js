@@ -8,16 +8,13 @@ const {
 	DAY_IN_MS,
 } = require('../../config');
 
-const getDate = (offset) => new Date(new Date().getTime() + offset);
-const formatDate = (date) => {
-	return date.toISOString().replace('T', ' ')+' +'+(date.getTimezoneOffset()/60)*-1;
-}
-const FROM = () => getDate(- DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS);
-const UNTIL = () => getDate(DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS);
+const FROM = () => new Date(new Date().getTime() - DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS);
+const UNTIL = () => new Date(new Date().getTime() + DAY_IN_MS * SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS);
 
 async function getRawEvents(filter, scopes) {
 	const { query, params } = buildQuery(filter, scopes);
-	return db.query(query, params);
+	const result = await db.query(query, params);
+	return result;
 }
 
 const isInScope = (scopes = {}, scopeId) => Object.keys(scopes).some((id) => id === scopeId);
@@ -26,8 +23,9 @@ function buildQuery(filter, scopes) {
 	let { scopeId, eventId, from, until } = filter;
 	let query;
 	let params = [];
-	from = formatDate(from || FROM());
-	until = formatDate(until || UNTIL());
+
+	from = isoDateFormat(from || FROM());
+	until = isoDateFormat(until || UNTIL());
 
 	query = `SELECT ${allColumns} FROM events WHERE scope_id = `;
 
@@ -52,14 +50,11 @@ function buildQuery(filter, scopes) {
 	}
 
 	const length = params.length;
-	const fromDate = `$${length}`;
-	const untilDate = `$${length+1}`;
-	// TODO make it shorter
-	const inTime = `(dtstart >= ${fromDate} AND dtend <= ${untilDate})`;
-	const startBeforeAndEndAfter = `(dtstart < ${fromDate} AND dtend > ${untilDate})`;
-	const startBeforeAndInTime = `(dtstart < ${fromDate} AND dtend <= ${untilDate})`;
-	const startAfterAndEndAfter = `(dtstart < ${fromDate} AND dtend > ${untilDate})`;
-	query += ` AND (${inTime} OR ${startBeforeAndEndAfter} OR ${startBeforeAndInTime} OR ${startAfterAndEndAfter})`;
+	const fromDate = `$${length+1}`;
+	const untilDate = `$${length+2}`;
+
+	const repeat = `(repeat_freq IS NOT NULL AND dtstart <= ${untilDate} AND repeat_until >= ${fromDate})`;
+	// query += ` AND ((dtstart <= ${untilDate} AND dtend >= ${fromDate}) OR ${repeat})`;
 	params.push(from);
 	params.push(until);
 
@@ -67,4 +62,35 @@ function buildQuery(filter, scopes) {
 	return { query, params };
 }
 
+/*
+	const inTime = `(dtstart >= ${fromDate} AND dtend <= ${untilDate})`;
+	const startBeforeAndEndAfter = `(dtstart < ${fromDate} AND dtend > ${untilDate})`;
+	const startBeforeAndInTime = `(dtstart < ${fromDate} AND dtend <= ${untilDate})`;
+	const startAfterAndEndAfter = `(dtstart < ${fromDate} AND dtend > ${untilDate})`;
+
+	startBeforeAndInTime
+	fromDate = 1
+	untilDate = 3
+	2 < 3 && 4 > 1
+	----------------
+	startBeforeAndEndAfter
+	fromDate = 1
+	untilDate = 5
+	2 < 5 && 4 > 1
+	-------------
+	inTime
+	fromDate = 3
+	untilDate = 3
+	2 < 3 && 4 > 3
+	------------
+	startAfterAndEndAfter
+	fromDate = 3
+	untilDate = 5
+	2 < 5 && 4 > 3
+	-------------
+	dtstart = 2
+	dtend = 4
+	
+	`dtstart < untilDate AND dtend > fromDate`;
+*/
 module.exports = getRawEvents;
