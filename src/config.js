@@ -3,7 +3,7 @@
  */
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
-exports.NODE_ENV;
+exports.NODE_ENV = NODE_ENV;
 exports.REQUEST_LOGGING_ENABLED = process.env.REQUEST_LOGGING_ENABLED || NODE_ENV === 'development';
 
 /**
