@@ -1,18 +1,9 @@
-const getClient = require('../../infrastructure/database');
-const errorMessage = require('../utils/errorMessage');
+const db = require('../../infrastructure/databasePromise');
 
-function updateOriginalEvent(params) {
-    return new Promise(function (resolve, reject) {
-        const query = 'UPDATE original_events SET original_event = $2 WHERE event_id = $1';
-        getClient().query(query, params, function (error, result) {
-            if (error) {
-                errorMessage(query, error);
-                reject(error);
-            } else {
-                resolve(result.rows[0]);
-            }
-        });
-    });
+async function updateOriginalEvent(params) {
+	const query = 'UPDATE original_events SET original_event = $2 WHERE event_id = $1';
+	const result = await db.query(query, params);
+	return result[0];
 }
 
 module.exports = updateOriginalEvent;

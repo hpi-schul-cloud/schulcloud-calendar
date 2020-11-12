@@ -1,27 +1,16 @@
-const getClient = require('../../infrastructure/database');
-const errorMessage = require('../utils/errorMessage');
+const db = require('../../infrastructure/databasePromise');
 const {
-    allColumns,
-    insertColumns,
-    insertTemplate
+	allColumns,
+	insertColumns,
+	insertTemplate
 } = require('./constants');
 
-function insertRawEvent(params) {
-    return new Promise(function (resolve, reject) {
-        const query = `INSERT INTO events ${insertColumns} `
-            + `VALUES ${insertTemplate} `
-            + `RETURNING ${allColumns}`;
-        console.log(`Query>>>>> ${query}`);
-        console.log(`Params>>>>> ${params}`);
-        getClient().query(query, params, function (error, result) {
-            if (error) {
-                errorMessage(query, error);
-                reject(error);
-            } else {
-                resolve(result.rows[0]);
-            }
-        });
-    });
+async function insertRawEvent(params) {
+	const query = `INSERT INTO events ${insertColumns} `
+		+ `VALUES ${insertTemplate} `
+		+ `RETURNING ${allColumns}`;
+	const result = await db.query(query, params);
+	return result[0];
 }
 
 module.exports = insertRawEvent;

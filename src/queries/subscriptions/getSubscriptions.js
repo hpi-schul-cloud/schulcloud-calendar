@@ -1,22 +1,12 @@
-const getClient = require('../../infrastructure/database');
-const errorMessage = require('../utils/errorMessage');
+const db = require('../../infrastructure/databasePromise');
 const { allColumns } = require('./constants');
 
 function getSubscriptions(filter) {
-    return new Promise((resolve, reject) => {
-        if (noParamsGiven(filter)) {
-            reject('No filter params for subscription selection given');
-        }
-        const { query, params } = buildQuery(filter);
-        getClient().query(query, params, (error, result) => {
-            if (error) {
-                errorMessage(query, error);
-                reject(error);
-            } else {
-                resolve(result.rows);
-            }
-        });
-    });
+    if (noParamsGiven(filter)) {
+        reject('No filter params for subscription selection given');
+    }
+    const { query, params } = buildQuery(filter);
+    return db.query(query, params);
 }
 
 function buildQuery(filter) {
