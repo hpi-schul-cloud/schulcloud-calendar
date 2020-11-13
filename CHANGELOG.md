@@ -12,6 +12,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 ### Added
 
  - OPS-1297 - Added Changelog github action
+ - Unit Tests for event parser
 
 ### Changed
 
