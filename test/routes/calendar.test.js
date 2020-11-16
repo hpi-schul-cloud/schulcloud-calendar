@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../../src/app');
 const nock = require('nock');
-const getClient = require('../../src/infrastructure/database');
+const db = require('../../src/infrastructure/databasePromise');
 const fillDatabase = require('../testutils/dbUtils');
 
 describe.skip('routes/calendar', function() {
@@ -10,7 +10,7 @@ describe.skip('routes/calendar', function() {
 		nock('http://localhost:3030')
 		.get('/api/all_scopes/student1_1')
 		.reply(200, '');
-		fillDatabase(getClient(), done);
+		fillDatabase(db, done);
 	});
 
 	afterEach(function(done) {

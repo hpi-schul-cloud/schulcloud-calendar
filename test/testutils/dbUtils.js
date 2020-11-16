@@ -1,7 +1,7 @@
-/* eslint-disable no-console */
 // initialize dummy events
 const path = require('path');
 const fs = require('fs');
+const logger = require('../../src/infrastructure/logger');
 
 const dropTablesPath = path.join(__dirname, '..', '..','dropTables.sql');
 const dropTablesQueryString = clearSQL(fs.readFileSync(dropTablesPath).toString());
@@ -48,49 +48,49 @@ function clearSQL(str) {
 	.filter(function(el) {return el.length != 0;}); // remove any empty ones
 }
 
-const fillDatabase = (client) => (done) => {
-	console.log('execute fillDatabase >');
-	return client.query(exampleDataQuery)
+const fillDatabase = (db) => (done) => {
+	logger.debug('execute fillDatabase >');
+	return db.query(exampleDataQuery)
 		.then((result) => {
 			if(done) {done();}
 		}).catch((err) => {
-			console.log(new Error(err));
+			logger.error(new Error(err));
 		});
 };
 
-const clearData = (client) => (done) =>  {
-	console.log('execute clearData >');
-	return client.query(dropTablesQuery)
+const clearData = (db) => (done) =>  {
+	logger.debug('execute clearData >');
+	return db.query(dropTablesQuery)
 		.then((result) =>{
 			if (done){ done(); }
 		})
 		.catch((err) => {
-			console.log(new Error(err));
+			logger.error(new Error(err));
 		});
 };
 
-const setSchema = (client) => (done) =>  {
-	console.log('execute setSchema >');
-	return client.query(schemaQuery)
+const setSchema = (db) => (done) =>  {
+	logger.debug('execute setSchema >');
+	return db.query(schemaQuery)
 		.then((result) => {
 			if(done) {done();}  
 		})
 		.catch((err) => {
-			console.log(new Error(err));
+			logger.error(new Error(err));
    		 });
 };
 
-const resetDB = (client) => (done) => {
-	return clearData(client)().then(() => {
-		return fillDatabase(client)().then(() => {
+const resetDB = (db) => (done) => {
+	return clearData(db)().then(() => {
+		return fillDatabase(db)().then(() => {
 			if(done) {done();}  
 		});
 	});
 };
 
-module.exports = (client) => ({
-	fillDatabase: fillDatabase(client),
-	clearData: clearData(client),
-	setSchema: setSchema(client),
-	resetDB: resetDB(client),
+module.exports = (db) => ({
+	fillDatabase: fillDatabase(db),
+	clearData: clearData(db),
+	setSchema: setSchema(db),
+	resetDB: resetDB(db),
 });

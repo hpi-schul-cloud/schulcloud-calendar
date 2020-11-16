@@ -4,32 +4,20 @@ const getRawEvents = require('../../queries/events/getRawEvents');
 const flatten = require('../../utils/flatten');
 const moveScopeIdToArray = require('../_moveScopeIdToArray');
 
+//scopes contains the scopes the user is in
 function getEvents(filter, scopes) {
     return new Promise(function (resolve, reject) {
-        if (filter.scopeId || filter.eventId) {
-            completeEvents(filter)
+        if (filter.scopeId || filter.eventId || scopes) {
+            completeEvents(filter, scopes)
                 .then(resolve)
-                .catch(reject);
-        } else {
-            eventsPerScope(scopes, filter)
-                .then((events) => { resolve(flatten(events)); })
                 .catch(reject);
         }
     });
 }
 
-function eventsPerScope(scopes, filter) {
+function completeEvents(filter, scopes) {
     return new Promise((resolve, reject) => {
-        Promise.all(Object.keys(scopes).map((scopeId) => {
-            filter.scopeId = scopeId;
-            return completeEvents(filter);
-        })).then(resolve).catch(reject);
-    });
-}
-
-function completeEvents(filter) {
-    return new Promise((resolve, reject) => {
-        getRawEvents(filter)
+        getRawEvents(filter, scopes)
             .then(moveScopeIdToArray)
             .then(appendAlarms)
             .then(appendExdates)

@@ -1,18 +1,9 @@
-const getClient = require('../../infrastructure/database');
-const errorMessage = require('../utils/errorMessage');
+const db = require('../../infrastructure/databasePromise');
 
-function deleteOriginalSubscription(params) {
-    return new Promise(function (resolve, reject) {
-        const query = 'DELETE FROM original_subscriptions WHERE subscription_id = $1';
-        getClient().query(query, params, function (error, result) {
-            if (error) {
-                errorMessage(query, error);
-                reject(error);
-            } else {
-                resolve(result.rows[0]);
-            }
-        });
-    });
+async function deleteOriginalSubscription(params) {
+    const query = 'DELETE FROM original_subscriptions WHERE subscription_id = $1';
+    const result = await db.query(query, params);
+    return result[0];
 }
 
 module.exports = deleteOriginalSubscription;

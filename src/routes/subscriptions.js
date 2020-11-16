@@ -4,7 +4,7 @@ const router = express.Router();
 const cors = require('cors');
 const config = require('../config');
 const corsOptions = {
-    origin: config.CORS_ORIGIN
+	origin: config.CORS_ORIGIN
 };
 router.use(cors(corsOptions));
 router.use(bodyParser.json());
@@ -16,7 +16,6 @@ const { authorizeAccessToScopeId, authorizeAccessToObjects, authorizeWithPotenti
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
-const returnError = require('../utils/response/returnError');
 const returnSuccess = require('../utils/response/returnSuccess');
 const sendNotification = require('../services/sendNotification');
 const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJsonApi');
@@ -30,102 +29,96 @@ const deleteSubscriptions = require('../services/subscriptions/deleteSubscriptio
 
 /* routes */
 
-router.get('/subscriptions', authenticateFromHeaderField, function (req, res) {
-    const scopeId = req.query['scope-id'];
-    const subscriptionId = req.query['subscription-id'];
-    const lastUpdateFailed = req.query['last-update-failed'];
-    const filter = { scopeId, subscriptionId, lastUpdateFailed };
-    const user = req.user;
+router.get('/subscriptions', authenticateFromHeaderField, function (req, res, next) {
+	const scopeId = req.query['scope-id'];
+	const subscriptionId = req.query['subscription-id'];
+	const lastUpdateFailed = req.query['last-update-failed'];
+	const filter = { scopeId, subscriptionId, lastUpdateFailed };
+	const user = req.user;
 
-    authorizeAccessToScopeId(user, filter.scopeId)
-        .then(() => getSubscriptions(filter, user.scopes))
-        .then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
-        .then(subscriptionsToJsonApi)
-        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
+	authorizeAccessToScopeId(user, filter.scopeId)
+		.then(() => getSubscriptions(filter, user.scopes))
+		.then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
+		.then(subscriptionsToJsonApi)
+		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+		.catch(next);
 });
 
-router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const user = req.user;
-    const subscriptions = req.subscriptions;
+router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
+	const user = req.user;
+	const subscriptions = req.subscriptions;
 
-    authorizeAccessToObjects(user, 'can-write', subscriptions)
-        .then(insertSubscriptions)
-        .then((insertedSubscriptions) => {
-            insertedSubscriptions.forEach((insertedSubscription) => {
-                sendNotification.forNewSubscription(
-                    insertedSubscription['scope_id'],
-                    insertedSubscription['description'],
-                    insertedSubscription['ics_url']
-                );
-            });
-            return insertedSubscriptions;
-        })
-        .then(subscriptionsToJsonApi)
-        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
+	authorizeAccessToObjects(user, 'can-write', subscriptions)
+		.then(insertSubscriptions)
+		.then((insertedSubscriptions) => {
+			insertedSubscriptions.forEach((insertedSubscription) => {
+				sendNotification.forNewSubscription(
+					insertedSubscription['scope_id'],
+					insertedSubscription['description'],
+					insertedSubscription['ics_url']
+				);
+			});
+			return insertedSubscriptions;
+		})
+		.then(subscriptionsToJsonApi)
+		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+		.catch(next);
 });
 
-router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const subscriptionId = req.params.subscriptionId;
-    const subscription = req.subscriptions[0];
-    const scopeIds = subscription.scope_ids;
-    const user = req.user;
+router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
+	const subscriptionId = req.params.subscriptionId;
+	const subscription = req.subscriptions[0];
+	const scopeIds = subscription.scope_ids;
+	const user = req.user;
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
-        .then(() => updateSubscriptions(subscription, subscriptionId))
-        .then((updatedSubscriptions) => {
-            if (updatedSubscriptions.length === 0) {
-                const error = 'Given subscriptionId or scopeIds not found';
-                const status = 404;
-                const title = 'Query Error';
-                return Promise.reject({error, status, title});
-            } else {
-                sendNotification.forModifiedSubscription(
-                    updatedSubscriptions['scope_id'],
-                    updatedSubscriptions['description'],
-                    updatedSubscriptions['ics_url']
-                );
-                return updatedSubscriptions;
-            }
-        })
-        .then(subscriptionsToJsonApi)
-        .then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
+	authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
+		.then(() => updateSubscriptions(subscription, subscriptionId))
+		.then((updatedSubscriptions) => {
+			if (updatedSubscriptions.length === 0) {
+				const error = 'Given subscriptionId or scopeIds not found';
+				const status = 404;
+				const title = 'Query Error';
+				return Promise.reject({error, status, title});
+			} else {
+				sendNotification.forModifiedSubscription(
+					updatedSubscriptions['scope_id'],
+					updatedSubscriptions['description'],
+					updatedSubscriptions['ics_url']
+				);
+				return updatedSubscriptions;
+			}
+		})
+		.then(subscriptionsToJsonApi)
+		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+		.catch(next);
 });
 
-router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res) {
-    const subscriptionId = req.params.subscriptionId;
-    const subscription = req.subscriptions[0];
-    const scopeIds = subscription.scope_ids;
-    const user = req.user;
+router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
+	const subscriptionId = req.params.subscriptionId;
+	const subscription = req.subscriptions[0];
+	const scopeIds = subscription.scope_ids;
+	const user = req.user;
 
-    authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
-        .then(() => deleteSubscriptions(subscriptionId, scopeIds))
-        .then((deletedSubscriptions) => {
-            if (deletedSubscriptions.length === 0) {
-                const message = 'Given subscriptionId or scopeIds not found';
-                const status = 404;
-                const title = 'Query Error';
-                returnError(res, message, status, title);
-            } else {
-                sendNotification.forDeletedSubscription(
-                    deletedSubscriptions['scope_id'],
-                    deletedSubscriptions['description'],
-                    deletedSubscriptions['ics_url']
-                );
-                return deletedSubscriptions;
-            }
-        })
-        .catch(({ message, status, title }) => {
-            returnError(res, message, status, title);
-        });
+	authorizeWithPotentialScopeIds(subscriptionId, scopeIds, user, getSubscriptions, getOriginalSubscription, 'subscriptionId')
+		.then(() => deleteSubscriptions(subscriptionId, scopeIds))
+		.then((deletedSubscriptions) => {
+			if (deletedSubscriptions.length === 0) {
+				const err = {
+					message: 'Given subscriptionId or scopeIds not found',
+					status: 404,
+					title: 'Query Error',
+				}
+				next(err);
+			} else {
+				sendNotification.forDeletedSubscription(
+					deletedSubscriptions['scope_id'],
+					deletedSubscriptions['description'],
+					deletedSubscriptions['ics_url']
+				);
+				return deletedSubscriptions;
+			}
+		})
+		.catch(next);
 });
 
 module.exports = router;
