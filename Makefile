@@ -74,7 +74,7 @@ tags::
 	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME):$(DOCKER_SHA_TAG)
 ifeq ($(GIT_BRANCH),$(DEVELOP_BRANCH))
 	$(info "Create develop_latest")
-	docker tag -f $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME):develop_latest
+	docker tag $(DOCKER_TAG_OPTIONS) $(DOCKER_IMAGE_NAME) $(DOCKER_REPO_NAME):develop_latest
 endif
 
 .PHONY: push
@@ -84,7 +84,7 @@ push:: tags
 	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):$(DOCKER_SHA_TAG)
 ifeq ($(GIT_BRANCH),$(DEVELOP_BRANCH))
 	$(info "Push develop_latest")
-	docker push -f $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):develop_latest
+	docker push $(DOCKER_PUSH_OPTIONS) $(DOCKER_REPO_NAME):develop_latest
 endif
 
 .PHONY: deploy
