@@ -13,6 +13,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
  - OPS-1297 - Added Changelog github action
  - Unit Tests for event parser
+ - fix docker tag latest push
 
 ### Changed
 
