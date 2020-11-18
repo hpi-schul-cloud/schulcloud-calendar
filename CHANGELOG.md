@@ -9,6 +9,10 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## [Unreleased]
 
+### Fixed
+
+- SC-7845 updated changelog github action
+
 ### Added
 
  - OPS-1297 - Added Changelog github action
