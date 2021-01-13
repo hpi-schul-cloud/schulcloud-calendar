@@ -3,11 +3,10 @@ kind: ConfigMap
 metadata:
   name: $SERVICE_NAME-environment-variables
 data:
-  NAMESPACE: $NAMESPACE
   HOSTNAME: 66a384246502
   API_KEY: "123"
   CORS_ORIGIN: http://schulcloud-calendar:3000
-  DB_DATABASE: $NAMESPACE
+  DB_DATABASE: $DB_DATABASE
   DB_HOST: "10.141.10.251" # should use service name of the postgres
   DB_PORT: "5432"
   # remove 2 secrets !

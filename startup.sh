@@ -1,4 +1,4 @@
-PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U node -c "CREATE DATABASE $NAMESPACE"
-PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U node -d $NAMESPACE -a -f schema.sql
+PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U node -c "CREATE DATABASE $DB_DATABASE"
+PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U node -d $DB_DATABASE -a -f schema.sql
 
 npm start
