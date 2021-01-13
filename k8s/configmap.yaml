@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: $SERVICE_NAME-environment-variables
+data:
+  THIS_SERVICE: $SERVICE_NAME
+  BRANCH: $NAMESPACE
+  HOSTNAME: 66a384246502
+  API_KEY: "123"
+  CORS_ORIGIN: http://schulcloud-calendar:3000
+  DB_DATABASE: $NAMESPACE
+  # should use service name of the postgres
+  DB_HOST: 10.141.10.251:5432
+  # remove 2 secrets !
+  DB_PASSWORD: jJz88vcaAKh5SQ6Z
+  DB_USERNAME: node
+  NODE_ENV: production
+  #NOTIFICATION_SERVICE_BASE_PATH: http://notification:3040
+  #NOTIFICATION_SERVICE_NEW_NOTIFICATION: http://notification:3040/messages
+  #SCHULCLOUD_ALL_SCOPES_FOR_TOKEN: http://server:3030/resolve/scopes/
+  #SCHULCLOUD_ALL_USERS_FOR_UUID: http://server:3030/resolve/users/
+  SCHULCLOUD_BASE_PATH: http://schulcloud-server:3030
+  TZ: Europe/Berlin
+
