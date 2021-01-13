@@ -27,16 +27,16 @@ spec:
               name: $SERVICE_NAME-environment-variables
           ports:
           - name: web
-            containerPort: 3030
+            containerPort: 3000
           livenessProbe:
             httpGet:
-              path: /version
-              port: 3030
-            initialDelaySeconds: 60
+              path: /ping
+              port: 3000
+            initialDelaySeconds: 15
             timeoutSeconds: 15
           readinessProbe:
             httpGet:
-              path: /version
-              port: 3030
+              path: /ping
+              port: 3000
             initialDelaySeconds: 5
             timeoutSeconds: 3
