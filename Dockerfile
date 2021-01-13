@@ -10,4 +10,4 @@ COPY . .
 
 RUN npm install
 
-CMD ./startup.sh
+CMD ["bin/sh", "startup.sh"]
