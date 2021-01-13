@@ -1,8 +1,13 @@
 #FROM node:8.17.0
-from node:12.16.0-alpine3.9
+FROM node:lts-buster
 
 WORKDIR /schulcloud-calendar
-COPY . .
-RUN chown -R 1000:1000 /schulcloud-calendar && npm install
 
-CMD npm start
+RUN apt-get update -y && \ 
+apt-get install -y postgresql-client-11 make
+
+COPY . .
+
+RUN npm install
+
+CMD ./startup.sh
