@@ -4,13 +4,12 @@ metadata:
   name: $SERVICE_NAME-environment-variables
 data:
   HOSTNAME: 66a384246502
-  API_KEY: "123"
+  API_KEY: "123" # secret
   CORS_ORIGIN: http://schulcloud-calendar:3000
   DB_DATABASE: $DB_DATABASE
   DB_HOST: "10.141.10.251" # should use service name of the postgres
   DB_PORT: "5432"
-  # remove 2 secrets !
-  DB_PASSWORD: jJz88vcaAKh5SQ6Z
+  DB_PASSWORD: jJz88vcaAKh5SQ6Z # secret
   DB_USERNAME: node
   NODE_ENV: production
   #NOTIFICATION_SERVICE_BASE_PATH: http://notification:3040

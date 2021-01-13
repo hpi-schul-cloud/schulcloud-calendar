@@ -38,15 +38,18 @@ jobs:
         export SERVICE_NAME=${GITHUB_REPOSITORY##*/}
         export BUILD_IMAGE=$REGISTRY_HOSTNAME/${{ secrets.GCP_PROJECT_ID }}/$SERVICE_NAME:$SHORT_SHA
         export HOSTNAME=$HOSTNAME_PREFIX-$NAMESPACE.$STAGING_DOMAIN
+
         echo "SHORT_SHA=$SHORT_SHA"
         echo "SERVICE_NAME=$SERVICE_NAME"
         echo "NAMESPACE=$NAMESPACE"
+        echo "DB_DATABASE"
         echo "BUILD_IMAGE=$BUILD_IMAGE"
         echo "HOSTNAME=$HOSTNAME"
         
         echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
         echo "SERVICE_NAME=$SERVICE_NAME" >> $GITHUB_ENV
         echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
+        echo "DB_DATABASE=$DB_DATABASE" >> $GITHUB_ENV
         echo "BUILD_IMAGE=$BUILD_IMAGE" >> $GITHUB_ENV
         echo "HOSTNAME=$HOSTNAME" >> $GITHUB_ENV
         
