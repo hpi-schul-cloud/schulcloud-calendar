@@ -98,6 +98,4 @@ jobs:
         cat k8s/deployment.yaml | envsubst | kubectl apply -n $NAMESPACE -f -
         cat k8s/service.yaml | envsubst
         cat k8s/service.yaml | envsubst | kubectl apply -n $NAMESPACE -f -
-        cat k8s/ingress.yaml | envsubst
-        cat k8s/ingress.yaml | envsubst | kubectl apply -n $NAMESPACE -f -
         kubectl rollout status deployment/$SERVICE_NAME -n $NAMESPACE
