@@ -16,6 +16,6 @@ data:
   #NOTIFICATION_SERVICE_NEW_NOTIFICATION: http://notification:3040/messages
   #SCHULCLOUD_ALL_SCOPES_FOR_TOKEN: http://server:3030/resolve/scopes/
   #SCHULCLOUD_ALL_USERS_FOR_UUID: http://server:3030/resolve/users/
-  SCHULCLOUD_BASE_PATH: http://schulcloud-server:3030
+  SCHULCLOUD_BASE_PATH: http://schulcloud-server
   TZ: Europe/Berlin
 
