@@ -1,4 +1,4 @@
-const { deleteEvents, deleteEventsForScopes } = require('../../queries/events/deleteEvents');
+const { deleteEvents, deleteEventsForScope } = require('../../queries/events/deleteEvents');
 
 const validateScopes = (scopes) => {
 	if (!scopes) {
@@ -13,7 +13,7 @@ const validateScopes = (scopes) => {
 
 deleteAllEventsForScope = async (scope) => {
 	validateScopes(scope);
-	return deleteEventsForScopes(scope);
+	return deleteEventsForScope(scope);
 }
 
 deleteEventWithScope = async (eventId, scopes) => {

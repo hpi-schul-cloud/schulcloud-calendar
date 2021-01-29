@@ -1,4 +1,5 @@
 const getAllScopesForToken = require('../http/getAllScopesForToken');
+const config = require('./../config');
 
 function authenticateFromHeaderField(req, res, next) {
 	const token = req.get('Authorization');
@@ -8,6 +9,21 @@ function authenticateFromHeaderField(req, res, next) {
 function authenticateFromQueryParameter(req, res, next) {
 	const token = req.query['authorization'];
 	getUser(req, res, next, token);
+}
+
+function authenticateFromApiKey(req, res, next) {
+	const token = req.get('Authorization');
+	if (token === config.SPECIAL_API_KEY) {
+		next();
+	} else {
+		const err = {
+			message: 'Missing Authorization token!',
+			status: 401,
+			title: 'Unauthorized',
+		};
+		next(err);
+	}
+
 }
 
 function getUser(req, res, next, token) {
@@ -61,5 +77,6 @@ function parseUserInformation(apiResponse) {
 
 module.exports = {
 	authenticateFromHeaderField,
-	authenticateFromQueryParameter
+	authenticateFromQueryParameter,
+	authenticateFromApiKey
 };

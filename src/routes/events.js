@@ -11,7 +11,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
-const { authenticateFromHeaderField } = require('../security/authentication');
+const { authenticateFromHeaderField, authenticateFromApiKey } = require('../security/authentication');
 const { authorizeAccessToScopeId, authorizeAccessToObjects, authorizeWithPotentialScopeIds } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/event/jsonApiToJson');
 const icsToJson = require('../parsers/event/icsToJson');
@@ -27,6 +27,7 @@ const getEvents = require('../services/events/getEvents');
 const getOriginalEvent = require('../queries/original-events/getOriginalEvent');
 const insertEvents = require('../services/events/insertEvents');
 const { deleteEventWithScope, deleteAllEventsForScope } = require('../services/events/deleteEventWithScope');
+const { deleteDuplicatedEvents } = require('../services/events/deleteDuplicatedEvents');
 const updateEvents = require('../services/events/updateEvents');
 
 /* routes */
@@ -138,6 +139,12 @@ function sendUpdateNotification(updatedEvents) {
 	});
 	return updatedEvents;
 }
+
+router.delete('/events/duplicates', authenticateFromApiKey, (req, res, next) => {
+	deleteDuplicatedEvents()
+		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+		.catch(next);
+});
 
 router.delete('/scopes/:scopeId', authenticateFromHeaderField, (req, res, next) => {
 	const scopeId = req.params.scopeId;
