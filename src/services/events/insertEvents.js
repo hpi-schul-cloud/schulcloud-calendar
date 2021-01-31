@@ -72,7 +72,8 @@ function insertEventPerScope(event, scopeId, externalEventId) {
             event['repeat_bysetpos'],
             event['repeat_wkst'],
             externalEventId,
-            event['x_fields']
+            event['x_fields'],
+            event['last-modified']
         ];
         insertRawEvent(params)
             .then(moveScopeIdToArray)

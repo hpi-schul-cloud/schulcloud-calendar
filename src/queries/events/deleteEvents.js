@@ -16,25 +16,18 @@ async function deleteEventsForScope(scopeId) {
 }
 
 async function deleteDuplicatesForCourses() {
-	const query = `DELETE FROM events
-				   WHERE x_fields ->> 'x-sc-courseId' is not null and repeat_wkst is not null
-					 and id not in (
-					   SELECT id
-					   FROM (
-								-- query to find max last-modified value for each duplication group
-								SELECT scope_id, dtstart, dtend, repeat_wkst, MAX("last-modified") as lastmod
-								from events
-								group by scope_id, dtstart, dtend, repeat_wkst) as dup
-								JOIN
-							-- join with events table to get ids of the duplicates based on duplicate attributes 
-							-- and last modification
-								events as e
-							ON dup.scope_id = e.scope_id and
-							   dup.dtstart = e.dtstart and
-							   dup.repeat_wkst = e.repeat_wkst and
-							   dup.dtend = e.dtend and
-							   dup.lastmod = e."last-modified"
-				   ) RETURNING event_id`;
+	const query = `DELETE FROM events where id in (
+		SELECT e.id from
+		(
+		-- events grouped by scope_id
+		select scope_id, max("last-modified") as maxLastMod
+		FROM events 
+		WHERE x_fields ->> 'x-sc-courseId' is not null and repeat_wkst is not null
+		GROUP BY scope_id) as t1
+		-- return only events which were modified before max last modified date - 20 seconds
+		JOIN events as e
+			 ON t1.scope_id = e.scope_id and e."last-modified" < (t1.maxLastMod - '20 seconds'::interval)
+	) RETURNING event_id`;
 	return db.query(query);
 }
 

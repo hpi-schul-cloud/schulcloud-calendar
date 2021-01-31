@@ -142,7 +142,8 @@ function sendUpdateNotification(updatedEvents) {
 
 router.delete('/events/duplicates', authenticateFromApiKey, (req, res, next) => {
 	deleteDuplicatedEvents()
-		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
+		.then((result) => ({data: result}))
+		.then((jsonApi) => { returnSuccess(res, 204, jsonApi); })
 		.catch(next);
 });
 
@@ -152,13 +153,14 @@ router.delete('/scopes/:scopeId', authenticateFromHeaderField, (req, res, next) 
 
 	authorizeAccessToScopeId(user, scopeId)
 		.then(() => deleteAllEventsForScope(scopeId))
-		.then((deletedEvents) => processDeletedEvents(deletedEvents, res, next))
+		.then((result) => ({data: result}))
+		.then((jsonApi) => { returnSuccess(res, 204, jsonApi); })
 		.catch(next);
 });
 
 const processDeletedEvents = (deletedEvents, res, next) => {
 	if (deletedEvents.length > 0) {
-		returnSuccess(res, 204);
+		returnSuccess({data: deletedEvents}, 204);
 		deletedEvents.forEach((deletedEvent) => {
 			sendNotification.forDeletedEvent(
 				deletedEvent['scope_id'],
