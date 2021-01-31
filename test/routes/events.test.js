@@ -33,7 +33,7 @@ describe('routes/events', () => {
 			startDate,
 			endDate,
 			last_modified,
-			repeat_freq,
+			frequency: repeat_freq,
 			repeat_until,
 			weekday,
 		};
