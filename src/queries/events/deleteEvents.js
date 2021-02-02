@@ -8,13 +8,6 @@ async function deleteEvents(eventId, scopeIds) {
 	return db.query(query, params);
 }
 
-async function deleteEventsForScope(scopeId) {
-	const query = `DELETE FROM events WHERE scope_id = $1 RETURNING ${allColumns}`;
-	const params = [scopeId];
-
-	return db.query(query, params);
-}
-
 async function deleteDuplicatesForCourses() {
 	const query = `DELETE FROM events where id in (
 		SELECT e.id from
@@ -33,6 +26,5 @@ async function deleteDuplicatesForCourses() {
 
 module.exports = {
 	deleteEvents,
-	deleteEventsForScope,
 	deleteDuplicatesForCourses,
 };
