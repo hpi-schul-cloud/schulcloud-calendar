@@ -7,13 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`
 
-## [25.3.1] - 2020-12-18
-
-## Added
-
-- SC-8217 - new configurable options for postgres client
-
-## [25.2.0]
+## [Unreleased]
 
 ### Fixed
 
