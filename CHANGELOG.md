@@ -15,9 +15,16 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## [25.2.0]
 
+### Fixed
+
+- SC-7845 updated changelog github action
+- SC-8176 sunday events are possible now
+
 ### Added
 
  - OPS-1297 - Added Changelog github action
+ - Unit Tests for event parser
+ - fix docker tag latest push
 
 ### Changed
 
