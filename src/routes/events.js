@@ -26,7 +26,7 @@ const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 const getEvents = require('../services/events/getEvents');
 const getOriginalEvent = require('../queries/original-events/getOriginalEvent');
 const insertEvents = require('../services/events/insertEvents');
-const deleteEventWithScope = require('../services/events/deleteEventWithScope');
+const { deleteEventWithScope, deleteAllEventsForScope } = require('../services/events/deleteEventWithScope');
 const updateEvents = require('../services/events/updateEvents');
 
 /* routes */
@@ -139,24 +139,20 @@ function sendUpdateNotification(updatedEvents) {
 	return updatedEvents;
 }
 
-router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
-	const eventId = req.params.eventId;
+router.delete('/scopes/:scopeId', authenticateFromHeaderField, (req, res, next) => {
+	const scopeId = req.params.scopeId;
 	const user = req.user;
-	const scopeIds = user.scopes;
 
-	authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent, 'eventId')
-		.then(() => deleteEventWithScope(eventId, scopeIds))
-		.then((deletedEvents) => {
+	authorizeAccessToScopeId(user, scopeId)
+		.then(() => deleteAllEventsForScope(scopeId))
+		.then((result) => ({data: result}))
+		.then((jsonApi) => { returnSuccess(res, 204, jsonApi); })
+		.catch(next);
+});
+
+const processDeletedEvents = (deletedEvents, res, next) => {
 			if (deletedEvents.length > 0) {
-				returnSuccess(res, 204);
-				deletedEvents.forEach((deletedEvent) => {
-					sendNotification.forDeletedEvent(
-						deletedEvent['scope_id'],
-						deletedEvent['summary'],
-						deletedEvent['dtstart'],
-						deletedEvent['dtend']
-					);
-				});
+		returnSuccess({data: deletedEvents}, 204);
 			} else {
 				const err = {
 					message: 'Given eventId or scopeIds not found for event deletion',
@@ -165,6 +161,17 @@ router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, fu
 				};
 				next(err);
 			}
+}
+
+router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
+	const eventId = req.params.eventId;
+	const user = req.user;
+	const scopeIds = user.scopes;
+
+	authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent, 'eventId')
+		.then(() => deleteEventWithScope(eventId, scopeIds))
+		.then((deletedEvents) => {
+			processDeletedEvents(deletedEvents, res, next);
 		})
 		.catch(next);
 });

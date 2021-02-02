@@ -9,6 +9,10 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## [Unreleased]
 
+### Added
+
+- SC-8408 - delete events by scope
+
 ### Fixed
 
 - SC-7845 updated changelog github action

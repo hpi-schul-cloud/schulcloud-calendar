@@ -8,4 +8,14 @@ async function deleteEvents(eventId, scopeIds) {
 	return db.query(query, params);
 }
 
-module.exports = deleteEvents;
+async function deleteEventsForScope(scopeId) {
+	const query = `DELETE FROM events WHERE scope_id = $1 RETURNING ${allColumns}`;
+	const params = [scopeId];
+
+	return db.query(query, params);
+}
+
+module.exports = {
+	deleteEvents,
+	deleteEventsForScope,
+};
