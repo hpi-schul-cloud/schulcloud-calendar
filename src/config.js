@@ -61,8 +61,3 @@ exports.LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
 exports.DAY_IN_MS = 1000 * 60 * 60 * 24;
 exports.SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS = 21;
 exports.SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS = 365 * 2;
-
-/**
- * Authentication keys
- */
-exports.MIGRATION_CALENDAR_API_KEY = process.env.MIGRATION_CALENDAR_API_KEY || 'example';

@@ -11,21 +11,6 @@ function authenticateFromQueryParameter(req, res, next) {
 	getUser(req, res, next, token);
 }
 
-function authenticateFromApiKey(req, res, next) {
-	const token = req.get('Authorization');
-	if (token === config.MIGRATION_CALENDAR_API_KEY) {
-		next();
-	} else {
-		const err = {
-			message: 'Missing Authorization token!',
-			status: 401,
-			title: 'Unauthorized',
-		};
-		next(err);
-	}
-
-}
-
 function getUser(req, res, next, token) {
 	if (token) {
 		req.token = token;
@@ -77,6 +62,5 @@ function parseUserInformation(apiResponse) {
 
 module.exports = {
 	authenticateFromHeaderField,
-	authenticateFromQueryParameter,
-	authenticateFromApiKey
+	authenticateFromQueryParameter
 };
