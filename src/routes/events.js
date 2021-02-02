@@ -11,7 +11,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
-const { authenticateFromHeaderField, authenticateFromApiKey } = require('../security/authentication');
+const { authenticateFromHeaderField, isMigration } = require('../security/authentication');
 const { authorizeAccessToScopeId, authorizeAccessToObjects, authorizeWithPotentialScopeIds } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/event/jsonApiToJson');
 const icsToJson = require('../parsers/event/icsToJson');
@@ -140,7 +140,7 @@ function sendUpdateNotification(updatedEvents) {
 	return updatedEvents;
 }
 
-router.delete('/events/duplicates', authenticateFromApiKey, (req, res, next) => {
+router.delete('/events/duplicates', isMigration, (req, res, next) => {
 	deleteDuplicatedEvents()
 		.then((result) => ({data: result}))
 		.then((jsonApi) => { returnSuccess(res, 204, jsonApi); })

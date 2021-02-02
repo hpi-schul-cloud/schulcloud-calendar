@@ -9,10 +9,10 @@ exports.REQUEST_LOGGING_ENABLED = process.env.REQUEST_LOGGING_ENABLED || NODE_EN
 /**
  * Database settings for production environment
  */
-exports.DB_HOST = process.env.DB_HOST;
-exports.DB_DATABASE = process.env.DB_DATABASE;
-exports.DB_USERNAME = process.env.DB_USERNAME;
-exports.DB_PASSWORD = process.env.DB_PASSWORD;
+exports.DB_HOST = process.env.DB_HOST || 'localhost';
+exports.DB_DATABASE = process.env.DB_DATABASE || 'schulcloud_calendar_test';
+exports.DB_USERNAME = process.env.DB_USERNAME || 'postgres';
+exports.DB_PASSWORD = process.env.DB_PASSWORD || 'postgres';
 exports.DB_PORT = process.env.DB_PORT || 5432;
 exports.CONNECTION_POOL_SIZE = process.env.CONNECTION_POOL_SIZE || 10;
 exports.DB_IDLE_TIMEOUT_MILLIS = process.env.DB_IDLE_TIMEOUT_MILLIS;
@@ -63,6 +63,6 @@ exports.SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS = 21;
 exports.SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS = 365 * 2;
 
 /**
- * Authentication keys
+ * Feature toggles
  */
-exports.MIGRATION_CALENDAR_API_KEY = process.env.MIGRATION_CALENDAR_API_KEY || 'example';
+exports.IS_MIGRATION = process.env.IS_MIGRATION || NODE_ENV === 'test';

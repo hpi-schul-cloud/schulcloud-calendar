@@ -20,7 +20,7 @@ async function deleteDuplicatesForCourses() {
 		-- return only events which were modified before max last modified date - 20 seconds
 		JOIN events as e
 			 ON t1.scope_id = e.scope_id and e."last-modified" < (t1.maxLastMod - '20 seconds'::interval)
-	) RETURNING event_id`;
+	) RETURNING ${allColumns}`;
 	return db.query(query);
 }
 
