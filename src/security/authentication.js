@@ -13,7 +13,7 @@ function authenticateFromQueryParameter(req, res, next) {
 
 function authenticateFromApiKey(req, res, next) {
 	const token = req.get('Authorization');
-	if (token === config.SPECIAL_API_KEY) {
+	if (token === config.MIGRATION_CALENDAR_API_KEY) {
 		next();
 	} else {
 		const err = {

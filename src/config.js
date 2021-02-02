@@ -65,4 +65,4 @@ exports.SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS = 365 * 2;
 /**
  * Authentication keys
  */
-exports.SPECIAL_API_KEY = process.env.SPECIAL_API_KEY || 'example';
+exports.MIGRATION_CALENDAR_API_KEY = process.env.MIGRATION_CALENDAR_API_KEY || 'example';

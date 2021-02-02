@@ -3,7 +3,7 @@ const nock = require('nock');
 const request = require('supertest');
 
 const app = require('../../src/app');
-const { SERVER_SCOPES_URI, SCHULCLOUD_BASE_PATH, SPECIAL_API_KEY } = require('../../src/config');
+const { SERVER_SCOPES_URI, SCHULCLOUD_BASE_PATH, MIGRATION_CALENDAR_API_KEY } = require('../../src/config');
 const db = require('../../src/infrastructure/databasePromise');
 const {
 	dbUtils,
@@ -274,7 +274,7 @@ describe('routes/events', () => {
 
 				const result = await request(app)
 					.delete(`/events/duplicates`)
-					.set('Authorization', SPECIAL_API_KEY);
+					.set('Authorization', MIGRATION_CALENDAR_API_KEY);
 
 				resultsToBeDeleted = await db.query("SELECT id from events where scope_id = $1 and summary = $2", props);
 				let actualResultNotToBeDeleted = await db.query("SELECT id from events where scope_id != $1 or summary != $2", props);

@@ -161,14 +161,6 @@ router.delete('/scopes/:scopeId', authenticateFromHeaderField, (req, res, next) 
 const processDeletedEvents = (deletedEvents, res, next) => {
 	if (deletedEvents.length > 0) {
 		returnSuccess({data: deletedEvents}, 204);
-		deletedEvents.forEach((deletedEvent) => {
-			sendNotification.forDeletedEvent(
-				deletedEvent['scope_id'],
-				deletedEvent['summary'],
-				deletedEvent['dtstart'],
-				deletedEvent['dtend']
-			);
-		});
 	} else {
 		const err = {
 			message: 'Given eventId or scopeIds not found for event deletion',
