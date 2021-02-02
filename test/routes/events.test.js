@@ -3,7 +3,7 @@ const nock = require('nock');
 const request = require('supertest');
 
 const app = require('../../src/app');
-const { SERVER_SCOPES_URI, SCHULCLOUD_BASE_PATH, MIGRATION_CALENDAR_API_KEY } = require('../../src/config');
+const { SERVER_SCOPES_URI, SCHULCLOUD_BASE_PATH } = require('../../src/config');
 const db = require('../../src/infrastructure/databasePromise');
 const {
 	dbUtils,
@@ -20,17 +20,16 @@ describe('routes/events', () => {
 	let server;
 	const resolvedServerScopes = createOverlayWithDefaultScopes();
 
-	const addTestEvents = async ({ scopeId = '59cce16281297026d02cde123', summary, startDate, endDate, repeat_freq, repeat_until, last_modified, weekday}) => {
+	const addTestEvents = async ({ scopeId = '59cce16281297026d02cde123', summary, startDate, endDate, repeat_freq, repeat_until, repeat_wkst}) => {
 		const data = {
 			courseId: scopeId,
 			scopeId,
 			summary,
 			startDate,
 			endDate,
-			last_modified,
-			frequency: repeat_freq,
+			repeat_freq,
 			repeat_until,
-			weekday,
+			repeat_wkst,
 		};
 
 		await nock(SCHULCLOUD_BASE_PATH)
@@ -39,17 +38,12 @@ describe('routes/events', () => {
 				return resolvedServerScopes;
 			});
 
-		try{
 			const result = await request(app)
 				.post('/events')
 				.send(convertEventToJsonApi(data))
 				.set('Authorization', userId);
 
 			return result.body.data;
-		}
-		catch(e) {
-			console.log(e);
-		}
 
 	}
 
@@ -168,7 +162,7 @@ describe('routes/events', () => {
 				expect(result.body.data.some((e) => e.attributes.summary === 'touched end'), 'touched end').to.be.true;
 				expect(result.body.data.some((e) => e.attributes.summary === 'start before and end after'), 'start before and end after').to.be.true;
 				expect(result.body.data.some((e) => e.attributes.summary === 'touched start'), 'touched start').to.be.true;
-				// expect(result.body.data.some((e) => e.attributes.summary === 'weekly every monday'), 'weekly every monday').to.be.true;
+				expect(result.body.data.some((e) => e.attributes.summary === 'weekly every monday'), 'weekly every monday').to.be.true;
 
 				expect(result.body.data.some((e) => e.attributes.summary === 'end before - should not found'), 'end before - should not found').to.be.false;
 				expect(result.body.data.some((e) => e.attributes.summary === 'start after - should not found'), 'start after - should not found').to.be.false;
