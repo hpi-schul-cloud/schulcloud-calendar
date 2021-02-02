@@ -1,5 +1,4 @@
 const getAllScopesForToken = require('../http/getAllScopesForToken');
-const config = require('./../config');
 
 function authenticateFromHeaderField(req, res, next) {
 	const token = req.get('Authorization');
