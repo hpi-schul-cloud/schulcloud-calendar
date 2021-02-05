@@ -12,6 +12,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 ### Added
 
 - SC-8512 - route to fix event duplications & setting IS_MIGRATION in config.js
+
 ## [25.3.1] - 2020-12-18
 
 ## Added
@@ -22,7 +23,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ### Added
 
- - OPS-1297 - Added Changelog github action
+- OPS-1297 - Added Changelog github action
 
 ### Changed
 
