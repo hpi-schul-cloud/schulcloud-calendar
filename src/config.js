@@ -65,4 +65,4 @@ exports.SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS = 365 * 2;
 /**
  * Feature toggles
  */
-exports.IS_MIGRATION = process.env.IS_MIGRATION || NODE_ENV === 'test';
+exports.IS_MIGRATION = process.env.IS_MIGRATION === 'true' || NODE_ENV === 'test';
