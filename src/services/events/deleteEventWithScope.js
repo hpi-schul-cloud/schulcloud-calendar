@@ -10,7 +10,6 @@ const validateScopes = (scopes) => {
 		throw err;
 	}
 };
-};
 
 deleteAllEventsForScope = async (scope) => {
 	validateScopes(scope);
