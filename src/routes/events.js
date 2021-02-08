@@ -160,7 +160,7 @@ router.delete('/scopes/:scopeId', authenticateFromHeaderField, (req, res, next) 
 
 const processDeletedEvents = (deletedEvents, res, next) => {
 			if (deletedEvents.length > 0) {
-		returnSuccess({data: deletedEvents}, 204);
+		returnSuccess(res, 204);
 			} else {
 				const err = {
 					message: 'Given eventId or scopeIds not found for event deletion',
