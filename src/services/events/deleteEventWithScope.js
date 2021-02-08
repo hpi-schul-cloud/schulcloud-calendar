@@ -1,6 +1,6 @@
-const deleteEvents = require('../../queries/events/deleteEvents');
+const { deleteEvents } = require('../../queries/events/deleteEvents');
 
-async function deleteEventWithScope(eventId, scopes) {
+const validateScopes = (scopes) => {
 	if (!scopes) {
 		const err = {
 			message: `ScopeId is missing.`,
@@ -9,9 +9,13 @@ async function deleteEventWithScope(eventId, scopes) {
 		}
 		throw err;
 	}
+};
 
-	const result = await deleteEvents(eventId, Object.keys(scopes));
-	return result;
+deleteEventWithScope = async (eventId, scopes) => {
+	validateScopes(scopes);
+	return deleteEvents(eventId, Object.keys(scopes));
 }
 
-module.exports = deleteEventWithScope;
+module.exports = {
+	deleteEventWithScope,
+};
