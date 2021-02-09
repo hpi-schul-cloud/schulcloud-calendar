@@ -33,10 +33,12 @@ const columns = [
     'x_fields',
 ];
 
+const columnsForInsert = [...columns, '"last-modified"'];
+
 module.exports = {
     allColumns: allColumns(columns),
-    insertColumns: insertColumns(columns),
-    insertTemplate: insertTemplate(columns),
+    insertColumns: insertColumns(columnsForInsert),
+    insertTemplate: insertTemplate(columnsForInsert),
     updateColumns: updateColumns(columns),
     updateTemplate: updateTemplate(columns)
 };

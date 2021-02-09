@@ -73,6 +73,7 @@ function insertEventPerScope(event, scopeId, externalEventId) {
             event['repeat_wkst'],
             externalEventId,
             event['x_fields'],
+            event['last-modified'] || new Date().toISOString()
         ];
         insertRawEvent(params)
             .then(moveScopeIdToArray)
