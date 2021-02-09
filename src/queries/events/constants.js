@@ -31,7 +31,6 @@ const columns = [
     'repeat_wkst',
     'event_id',
     'x_fields',
-    '"last-modified"'
 ];
 
 module.exports = {
