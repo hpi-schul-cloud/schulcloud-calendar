@@ -9,6 +9,10 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## [25.3.2] - 2021-02-02
 
+### Added
+
+- SC-8408 - delete events by scope
+
 ### Fixed
 
 - SC-7845 updated changelog github action
