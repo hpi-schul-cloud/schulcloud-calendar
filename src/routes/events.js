@@ -159,16 +159,16 @@ router.delete('/scopes/:scopeId', authenticateFromHeaderField, (req, res, next) 
 });
 
 const processDeletedEvents = (deletedEvents, res, next) => {
-			if (deletedEvents.length > 0) {
+	if (deletedEvents.length > 0) {
 		returnSuccess(res, 204);
-			} else {
-				const err = {
-					message: 'Given eventId or scopeIds not found for event deletion',
-					status: 404,
-					title: 'Query Error',
-				};
-				next(err);
-			}
+	} else {
+		const err = {
+			message: 'Given eventId or scopeIds not found for event deletion',
+			status: 404,
+			title: 'Query Error',
+		};
+		next(err);
+	}
 }
 
 router.delete('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
