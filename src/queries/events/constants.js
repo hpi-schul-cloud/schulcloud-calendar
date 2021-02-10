@@ -31,13 +31,14 @@ const columns = [
     'repeat_wkst',
     'event_id',
     'x_fields',
-    '"last-modified"'
 ];
+
+const columnsForInsert = [...columns, '"last-modified"'];
 
 module.exports = {
     allColumns: allColumns(columns),
-    insertColumns: insertColumns(columns),
-    insertTemplate: insertTemplate(columns),
+    insertColumns: insertColumns(columnsForInsert),
+    insertTemplate: insertTemplate(columnsForInsert),
     updateColumns: updateColumns(columns),
     updateTemplate: updateTemplate(columns)
 };
