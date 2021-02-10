@@ -20,6 +20,15 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ### Added
 
+- SC-8408 - delete events by scope
+
+### Fixed
+
+- SC-7845 updated changelog github action
+- SC-8176 sunday events are possible now
+
+### Added
+
 - SC-8512 - route to fix event duplications & setting IS_MIGRATION in config.js
 
 ## [25.3.1] - 2020-12-18

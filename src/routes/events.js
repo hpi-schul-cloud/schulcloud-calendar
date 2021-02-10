@@ -26,8 +26,8 @@ const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 const getEvents = require('../services/events/getEvents');
 const getOriginalEvent = require('../queries/original-events/getOriginalEvent');
 const insertEvents = require('../services/events/insertEvents');
-const { deleteEventWithScope } = require('../services/events/deleteEventWithScope');
 const { deleteDuplicatedEvents } = require('../services/events/deleteDuplicatedEvents');
+const { deleteEventWithScope, deleteAllEventsForScope } = require('../services/events/deleteEventWithScope');
 const updateEvents = require('../services/events/updateEvents');
 
 /* routes */
@@ -142,6 +142,17 @@ function sendUpdateNotification(updatedEvents) {
 
 router.delete('/events/duplicates', isMigration, (req, res, next) => {
 	deleteDuplicatedEvents()
+		.then((result) => ({data: result}))
+		.then((jsonApi) => { returnSuccess(res, 204, jsonApi); })
+		.catch(next);
+});
+
+router.delete('/scopes/:scopeId', authenticateFromHeaderField, (req, res, next) => {
+	const scopeId = req.params.scopeId;
+	const user = req.user;
+
+	authorizeAccessToScopeId(user, scopeId)
+		.then(() => deleteAllEventsForScope(scopeId))
 		.then((result) => ({data: result}))
 		.then((jsonApi) => { returnSuccess(res, 204, jsonApi); })
 		.catch(next);
