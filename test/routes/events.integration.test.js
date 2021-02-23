@@ -20,16 +20,22 @@ describe('routes/events', () => {
 	let server;
 	const resolvedServerScopes = createOverlayWithDefaultScopes();
 
-	const addTestEvents = async ({ scopeId = '59cce16281297026d02cde123', summary, startDate, endDate, repeat_freq, repeat_until, repeat_wkst}) => {
+	const addCourseTestEvent = async ({ scopeId = '59cce16281297026d02cde123', summary = 'event1', repeat_until, last_modified, weekday}) => {
+		const data = { scopeId, summary, startDate: getDate(-30), endDate: getDate(30), repeat_freq: "WEEKLY", repeat_until, last_modified, weekday};
+		return addTestEvents(data);
+	}
+
+	const addTestEvents = async ({ scopeId = '59cce16281297026d02cde123', summary, startDate, endDate, repeat_freq, repeat_until, last_modified, weekday}) => {
 		const data = {
 			courseId: scopeId,
 			scopeId,
 			summary,
 			startDate,
 			endDate,
-			repeat_freq,
+			last_modified,
+			frequency: repeat_freq,
 			repeat_until,
-			repeat_wkst
+			weekday,
 		};
 
 		await nock(SCHULCLOUD_BASE_PATH)
@@ -170,8 +176,108 @@ describe('routes/events', () => {
 			});
 		});
 
-		describe('DELETE', () => {
-	
+		describe('DELETE Duplicates', async () => {
+			const scopeId = '59cce16281297026d02cde123';
+			const anotherScopeId = 'another_id';
+			const courseName = 'post test';
+			let events;
+			before(async () => {
+				await addCourseScope(resolvedServerScopes, scopeId, courseName, true);
+				await addCourseScope(resolvedServerScopes, anotherScopeId, courseName, true);
+
+				events = await Promise.all([
+					// last events
+					addCourseTestEvent({ scopeId, summary: "orig", weekday: "MO", last_modified: getDate(-30)}),
+					addCourseTestEvent({ scopeId, summary: "orig", weekday: "TU", last_modified: getDate(-30)}),
+					addCourseTestEvent({ scopeId, summary: "orig", weekday: "WE", last_modified: getDate(-30)}),
+
+					// duplicates
+					addCourseTestEvent({ scopeId, summary: "dup", weekday: "MO", last_modified: getDate(-60)}),
+					addCourseTestEvent({ scopeId, summary: "dup", weekday: "TU", last_modified: getDate(-60)}),
+					addCourseTestEvent({ scopeId, summary: "dup", weekday: "WE", last_modified: getDate(-60)}),
+
+					// other
+					addCourseTestEvent({ scopeId: anotherScopeId, summary: "other", weekday: "MO", last_modified: getDate(-30)}),
+					addCourseTestEvent({ scopeId: anotherScopeId, summary: "other", weekday: "TU", last_modified: getDate(-30)}),
+					addCourseTestEvent({ scopeId: anotherScopeId, summary: "other", weekday: "WE", last_modified: getDate(-30)}),
+				]);
+
+			});
+
+			after(async () => {
+				resolvedServerScopes.data = resolvedServerScopes.data.filter(scope => scope.id !== scopeId);
+				await resetDB();
+			});
+
+			it('should successfully delete duplicates and not delete not duplicates', async () => {
+				const props = [scopeId, 'dup'];
+				let resultsToBeDeleted = await db.query("SELECT id from events where scope_id = $1 and summary = $2", props);
+				let expectedResultNotToBeDeleted = await db.query("SELECT id from events where scope_id != $1 or summary != $2", props);
+				expect(resultsToBeDeleted.length).to.be.greaterThan(0);
+				expect(expectedResultNotToBeDeleted.length).to.be.greaterThan(0);
+
+				const result = await request(app)
+					.delete(`/events/duplicates`);
+
+				resultsToBeDeleted = await db.query("SELECT id from events where scope_id = $1 and summary = $2", props);
+				let actualResultNotToBeDeleted = await db.query("SELECT id from events where scope_id != $1 or summary != $2", props);
+
+				expect(result.statusCode).to.be.equal(204);
+				expect(resultsToBeDeleted.length).to.be.equal(0);
+				// check that nothing except expected values was deleted
+				expect(actualResultNotToBeDeleted.length).to.be.greaterThan(0);
+				expect(expectedResultNotToBeDeleted).to.be.deep.equal(actualResultNotToBeDeleted);
+			});
+		});
+
+		describe('DELETE by scope', async () => {
+			const scopeId = '59cce16281297026d02cde123';
+			const anotherScopeId = 'another_id';
+			const courseName = 'post test';
+			let events;
+			before(async () => {
+				await addCourseScope(resolvedServerScopes, scopeId, courseName, true);
+				events = await Promise.all([
+					addTestEvents({ scopeId, startDate: getDate(-30), endDate: getDate(30), summary: 'touched start'}),
+					addTestEvents({ scopeId, startDate: getDate(15), endDate: getDate(45), summary: 'in time'}),
+					addTestEvents({ scopeId, startDate: getDate(30), endDate: getDate(90), summary: 'touched end'}),
+					addTestEvents({ scopeId, startDate: getDate(-30), endDate: getDate(90), summary: 'start before and end after'}),
+					addTestEvents({ scopeId, startDate: getDate(-60), endDate: getDate(-30), summary: 'end before - should not found'}),
+					addTestEvents({ scopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
+
+					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
+					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
+					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
+					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'})
+				]);
+
+			});
+
+			after(async () => {
+				resolvedServerScopes.data = resolvedServerScopes.data.filter(scope => scope.id !== scopeId);
+				await resetDB();
+			});
+
+			it('should successfully delete all events for the scope and not delete other events', async () => {
+				const props = [scopeId];
+				let resultForScopeToBeDeleted = await db.query('SELECT id from events where scope_id = $1', props);
+				let expectedResultNotToBeDeleted = await db.query('SELECT id from events where scope_id != $1', props);
+				expect(resultForScopeToBeDeleted.length).to.be.greaterThan(0);
+				expect(expectedResultNotToBeDeleted.length).to.be.greaterThan(0);
+
+				const result = await request(app)
+					.delete(`/scopes/${scopeId}`)
+					.set('Authorization', userId);
+
+				resultForScopeToBeDeleted = await db.query('SELECT id from events where scope_id = $1', props);
+				let actualResultNotToBeDeleted = await db.query('SELECT id from events where scope_id != $1', props);
+
+				expect(result.statusCode).to.be.equal(204);
+				expect(resultForScopeToBeDeleted.length).to.be.equal(0);
+				// check that nothing except expected values was deleted
+				expect(actualResultNotToBeDeleted.length).to.be.greaterThan(0);
+				expect(expectedResultNotToBeDeleted).to.be.deep.equal(actualResultNotToBeDeleted);
+			});
 		});
 	
 		describe('PUT', () => {

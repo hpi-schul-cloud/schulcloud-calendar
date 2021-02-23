@@ -14,8 +14,9 @@ exports.DB_DATABASE = process.env.DB_DATABASE;
 exports.DB_USERNAME = process.env.DB_USERNAME;
 exports.DB_PASSWORD = process.env.DB_PASSWORD;
 exports.DB_PORT = process.env.DB_PORT || 5432;
-exports.API_KEY = process.env.API_KEY || 'example';
 exports.CONNECTION_POOL_SIZE = process.env.CONNECTION_POOL_SIZE || 10;
+exports.DB_IDLE_TIMEOUT_MILLIS = process.env.DB_IDLE_TIMEOUT_MILLIS;
+exports.DB_MAX_USES = process.env.DB_MAX_USES;
 
 /**
  * Base Paths
@@ -29,6 +30,7 @@ exports.ROOT_URL = process.env.ROOT_URL || `https://${exports.DOMAIN_NAME}:3000`
 /**
 * API Paths
 */
+exports.API_KEY = process.env.API_KEY || 'example';
 const SERVER_USERS_URI = '/resolve/users/';
 const SERVER_SCOPES_URI = '/resolve/scopes/';
 exports.SERVER_USERS_URI = SERVER_USERS_URI;
@@ -59,3 +61,8 @@ exports.LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
 exports.DAY_IN_MS = 1000 * 60 * 60 * 24;
 exports.SCOPE_DISPLAY_OLD_EVENTS_FROM_LAST_DAYS = 21;
 exports.SCOPE_DISPLAY_OLD_EVENTS_UNTIL_DAYS = 365 * 2;
+
+/**
+ * Feature toggles
+ */
+exports.IS_MIGRATION = process.env.IS_MIGRATION === 'true' || NODE_ENV === 'test';
