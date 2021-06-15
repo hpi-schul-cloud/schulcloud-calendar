@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calendar-configmap
+  namespace: {{ NAMESPACE }}
+  labels:
+    app: calendar
+data:  
+  NODE_ENV: "production"
+  CORS_ORIGIN: "http://calendar-svc:3000"
+  # Paths
+  SCHULCLOUD_BASE_PATH: "http://api-svc:3030"
+  NOTIFICATION_SERVICE_BASE_PATH: "http://notification-svc"
+  SCHULCLOUD_ALL_USERS_FOR_UUID: "http://api-svc:3030/resolve/users/"
+  SCHULCLOUD_ALL_SCOPES_FOR_TOKEN: "http://api-svc:3030/resolve/scopes/"
+  NOTIFICATION_SERVICE_NEW_NOTIFICATION: "http://notification-svc/messages"
+  TZ: "Europe/Berlin"
+{% if CAL_IS_MIGRATION is defined %}
+  IS_MIGRATION: "{{ CAL_IS_MIGRATION }}"
+{% endif %}

@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar-deployment
+  namespace: {{ NAMESPACE }}
+  labels:
+    app: calendar
+spec:
+  replicas: {{ CALENDAR_REPLICAS }}
+  selector:
+    matchLabels:
+      app: calendar
+  template:
+    metadata:
+      labels:
+        app: calendar
+    spec:
+      securityContext:
+        #readOnlyRootFilesystem: true
+        # run as user node (uid 1000)
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+      containers:
+      - name: calendar
+        image: {{ CALENDAR_IMAGE_NAME }}:{{ APP_IMAGE_TAG }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: calendar-configmap
+        - secretRef:
+            name: calendar-secret
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 4
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 4
+        startupProbe:
+          failureThreshold: 4
+          httpGet:
+            path: /ping
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 4
+        resources:
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+          requests:
+            cpu: "100m"
+            memory: "1Gi"
