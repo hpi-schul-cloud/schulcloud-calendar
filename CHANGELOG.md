@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`
 
+## [25.6.1] - 2021-06-24
+
+### Changed
+
+- OPS-2470 - changes build pipeline to github actions 
+
 ## [25.6.0] - 2021-03-15
 
 ### Changed
