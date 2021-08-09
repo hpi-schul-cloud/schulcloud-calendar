@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: calendar-db-init-job
+  labels:
+    app: calendar
+spec:
+  template:
+    spec:
+      containers:
+      - name: calendar-db-init
+        image: schulcloud/infra-tools:latest
+        envFrom:
+        - configMapRef:
+            name: calendar-configmap
+        - secretRef:
+            name: calendar-secret
+        volumeMounts:
+        - name: script
+          mountPath: /update.sh
+          subPath: update.sh
+        command: ['/bin/sh','-c']
+        args: ['cp /update.sh /update.run.sh && chmod +x /update.run.sh &&./update.run.sh']
+      volumes:
+      - name: script
+        configMap:
+          name: calendar-db-init-file
+          items:
+          - key: update.sh
+            path: update.sh
+      restartPolicy: Never
+  backoffLimit: 4
