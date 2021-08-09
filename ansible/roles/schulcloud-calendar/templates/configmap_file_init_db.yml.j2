@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calendar-db-init-file
+  namespace: {{ NAMESPACE }}
+  labels:
+    app: calendar
+data:
+  update.sh: |
+    #!/bin/bash
+    git clone https://github.com/hpi-schul-cloud/schulcloud-calendar.git
+    cd schulcloud-calendar
+    export PGPASSWORD=$DB_PASSWORD
+    psql -U $DB_USERNAME -d $DB_DATABASE -h $DB_HOST -a -f schema.sql
