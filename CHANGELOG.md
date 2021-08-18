@@ -9,6 +9,8 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## Unreleased
 
+## [26.9.1] - 2021-08-18
+
 ### Added
 
 - OPS-2574 - Removeing autodeployed branches for developers if branch deleted
@@ -18,6 +20,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 ### Changed
 
 - OPS-2470 - changes build pipeline to github actions 
+- SC-9192 - change api basepath to have /api/v1 prefixed
 
 ## [25.6.0] - 2021-03-15
 
