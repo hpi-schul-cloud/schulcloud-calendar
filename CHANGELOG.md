@@ -15,7 +15,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ### Changed
 
-- BC-37 - BC-91 - reduce resource consumption for deployed schulcloud-calendar
+- BC-37 - BC-92 - reduce resource consumption for deployed schulcloud-calendar
 
 ## [25.6.1] - 2021-06-24
 
