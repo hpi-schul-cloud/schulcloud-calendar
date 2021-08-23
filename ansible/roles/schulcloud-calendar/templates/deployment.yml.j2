@@ -6,7 +6,7 @@ metadata:
   labels:
     app: calendar
 spec:
-  replicas: {{ CALENDAR_REPLICAS }}
+  replicas: {{ CALENDAR_REPLICAS|default("1", true) }}
   selector:
     matchLabels:
       app: calendar
@@ -62,8 +62,9 @@ spec:
           timeoutSeconds: 4
         resources:
           limits:
-            cpu: "1000m"
-            memory: "1Gi"
+            cpu: {{ CALENDAR_CPU_LIMITS|default("1000m", true) }}
+            memory: {{ CALENDAR_MEMORY_LIMITS|default("1Gi", true) }}
           requests:
-            cpu: "100m"
-            memory: "1Gi"
+            cpu: {{ CALENDAR_CPU_REQUESTS|default("100m", true) }}
+            memory: {{ CALENDAR_MEMORY_REQUESTS|default("128Mi", true) }}
+            
