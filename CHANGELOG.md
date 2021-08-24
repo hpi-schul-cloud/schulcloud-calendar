@@ -9,6 +9,10 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## Unreleased
 
+## [26.9.0] - 2021-08-25
+
+- SC-9192 - change api basepath to have /api/v1 prefixed
+
 ### Added
 
 - OPS-2574 - Removeing autodeployed branches for developers if branch deleted
