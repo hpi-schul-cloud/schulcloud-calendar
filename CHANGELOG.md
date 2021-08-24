@@ -9,7 +9,9 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## Unreleased
 
-## [26.9.1] - 2021-08-18
+## [26.9.0] - 2021-08-25
+
+- SC-9192 - change api basepath to have /api/v1 prefixed
 
 ### Added
 
@@ -20,7 +22,6 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 ### Changed
 
 - OPS-2470 - changes build pipeline to github actions 
-- SC-9192 - change api basepath to have /api/v1 prefixed
 
 ## [25.6.0] - 2021-03-15
 
