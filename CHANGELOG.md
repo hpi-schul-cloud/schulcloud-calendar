@@ -9,6 +9,10 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## Unreleased
 
+### Added
+
+- BC-147 - add dispatch job after build and push job for the main branch
+
 ## [26.9.0] - 2021-08-25
 
 - SC-9192 - change api basepath to have /api/v1 prefixed
