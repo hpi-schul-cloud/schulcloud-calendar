@@ -9,6 +9,10 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ## Unreleased
 
+### Added
+
+- BC-38 - BC-127 - Add ansible files for Bosscloud (default)
+
 ## [26.9.0] - 2021-08-25
 
 - SC-9192 - change api basepath to have /api/v1 prefixed
