@@ -11,6 +11,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ### Added
 
+- BC-147 - add dispatch job after build and push job for the main branch
 - BC-38 - BC-127 - Add ansible files for Bosscloud (default)
 
 ## [26.9.0] - 2021-08-25
