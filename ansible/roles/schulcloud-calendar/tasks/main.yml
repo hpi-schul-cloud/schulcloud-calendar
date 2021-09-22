@@ -23,12 +23,12 @@
       namespace: "{{ NAMESPACE }}"
       template: onepassword.yml.j2
     when: ONEPASSWORD is defined and ONEPASSWORD|bool
-      
-  - name: Deployment
+
+  - name: Calendar db init job config map
     community.kubernetes.k8s:
-      kubeconfig: ~/.kube/config 
+      kubeconfig: ~/.kube/config
       namespace: "{{ NAMESPACE }}"
-      template: deployment.yml.j2
+      template: configmap_file_init_db.yml.j2
 
   - name: Calendar db init job
     community.kubernetes.k8s:
@@ -36,9 +36,8 @@
       namespace: "{{ NAMESPACE }}"
       template: job_init_db.yml.j2
 
-  - name: Calendar db init job config map
+  - name: Deployment
     community.kubernetes.k8s:
-      kubeconfig: ~/.kube/config
+      kubeconfig: ~/.kube/config 
       namespace: "{{ NAMESPACE }}"
-      template: configmap_file_init_db.yml.j2
-   
+      template: deployment.yml.j2
