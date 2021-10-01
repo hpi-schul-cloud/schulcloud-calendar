@@ -11,4 +11,8 @@ data:
     git clone https://github.com/hpi-schul-cloud/schulcloud-calendar.git
     cd schulcloud-calendar
     export PGPASSWORD=$DB_PASSWORD
+    until psql -h $DB_HOST -U $DB_USERNAME -d $DB_DATABASE -c "select 1" > /dev/null 2>&1; do
+      echo "Waiting for postgres server..."
+      sleep 1
+    done
     psql -U $DB_USERNAME -d $DB_DATABASE -h $DB_HOST -a -f schema.sql
