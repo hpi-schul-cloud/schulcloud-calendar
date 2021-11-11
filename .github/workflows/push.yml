@@ -4,9 +4,7 @@ name: Build and push Docker Image
 on:
   push:
     branches-ignore:
-      - main
-      - master
-      - dependabot/*
+      - dependabot/**
 
 jobs:
   build_and_push:
