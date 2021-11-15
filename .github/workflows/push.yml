@@ -35,6 +35,7 @@ jobs:
          echo "IMAGE_EXISTS=$(docker manifest inspect ghcr.io/${{ github.repository }}:${{ github.sha }} > /dev/null && echo 1 || echo 0)" >> $GITHUB_ENV
 
       - name: Build and push ${{ github.repository }}
+        if: ${{ env.IMAGE_EXISTS == 0 }}
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -43,7 +44,15 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
           labels: ${{ steps.docker_meta_img.outputs.labels }}
-
+  branch_name:
+    runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
   deploy:
     needs:
       - build_and_push_docker
