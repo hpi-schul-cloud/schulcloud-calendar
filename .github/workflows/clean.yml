@@ -4,8 +4,6 @@ on: delete
 
 jobs:
   clean:
-    needs:
-      - branch_name
     uses: hpi-schul-cloud/dof_app_deploy/.github/workflows/clean_workflow.yml@main
     with:
       branch: ${{ github.event.ref }}
