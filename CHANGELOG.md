@@ -11,7 +11,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 
 ### Changed
 
-- BC-589 - BC-654 - Change auto deployment to a reusable workflow
+- BC-589 - BC-654 - change auto deployment to a reusable workflow
 
 ### Fixed
 
