@@ -24,7 +24,7 @@ spec:
         runAsNonRoot: true
       containers:
       - name: calendar
-        image: {{ CALENDAR_IMAGE_NAME }}:{{ APP_IMAGE_TAG }}
+        image: {{ SCHULCLOUD_CALENDAR_IMAGE }}:{{ SCHULCLOUD_CALENDAR_IMAGE_TAG }}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
