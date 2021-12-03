@@ -1,0 +1,11 @@
+  - name: Calendar db init job config map
+    kubernetes.core.k8s:
+      kubeconfig: ~/.kube/config
+      namespace: "{{ NAMESPACE }}"
+      template: configmap_file_init_db.yml.j2
+
+  - name: Calendar db init job
+    kubernetes.core.k8s:
+      kubeconfig: ~/.kube/config
+      namespace: "{{ NAMESPACE }}"
+      template: job_init_db.yml.j2
