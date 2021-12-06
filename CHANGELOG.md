@@ -12,6 +12,7 @@ Allowed Types of change: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `
 ### Added
 
 ### Fixed
+- BC-741 - Sort and split ansible rols
 
 ## [26.19.0]
 
