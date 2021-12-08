@@ -1,0 +1,3 @@
+---
+SCHULCLOUD_CALENDAR_IMAGE: schulcloud/schulcloud-calendar
+CALENDAR_REPLICAS: 1
