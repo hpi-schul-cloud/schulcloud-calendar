@@ -32,7 +32,6 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
         "authorities": [
           "can-read",
           "can-write",
-          "can-send-notifications"
         ]
       }
     },
@@ -44,7 +43,6 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
         "authorities": [
           "can-read",
           "can-write",
-          "can-send-notifications"
         ]
       }
     },
@@ -55,7 +53,6 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
         "name": "Kurs Mathe 1a",
         "authorities": [
           "can-write",
-          "can-send-notifications"
         ]
       }
     },
@@ -121,7 +118,6 @@ Response with Service token:
       "attributes": {
         "name": "Service 1",
         "authorities": [
-          "can-send-notifications"
         ]
       }
     }
