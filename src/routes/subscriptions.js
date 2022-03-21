@@ -17,7 +17,6 @@ const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
 const returnSuccess = require('../utils/response/returnSuccess');
-const sendNotification = require('../services/sendNotification');
 const subscriptionsToJsonApi = require('../parsers/subscription/subscriptionsToJsonApi');
 
 // content
@@ -51,13 +50,6 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 	authorizeAccessToObjects(user, 'can-write', subscriptions)
 		.then(insertSubscriptions)
 		.then((insertedSubscriptions) => {
-			insertedSubscriptions.forEach((insertedSubscription) => {
-				sendNotification.forNewSubscription(
-					insertedSubscription['scope_id'],
-					insertedSubscription['description'],
-					insertedSubscription['ics_url']
-				);
-			});
 			return insertedSubscriptions;
 		})
 		.then(subscriptionsToJsonApi)
@@ -80,11 +72,6 @@ router.put('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromHead
 				const title = 'Query Error';
 				return Promise.reject({error, status, title});
 			} else {
-				sendNotification.forModifiedSubscription(
-					updatedSubscriptions['scope_id'],
-					updatedSubscriptions['description'],
-					updatedSubscriptions['ics_url']
-				);
 				return updatedSubscriptions;
 			}
 		})
@@ -110,11 +97,6 @@ router.delete('/subscriptions/:subscriptionId', jsonApiToJson, authenticateFromH
 				}
 				next(err);
 			} else {
-				sendNotification.forDeletedSubscription(
-					deletedSubscriptions['scope_id'],
-					deletedSubscriptions['description'],
-					deletedSubscriptions['ics_url']
-				);
 				return deletedSubscriptions;
 			}
 		})

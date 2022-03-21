@@ -13,7 +13,6 @@ const addPermission = (event, hasWritePermission = false) => {
     event.attributes.authorities = ['can-read'];
     if (hasWritePermission) {
         event.attributes.authorities.push('can-write');
-        event.attributes.authorities.push('can-send-notifications');
     }
 
     return event;
