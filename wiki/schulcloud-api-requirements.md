@@ -126,7 +126,7 @@ Response with Service token:
 ```
 
 #### Map from UUID to related user UUID(s)
-As the calendar service we need to get all users belonging to a UUID in order to bulk create events (e.g. when accessed through our REST API by a submission system) individually for each user. In addition, the notification service requires this endpoint to notify all users belonging to an event.
+As the calendar service we need to get all users belonging to a UUID in order to bulk create events (e.g. when accessed through our REST API by a submission system) individually for each user.
 
 _Request_: UUID
 
