@@ -49,9 +49,6 @@ router.post('/subscriptions', jsonApiToJson, authenticateFromHeaderField, functi
 
 	authorizeAccessToObjects(user, 'can-write', subscriptions)
 		.then(insertSubscriptions)
-		.then((insertedSubscriptions) => {
-			return insertedSubscriptions;
-		})
 		.then(subscriptionsToJsonApi)
 		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
 		.catch(next);
