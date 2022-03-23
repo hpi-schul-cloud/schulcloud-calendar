@@ -18,7 +18,6 @@ const icsToJson = require('../parsers/event/icsToJson');
 
 // response
 const returnSuccess = require('../utils/response/returnSuccess');
-const sendNotification = require('../services/sendNotification');
 const eventsToJsonApi = require('../parsers/event/eventsToJsonApi');
 const eventsToIcsInJsonApi = require('../parsers/event/eventsToIcsInJsonApi');
 
@@ -70,7 +69,6 @@ function handlePost(req, res, next, outputFormatter) {
 
 	authorizeAccessToObjects(user, 'can-write', events)
 		.then((events) => doInserts(events, user))
-		.then(sendInsertNotification)
 		.then(outputFormatter)
 		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
 		.catch(next);
@@ -82,14 +80,6 @@ function doInserts(events, user) {
 			.then(resolve)
 			.catch(reject);
 	});
-}
-
-function sendInsertNotification(insertedEvents) {
-	insertedEvents.forEach((insertedEvent) => {
-		const {scope_id, summary, dtstart, dtend} = insertedEvent;
-		sendNotification.forNewEvent(scope_id, summary, dtstart, dtend);
-	});
-	return insertedEvents;
 }
 
 router.put('/events/:eventId', jsonApiToJson, authenticateFromHeaderField, function (req, res, next) {
@@ -108,7 +98,6 @@ function handlePut(req, res, next, outputFormatter) {
 
 	authorizeWithPotentialScopeIds(eventId, scopeIds, user, getEvents, getOriginalEvent, 'eventId')
 		.then(() => doUpdates(event, eventId))
-		.then(sendUpdateNotification)
 		.then(outputFormatter)
 		.then((jsonApi) => { returnSuccess(res, 200, jsonApi); })
 		.catch(next);
@@ -130,14 +119,6 @@ function doUpdates(event, eventId) {
 			})
 			.catch(reject);
 	});
-}
-
-function sendUpdateNotification(updatedEvents) {
-	updatedEvents.forEach((updatedEvent) => {
-		const { scope_id, summary, dtstart, dtend } = updatedEvent;
-		sendNotification.forModifiedEvent(scope_id, summary, dtstart, dtend);
-	});
-	return updatedEvents;
 }
 
 router.delete('/events/duplicates', isMigration, (req, res, next) => {

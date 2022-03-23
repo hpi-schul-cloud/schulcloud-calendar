@@ -32,7 +32,6 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
         "authorities": [
           "can-read",
           "can-write",
-          "can-send-notifications"
         ]
       }
     },
@@ -44,7 +43,6 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
         "authorities": [
           "can-read",
           "can-write",
-          "can-send-notifications"
         ]
       }
     },
@@ -55,7 +53,6 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/all_scopes/:token
         "name": "Kurs Mathe 1a",
         "authorities": [
           "can-write",
-          "can-send-notifications"
         ]
       }
     },
@@ -121,43 +118,6 @@ Response with Service token:
       "attributes": {
         "name": "Service 1",
         "authorities": [
-          "can-send-notifications"
-        ]
-      }
-    }
-  ]
-}
-```
-
-#### Map from usertoken to related user UUID
-(For the notification service.)
-
-_Request_: Usertoken
-
-_Response_: Verification and UUID of related user
-
-_Example_: https://schulcloud-api-mock.herokuapp.com/api/user/:token
-
-`token ∈ {student[1|2]\_[1|2], teacher[1|2]\_[1|2]}`
-
-```
-{
-  "links": {
-    "self": "https://schulcloud-api-mock.herokuapp.com/api/user/student1_1",
-    "first": "",
-    "last": "",
-    "next": "",
-    "prev": ""
-  },
-  "data": [
-    {
-      "type": "user",
-      "id": "874a9be4-ea6a-4364-852d-1a46b0d155f3",
-      "attributes": {
-        "name": "Schüler 1.1",
-        "authorities": [
-          "can-read",
-          "can-write"
         ]
       }
     }
@@ -166,7 +126,7 @@ _Example_: https://schulcloud-api-mock.herokuapp.com/api/user/:token
 ```
 
 #### Map from UUID to related user UUID(s)
-As the calendar service we need to get all users belonging to a UUID in order to bulk create events (e.g. when accessed through our REST API by a submission system) individually for each user. In addition, the notification service requires this endpoint to notify all users belonging to an event.
+As the calendar service we need to get all users belonging to a UUID in order to bulk create events (e.g. when accessed through our REST API by a submission system) individually for each user.
 
 _Request_: UUID
 
