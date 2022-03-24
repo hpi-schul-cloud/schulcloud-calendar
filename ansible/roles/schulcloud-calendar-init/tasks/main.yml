@@ -10,7 +10,7 @@
       kubeconfig: ~/.kube/config
       namespace: "{{ NAMESPACE }}"
       state: absent
-      apiVersion: v1
+      api_version: v1
       kind: ConfigMap
       name: calendar-db-init-file
     when: not WITH_CALENDAR_INIT
@@ -27,7 +27,7 @@
       kubeconfig: ~/.kube/config
       namespace: "{{ NAMESPACE }}"
       state: absent
-      apiVersion: batch/v1
+      api_version: batch/v1
       kind: Job
       name: calendar-db-init-job
     when: not WITH_CALENDAR_INIT
