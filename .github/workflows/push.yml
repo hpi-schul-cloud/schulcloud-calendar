@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build_and_push_docker:
+  build_and_push:
     runs-on: ubuntu-latest
     permissions:
       packages: write
