@@ -8,6 +8,16 @@ function authorizeAccessToScopeId(user, scopeId) {
     });
 }
 
+function authorizeAccessToScopeIdForDelete(user, scopeId) {
+    return new Promise((resolve, reject) => {
+        if (scopeId && !hasPermission(user, 'can-write', scopeId)) {
+            reject(accessDenied());
+        } else {
+            resolve();
+        }
+    });
+}
+
 function authorizeAccessToObjects(user, accessLevel, container) {
     return new Promise ((resolve, reject) => {
         if (!hasPermissionForAll(user, container, accessLevel)) {
@@ -77,5 +87,6 @@ function accessDenied() {
 module.exports = {
     authorizeAccessToScopeId,
     authorizeAccessToObjects,
-    authorizeWithPotentialScopeIds
+    authorizeWithPotentialScopeIds,
+    authorizeAccessToScopeIdForDelete
 };
