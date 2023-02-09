@@ -12,7 +12,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField, authenticateFromQueryParameter } = require('../security/authentication');
-const { authorizeAccessToScopeId } = require('../security/authorization');
+const { authorizeReadAccessToScopeId } = require('../security/authorization');
 
 // response
 const returnSuccess = require('../utils/response/returnSuccess');
@@ -39,7 +39,7 @@ router.get('/calendar', authenticateFromQueryParameter, function (req, res, next
 	const scopeId = req.query['scope-id'];
 	const user = req.user;
 
-	authorizeAccessToScopeId(user, scopeId)
+	authorizeReadAccessToScopeId(user, scopeId)
 		.then(() => getIcs(user.scopes, scopeId))
 		.then((icsString) => returnIcs(res, icsString))
 		.catch(next);

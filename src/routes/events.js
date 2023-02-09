@@ -12,7 +12,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField, isMigration } = require('../security/authentication');
-const { authorizeAccessToScopeId, authorizeAccessToObjects, authorizeWithPotentialScopeIds, authorizeAccessToScopeIdForDelete } = require('../security/authorization');
+const { authorizeReadAccessToScopeId, authorizeWriteAccessToScopeId, authorizeAccessToObjects, authorizeWithPotentialScopeIds } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/event/jsonApiToJson');
 const icsToJson = require('../parsers/event/icsToJson');
 
@@ -47,7 +47,7 @@ router.get('/events', authenticateFromHeaderField, function (req, res, next) {
 	}
 
 	const user = req.user;
-	authorizeAccessToScopeId(user, filter.scopeId)
+	authorizeReadAccessToScopeId(user, filter.scopeId)
 		.then(() => getEvents(filter, user.scopes))
 		.then((events) => authorizeAccessToObjects(user, 'can-read', events))
 		.then(eventsToJsonApi)
@@ -132,7 +132,7 @@ router.delete('/scopes/:scopeId', authenticateFromHeaderField, (req, res, next) 
 	const scopeId = req.params.scopeId;
 	const user = req.user;
 
-	authorizeAccessToScopeIdForDelete(user, scopeId)
+	authorizeWriteAccessToScopeId(user, scopeId)
 		.then(() => deleteAllEventsForScope(scopeId))
 		.then((result) => ({data: result}))
 		.then((jsonApi) => { returnSuccess(res, 204, jsonApi); })
