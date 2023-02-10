@@ -47,6 +47,10 @@ router.get('/events', authenticateFromHeaderField, function (req, res, next) {
 	}
 
 	const user = req.user;
+
+	// filter out scopes with admin-access authority to hide events of all courses for admin
+	user.scopes = Object.fromEntries(Object.entries(user.scopes).filter(scope => !scope[1].authorities['admin-access']));
+
 	authorizeReadAccessToScopeId(user, filter.scopeId)
 		.then(() => getEvents(filter, user.scopes))
 		.then((events) => authorizeAccessToObjects(user, 'can-read', events))
