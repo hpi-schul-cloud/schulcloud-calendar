@@ -27,7 +27,8 @@ function isMigration(req, res, next) {
 function getUser(req, res, next, token) {
 	if (token) {
 		req.token = token;
-		getAllScopesForToken(token)
+		const params = (req.query || {}).all ? '?view=true' : '';
+		getAllScopesForToken(token, params)
 			.then((apiResponse) => {
 				req.user = parseUserInformation(apiResponse);
 				next();
