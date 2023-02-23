@@ -81,7 +81,7 @@ describe('routes/events', () => {
 
 			after(async () => {
 				resolvedServerScopes.data = resolvedServerScopes.data.filter(scope => scope.id !== scopeId);
-			}); 
+			});
 
 			it('create event', async () => {
 				const eventData = convertEventToJsonApi({
@@ -94,7 +94,7 @@ describe('routes/events', () => {
 					.post('/events')
 					.send(eventData)
 					.set('Authorization', userId);
-				
+
 				const { data } = result.body;
 
 				expect(data).to.be.an('array').to.have.lengthOf(1);
@@ -120,7 +120,7 @@ describe('routes/events', () => {
 				expect(result.body.data).to.be.an('array').to.have.lengthOf(5);
 			});
 		}); */
-	
+
 		describe('FIND with scope and timebox', () => {
 			const scopeId = '59cce16281297026d02abc123';
 			const scopeIdThatIsNotRequested = '59cce16281297026d02xyz999';
@@ -233,6 +233,7 @@ describe('routes/events', () => {
 		describe('DELETE by scope', async () => {
 			const scopeId = '59cce16281297026d02cde123';
 			const anotherScopeId = 'another_id';
+			const scopeIdWithoutWritePermissions = '58f735e4014bbf45f0be2502';
 			const courseName = 'post test';
 			let events;
 			before(async () => {
@@ -248,7 +249,9 @@ describe('routes/events', () => {
 					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
 					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
 					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
-					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'})
+					addTestEvents({ scopeId: anotherScopeId, startDate: getDate(90), endDate: getDate(120), summary: 'start after - should not found'}),
+
+					addTestEvents({ scopeId: scopeIdWithoutWritePermissions, startDate: getDate(15), endDate: getDate(45), summary: 'no permissions - should not delete'}),
 				]);
 
 			});
@@ -278,10 +281,31 @@ describe('routes/events', () => {
 				expect(actualResultNotToBeDeleted.length).to.be.greaterThan(0);
 				expect(expectedResultNotToBeDeleted).to.be.deep.equal(actualResultNotToBeDeleted);
 			});
+
+			it('should not delete events for the scope if missing write permission', async () => {
+				const props = [scopeIdWithoutWritePermissions];
+				let resultForScopeToBeDeleted = await db.query('SELECT id from events where scope_id = $1', props);
+				let expectedResultNotToBeDeleted = await db.query('SELECT id from events');
+				expect(resultForScopeToBeDeleted.length).to.be.greaterThan(0);
+				expect(expectedResultNotToBeDeleted.length).to.be.greaterThan(0);
+
+				const result = await request(app)
+					.delete(`/scopes/${scopeIdWithoutWritePermissions}`)
+					.set('Authorization', userId);
+
+				resultForScopeToBeDeleted = await db.query('SELECT id from events where scope_id = $1', props);
+				let actualResultNotToBeDeleted = await db.query('SELECT id from events');
+
+				expect(result.statusCode).to.be.equal(403);
+				expect(resultForScopeToBeDeleted.length).to.be.greaterThan(0);
+				// check that nothing was deleted
+				expect(actualResultNotToBeDeleted.length).to.be.greaterThan(0);
+				expect(expectedResultNotToBeDeleted).to.be.deep.equal(actualResultNotToBeDeleted);
+			});
 		});
-	
+
 		describe('PUT', () => {
-	
+
 		});
 	});
 
