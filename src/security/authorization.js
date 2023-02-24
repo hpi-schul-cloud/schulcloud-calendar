@@ -1,6 +1,14 @@
-function authorizeAccessToScopeId(user, scopeId) {
+function authorizeReadAccessToScopeId(user, scopeId) {
+    return authorizeAccessToScopeId(user, scopeId, 'can-read');
+}
+
+function authorizeWriteAccessToScopeId(user, scopeId) {
+    return authorizeAccessToScopeId(user, scopeId, 'can-write');
+}
+
+function authorizeAccessToScopeId(user, scopeId, permission) {
     return new Promise((resolve, reject) => {
-        if (scopeId && !hasPermission(user, 'can-read', scopeId)) {
+        if (scopeId && !hasPermission(user, permission, scopeId)) {
             reject(accessDenied());
         } else {
             resolve();
@@ -75,7 +83,8 @@ function accessDenied() {
 }
 
 module.exports = {
-    authorizeAccessToScopeId,
+    authorizeReadAccessToScopeId,
+    authorizeWriteAccessToScopeId,
     authorizeAccessToObjects,
     authorizeWithPotentialScopeIds
 };

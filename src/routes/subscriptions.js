@@ -12,7 +12,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 // authentication, authorization and preprocessing
 const { authenticateFromHeaderField } = require('../security/authentication');
-const { authorizeAccessToScopeId, authorizeAccessToObjects, authorizeWithPotentialScopeIds } = require('../security/authorization');
+const { authorizeReadAccessToScopeId, authorizeAccessToObjects, authorizeWithPotentialScopeIds } = require('../security/authorization');
 const jsonApiToJson = require('../parsers/subscription/jsonApiToJson');
 
 // response
@@ -35,7 +35,7 @@ router.get('/subscriptions', authenticateFromHeaderField, function (req, res, ne
 	const filter = { scopeId, subscriptionId, lastUpdateFailed };
 	const user = req.user;
 
-	authorizeAccessToScopeId(user, filter.scopeId)
+	authorizeReadAccessToScopeId(user, filter.scopeId)
 		.then(() => getSubscriptions(filter, user.scopes))
 		.then((subscriptions) => authorizeAccessToObjects(user, 'can-read', subscriptions))
 		.then(subscriptionsToJsonApi)
