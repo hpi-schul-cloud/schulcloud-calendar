@@ -1,9 +1,10 @@
-#FROM node:8.17.0
-from node:12.16.0-alpine3.9
+FROM docker.io/node:18-alpine
 
+ENV NODE_ENV=production
 WORKDIR /schulcloud-calendar
-COPY . .
-RUN chown -R 1000:1000 /schulcloud-calendar 
-RUN npm install
+
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY src ./src
 
 CMD npm start
