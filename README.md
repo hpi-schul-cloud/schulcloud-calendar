@@ -41,35 +41,3 @@ If you get `fe_sendauth: no password supplied` errors on commands, edit your `[i
 1. Create a database named `schulcloud_calendar_test` and setup as described above
 2. Create tables with `psql -U node -d schulcloud_calendar_test -a -f schema.sql`
 3. Run `npm test`
-
-## Container
-
-### Build
-
-To build a default container image run the following code:
-```
-make build
-```
-
-To customize the build process set some environment variables (details see
-Makefile). For example set `DOCKER_IMAGE_TAG` to build a custom image tag:
-```
-make build DOCKER_IMAGE_TAG="foo/bar:latest"
-```
-
-### Push
-
-To push a previously built default container image run the following code:
-```
-make push
-```
-
-**Todo: Currently private credentials (username, password) will be used for
-`docker login` (see `~/.docker/config.json`). This should be made configurable
-later for CI pipelines.**
-
-To customize the push process set some environment variables (details see
-Makefile). For example set `DOCKER_IMAGE_TAG` to push a custom image tag:
-```
-make push DOCKER_IMAGE_TAG="foo/bar:latest"
-```

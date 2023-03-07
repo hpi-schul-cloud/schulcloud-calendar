@@ -20,8 +20,7 @@
     "linter": "eslint src",
     "test": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --exit --t 10000 './test/**/*.test.js'",
     "test:integration": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --exit --t 10000 './test/**/*.integration.test.js'",
-    "test:unit": "mocha --exit --t 10000 './test/**/*.unit.test.js'",
-    "preinstall": "npx npm-force-resolutions"
+    "test:unit": "mocha --exit --t 10000 './test/**/*.unit.test.js'"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
