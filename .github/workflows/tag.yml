@@ -19,7 +19,7 @@ jobs:
         id: docker_meta_img
         uses: docker/metadata-action@v4
         with:
-          images: docker.io/${{ github.repository }}, quay.io/schulcloudverbund/${{ github.repository }}
+          images: docker.io/schulcloud/schulcloud-calendar, quay.io/schulcloudverbund/schulcloud-calendar
           tags: |
             type=ref,event=branch,enable=false,priority=600
             type=sha,enable=true,priority=600,prefix=
