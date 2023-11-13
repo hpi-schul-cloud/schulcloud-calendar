@@ -7,6 +7,9 @@ metadata:
     app: calendar
     app.kubernetes.io/part-of: schulcloud-verbund
     app.kubernetes.io/version: {{ SCHULCLOUD_CALENDAR_IMAGE_TAG }}
+    app.kubernetes.io/name: calendar
+    app.kubernetes.io/component: calendar
+    app.kubernetes.io/managed-by: ansible
     git.branch: {{ SCHULCLOUD_CALENDAR_BRANCH_NAME }}
     git.repo: {{ SCHULCLOUD_CALENDAR_REPO_NAME }}
 spec:
@@ -20,6 +23,9 @@ spec:
         app: calendar
         app.kubernetes.io/part-of: schulcloud-verbund
         app.kubernetes.io/version: {{ SCHULCLOUD_CALENDAR_IMAGE_TAG }}
+        app.kubernetes.io/name: calendar
+        app.kubernetes.io/component: calendar
+        app.kubernetes.io/managed-by: ansible
         git.branch: {{ SCHULCLOUD_CALENDAR_BRANCH_NAME }}
         git.repo: {{ SCHULCLOUD_CALENDAR_REPO_NAME }}
     spec:
