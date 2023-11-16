@@ -5,6 +5,13 @@ metadata:
   namespace: {{ NAMESPACE }}
   labels:
     app: calendar
+    app.kubernetes.io/part-of: schulcloud-verbund
+    app.kubernetes.io/version: {{ SCHULCLOUD_CALENDAR_IMAGE_TAG }}
+    app.kubernetes.io/name: calendar
+    app.kubernetes.io/component: calendar
+    app.kubernetes.io/managed-by: ansible
+    git.branch: {{ SCHULCLOUD_CALENDAR_BRANCH_NAME }}
+    git.repo: {{ SCHULCLOUD_CALENDAR_REPO_NAME }}
 spec:
   replicas: {{ CALENDAR_REPLICAS|default("1", true) }}
   selector:
@@ -14,6 +21,13 @@ spec:
     metadata:
       labels:
         app: calendar
+        app.kubernetes.io/part-of: schulcloud-verbund
+        app.kubernetes.io/version: {{ SCHULCLOUD_CALENDAR_IMAGE_TAG }}
+        app.kubernetes.io/name: calendar
+        app.kubernetes.io/component: calendar
+        app.kubernetes.io/managed-by: ansible
+        git.branch: {{ SCHULCLOUD_CALENDAR_BRANCH_NAME }}
+        git.repo: {{ SCHULCLOUD_CALENDAR_REPO_NAME }}
     spec:
       securityContext:
         #readOnlyRootFilesystem: true
@@ -67,4 +81,3 @@ spec:
           requests:
             cpu: {{ CALENDAR_CPU_REQUESTS|default("100m", true) }}
             memory: {{ CALENDAR_MEMORY_REQUESTS|default("128Mi", true) }}
-            
