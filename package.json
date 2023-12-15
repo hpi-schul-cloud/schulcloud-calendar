@@ -11,7 +11,7 @@
   "license": "AGPL-3.0",
   "engines": {
     "node": "18",
-    "npm": "9"
+    "npm": ">=9"
   },
   "scripts": {
     "start": "node src",
