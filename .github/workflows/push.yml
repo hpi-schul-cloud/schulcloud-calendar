@@ -53,23 +53,36 @@ jobs:
           tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
           labels: ${{ steps.docker_meta_img.outputs.labels }}
 
-  branch_name:
+  branch_meta:
     runs-on: ubuntu-latest
     outputs:
-      branch: ${{ steps.extract_branch.outputs.branch }}
+      branch: ${{ steps.extract_branch_meta.outputs.branch }}
+      sha: ${{ steps.extract_branch_meta.outputs.sha }}
     steps:
-      - name: Extract branch name
+      - name: Extract branch meta
         shell: bash
-        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-        id: extract_branch
+        id: extract_branch_meta
+        env:
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BRANCH_REF_NAME: ${{ github.ref_name}}
+          BRANCH_SHA: ${{ github.sha }}
+        run: |
+          if [ "${{ github.event_name }}" == 'pull_request' ]; then
+            echo "branch=$PR_HEAD_REF" >> $GITHUB_OUTPUT
+            echo "sha=$PR_HEAD_SHA" >> $GITHUB_OUTPUT
+          else
+            echo "branch=$BRANCH_REF_NAME" >> $GITHUB_OUTPUT
+            echo "sha=$BRANCH_SHA" >> $GITHUB_OUTPUT
+          fi
 
   deploy:
     needs:
       - build_and_push
-      - branch_name
+      - branch_meta
     uses: hpi-schul-cloud/dof_app_deploy/.github/workflows/deploy.yml@main
     with:
-      branch: ${{ needs.branch_name.outputs.branch }}
+      branch: ${{ needs.branch_meta.outputs.branch }}
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       DEV_VAULT_BRB: ${{ secrets.DEV_VAULT_BRB }}
@@ -91,7 +104,7 @@ jobs:
   trivy-vulnerability-scanning:
     needs:
       - build_and_push
-      - branch_name
+      - branch_meta
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -99,7 +112,7 @@ jobs:
       security-events: write
     steps:
       - name: run trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@9ab158e8597f3b310480b9a69402b419bc03dbd5
+        uses: aquasecurity/trivy-action@1f6384b6ceecbbc6673526f865b818a2a06b07c9
         with:
           image-ref: 'ghcr.io/${{ github.repository }}:${{ github.sha }}'
           format: 'sarif'
@@ -108,6 +121,6 @@ jobs:
           ignore-unfixed: true
       - name: upload trivy results
         if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
