@@ -15,8 +15,7 @@ const resolveDBCredentials = () => {
 			(config.NODE_ENV === 'production' && !db_password) ||
 			!db_host ||
 			!db_port ||
-			!db_database ||
-			!db_ssl) {
+			!db_database) {
 			throw new Error('expected database credentials but incomplete specified');
 		}
 	
