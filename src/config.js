@@ -14,7 +14,7 @@ exports.DB_DATABASE = process.env.DB_DATABASE;
 exports.DB_USERNAME = process.env.DB_USERNAME;
 exports.DB_PASSWORD = process.env.DB_PASSWORD;
 exports.DB_PORT = process.env.DB_PORT || 5432;
-exports.DB_SSL = process.env.DB_SSL || false;
+exports.DB_SSL = process.env.DB_SSL.toLowerCase?.() === 'true';
 exports.CONNECTION_POOL_SIZE = process.env.CONNECTION_POOL_SIZE || 10;
 exports.DB_IDLE_TIMEOUT_MILLIS = process.env.DB_IDLE_TIMEOUT_MILLIS;
 exports.DB_MAX_USES = process.env.DB_MAX_USES;
