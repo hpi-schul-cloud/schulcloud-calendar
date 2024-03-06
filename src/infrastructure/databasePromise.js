@@ -46,7 +46,7 @@ const resolveDBCredentials = () => {
 	// https://github.com/vitaly-t/pg-promise/wiki/Connection-Syntax#configuration-object
 	// https://www.npmjs.com/package/pg-pool
 	// https://docs.hpi-schul-cloud.org/display/CARCH/Open+Issues+Scalability+and+Stabilization
-	// db.ssl = true;
+	db.ssl = true;
 	// db.connectionTimeoutMillis = 1000;
 	// db.min = config.CONNECTION_POOL_SIZE_MIN; // validate if it is exist
 	if (config.DB_IDLE_TIMEOUT_MILLIS) {
