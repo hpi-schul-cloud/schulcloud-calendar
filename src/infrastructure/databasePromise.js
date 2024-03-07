@@ -9,6 +9,7 @@ const resolveDBCredentials = () => {
 		const db_host = config.DB_HOST;
 		const db_port = config.DB_PORT;
 		const db_database = config.DB_DATABASE;
+		const db_ssl = config.DB_SSL;
 	
 		if (!db_username ||
 			(config.NODE_ENV === 'production' && !db_password) ||
@@ -25,6 +26,7 @@ const resolveDBCredentials = () => {
 				host: db_host,
 				port: db_port,
 				database: db_database,
+				ssl: db_ssl,
 			};
 		} else {
 			db = {
@@ -32,6 +34,7 @@ const resolveDBCredentials = () => {
 				host: db_host,
 				port: db_port,
 				database: db_database,
+				ssl: db_ssl,
 			};
 		}
 	} else {
@@ -41,12 +44,12 @@ const resolveDBCredentials = () => {
 			host: 'localhost',
 			port: 5432,
 			database: 'schulcloud_calendar',
+			ssl: false, //default
 		};
 	}
 	// https://github.com/vitaly-t/pg-promise/wiki/Connection-Syntax#configuration-object
 	// https://www.npmjs.com/package/pg-pool
 	// https://docs.hpi-schul-cloud.org/display/CARCH/Open+Issues+Scalability+and+Stabilization
-	// db.ssl = true;
 	// db.connectionTimeoutMillis = 1000;
 	// db.min = config.CONNECTION_POOL_SIZE_MIN; // validate if it is exist
 	if (config.DB_IDLE_TIMEOUT_MILLIS) {
