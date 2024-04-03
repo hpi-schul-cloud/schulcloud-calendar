@@ -11,10 +11,21 @@ spec:
       - name: calendar-db-init
         image: schulcloud/infra-tools:latest
         envFrom:
-        - configMapRef:
-            name: calendar-configmap
         - secretRef:
             name: calendar-secret
+        - configMapRef:
+            name: calendar-configmap
+{% if WITH_BRANCH_POSTGRES_DB_MANAGEMENT is defined and WITH_BRANCH_POSTGRES_DB_MANAGEMENT|bool %}
+        - secretRef:
+            name: pg-calendar-secret
+        env:
+        - name: DB_PASSWORD
+          value: "${DB_USER_PASSWORD}"
+        - name: DB_USERNAME
+          value: "${DB_USER}"
+        - name: DB_DATABASE
+          value: "${DB_NAME}"
+{% endif %}
         volumeMounts:
         - name: script
           mountPath: /update.sh
