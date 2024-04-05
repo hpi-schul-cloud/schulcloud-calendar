@@ -15,7 +15,7 @@
       name: calendar-db-init-file
     when: not WITH_CALENDAR_INIT
 
-  - name: Test if init job exits
+  - name: Test if init job exists
     kubernetes.core.k8s_info:
       kubeconfig: ~/.kube/config
       namespace: "{{ NAMESPACE }}"
