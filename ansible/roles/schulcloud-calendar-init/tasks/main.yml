@@ -15,12 +15,22 @@
       name: calendar-db-init-file
     when: not WITH_CALENDAR_INIT
 
+  - name: Test if init job exits
+    kubernetes.core.k8s_info:
+      kubeconfig: ~/.kube/config
+      namespace: "{{ NAMESPACE }}"
+      api_version: batch/v1
+      kind: Job
+      name: calendar-db-init-job
+    register: calendar_init_job_present
+    when: WITH_CALENDAR_INIT
+
   - name: Calendar db init job
     kubernetes.core.k8s:
       kubeconfig: ~/.kube/config
       namespace: "{{ NAMESPACE }}"
       template: job_init_db.yml.j2
-    when: WITH_CALENDAR_INIT
+    when: WITH_CALENDAR_INIT and calendar_init_job_present.resources|length == 0
 
   - name: Calendar db init job
     kubernetes.core.k8s:
