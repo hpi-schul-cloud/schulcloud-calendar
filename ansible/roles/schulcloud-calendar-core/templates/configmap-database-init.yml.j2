@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pg-{{ database_name }}-configmap-init
+  name: pg-calendar-configmap-init
   namespace: {{ NAMESPACE }}
   labels:
-    app: postgres
+    app: calendar-postgres-init
 data:
   config_script.sh: |
     #!/bin/bash
