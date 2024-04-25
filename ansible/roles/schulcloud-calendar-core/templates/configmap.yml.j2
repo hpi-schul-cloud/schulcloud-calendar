@@ -16,3 +16,7 @@ data:
 {% if CAL_IS_MIGRATION is defined %}
   IS_MIGRATION: "{{ CAL_IS_MIGRATION }}"
 {% endif %}
+{% if WITH_BRANCH_POSTGRES_DB_MANAGEMENT is defined and WITH_BRANCH_POSTGRES_DB_MANAGEMENT|bool %}
+  DB_HOST: "{{ POSTGRES_MANAGEMENT_HOST }}"
+  DB_SSL: "true"
+{% endif %}
