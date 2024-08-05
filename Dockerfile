@@ -1,4 +1,4 @@
-FROM docker.io/node:18-alpine
+FROM docker.io/node:20-alpine
 
 ENV NODE_ENV=production
 WORKDIR /schulcloud-calendar
