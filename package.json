@@ -1,6 +1,5 @@
 {
   "name": "schulcloud-calendar",
-  "version": "27.12.0",
   "homepage": "https://hpi-schul-cloud.de",
   "main": "src/",
   "keywords": [
@@ -10,7 +9,7 @@
   ],
   "license": "AGPL-3.0",
   "engines": {
-    "node": "18",
+    "node": "20",
     "npm": ">=9"
   },
   "scripts": {
