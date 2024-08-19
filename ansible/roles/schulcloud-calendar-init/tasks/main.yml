@@ -4,6 +4,8 @@
       namespace: "{{ NAMESPACE }}"
       template: configmap_file_init_db.yml.j2
     when: WITH_CALENDAR_INIT
+    tags:
+      - configmap
 
   - name: Calendar db init job config map
     kubernetes.core.k8s:
@@ -14,6 +16,8 @@
       kind: ConfigMap
       name: calendar-db-init-file
     when: not WITH_CALENDAR_INIT
+    tags:
+      - configmap
 
   - name: Test if init job exists
     kubernetes.core.k8s_info:
@@ -24,6 +28,8 @@
       name: calendar-db-init-job
     register: calendar_init_job_present
     when: WITH_CALENDAR_INIT
+    tags:
+      - job
 
   - name: Calendar db init job
     kubernetes.core.k8s:
@@ -31,6 +37,8 @@
       namespace: "{{ NAMESPACE }}"
       template: job_init_db.yml.j2
     when: WITH_CALENDAR_INIT and calendar_init_job_present.resources|length == 0
+    tags:
+      - job
 
   - name: Calendar db init job
     kubernetes.core.k8s:
@@ -41,3 +49,5 @@
       kind: Job
       name: calendar-db-init-job
     when: not WITH_CALENDAR_INIT
+    tags:
+      - job
