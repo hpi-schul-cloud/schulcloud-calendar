@@ -1,6 +1,6 @@
 {
   "name": "schulcloud-calendar",
-  "homepage": "https://hpi-schul-cloud.de",
+  "homepage": "https://dBildungscloud.de",
   "main": "src/",
   "keywords": [
     "postgres",
