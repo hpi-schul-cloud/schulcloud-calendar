@@ -15,7 +15,6 @@
   "scripts": {
     "start": "node src",
     "debug": "node --watch --inspect=4949 src",
-    "debug:container": "node --watch --inspect=0.0.0.0:4949 src",
     "linter": "eslint src",
     "test": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --exit --t 10000 './test/**/*.test.js'",
     "test:integration": "cross-env NODE_ENV=test DB_HOST=localhost DB_USERNAME=node DB_PASSWORD=node DB_DATABASE=schulcloud_calendar_test mocha --exit --t 10000 './test/**/*.integration.test.js'",
