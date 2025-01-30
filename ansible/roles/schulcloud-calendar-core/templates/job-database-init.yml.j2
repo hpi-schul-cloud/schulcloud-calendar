@@ -21,6 +21,8 @@ spec:
         app.kubernetes.io/managed-by: ansible
         git.repo: {{ SCHULCLOUD_CALENDAR_REPO_NAME }}
     spec:
+      os:
+        name: linux
       volumes:
         - name: config-script
           configMap:
