@@ -1,17 +1,24 @@
-[![Build Status](https://travis-ci.org/hpi-schul-cloud/schulcloud-calendar.svg?branch=master)](https://travis-ci.org/hpi-schul-cloud/schulcloud-calendar)
-
 # schulcloud-calendar
 
-[Calendar API](https://schul-cloud.github.io/schulcloud-calendar/#/default)
-
-[HPI Schul-Cloud API Requirements](https://github.com/hpi-schulcloud/schulcloud-calendar/blob/master/wiki/schulcloud-api-requirements.md)
-
-[Research of Caldav Modules for Node](https://github.com/hpi-schulcloud/schulcloud-calendar/blob/master/wiki/node-caldav-research.md)
-
-[Future work](https://github.com/hpi-schulcloud/schulcloud-calendar/blob/master/wiki/future-work.md)
-
 ## Setup
-### Installation
+The calender needs a PostgreSQL database. You can set it up in a container or install it locally.
+
+### Setup PostgreSQL as Docker container
+1. Pull the PostgreSQL image: `docker pull postgres`
+2. Run the image with `docker run --name calendar-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres`. (Name and password are just examples. If changed some of the following commands must be adjusted.)
+3. Attach a shell to the container: `docker exec -it calendar-postgres bash`.
+4. Run `createuser -P -U postgres --superuser --login node` and set the password to "node".
+5. Run `createdb -U postgres schulcloud_calendar`.
+5. Run `psql -d schulcloud_calendar -U postgres`. (Prompt will change to `schulcloud_calendar=#`.)
+6. Grant user with `all` permissions for the db: `grant all privileges on database schulcloud_calendar TO node;` (Feedback should be: `GRANT`)
+7. Install [uuid-ossp](https://www.postgresql.org/docs/current/static/uuid-ossp.html) ([install info](https://www.postgresql.org/message-id/C5EBF511-835E-4F24-A4E4-6CC0119F48E4%40me.com)) extension: `CREATE EXTENSION "uuid-ossp";` (Feedback should be: `CREATE EXTENSION`)
+8. Exit psql and the container (e.g. by pressing Ctrl+D).
+9. Copy files from the repository to the container with `docker cp schema.sql calendar-postgres:/tmp` and `docker cp example_data.sql calendar-postgres:/tmp`.
+10. Attach a shell to the container again: `docker exec -it calendar-postgres bash`.
+11. Run `psql -U node -d schulcloud_calendar -a -f schema.sql` to create tables.
+12. Run `psql -U node -d schulcloud_calendar -a -f example_data.sql` to insert example data.
+
+### Install PostgreSQL locally (might be outdated)
 PostgreSQL/bin/* folder must be accessable through shell/cmd (check environment variables) for this install guide to work. Check functionality with `psql --version` for example.
 1. Clone repository
 2. Install & start PostgreSQL, set and remember `postgres` user password during install
@@ -23,21 +30,15 @@ PostgreSQL/bin/* folder must be accessable through shell/cmd (check environment 
    (Feedback should be: `GRANT`)
 7. Install [uuid-ossp](https://www.postgresql.org/docs/current/static/uuid-ossp.html) ([install info](https://www.postgresql.org/message-id/C5EBF511-835E-4F24-A4E4-6CC0119F48E4%40me.com)) extension: `CREATE EXTENSION "uuid-ossp";`
    Feedback should be: `CREATE EXTENSION`
-8. Quit psql-Interpreter with Ctrl+C (or open new command prompt) and run `npm install`
-9. Import DB data: view below
-10. Run node:
-   `npm start` for production environment
-   `npm run start_local` for local unix environment
-   `npm run start_local_win` for local windows environment
+8. Create tables with `psql -U node -d schulcloud_calendar -a -f schema.sql`
+9. Insert example data using `psql -U node -d schulcloud_calendar -a -f example_data.sql`
+(If you get `fe_sendauth: no password supplied` errors on commands, edit your `[installdir]\data\pg_hba.conf` and set `METHOD` to `trust` in all lines.)
 
-Alternative install instructions here: [Kalender Setup](https://docs.schul-cloud.org/display/SCDOK/Setup#Setup-Kalender)
+## Run the app
+1. Run `npm install`
+2. Run `npm start` 
 
-### Example database data
-If you get `fe_sendauth: no password supplied` errors on commands, edit your `[installdir]\data\pg_hba.conf` and set `METHOD` to `trust` in all lines.
-1. Create tables with `psql -U node -d schulcloud_calendar -a -f schema.sql`
-2. Insert example data using `psql -U node -d schulcloud_calendar -a -f example_data.sql`
-
-### Tests
+## Tests
 1. Create a database named `schulcloud_calendar_test` and setup as described above
 2. Create tables with `psql -U node -d schulcloud_calendar_test -a -f schema.sql`
 3. Run `npm test`
