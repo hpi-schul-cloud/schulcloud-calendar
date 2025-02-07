@@ -1,7 +1,7 @@
 # schulcloud-calendar
 
 ## Setup
-The calender needs a PostgreSQL database. You can set it up in a container or install it locally.
+The calendar needs a PostgreSQL database. You can set it up in a container or install it locally.
 
 ### Setup PostgreSQL as Docker container
 1. Pull the PostgreSQL image: `docker pull postgres`
