@@ -21,7 +21,7 @@
     "test:unit": "mocha --exit --t 10000 './test/**/*.unit.test.js'"
   },
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^2.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
