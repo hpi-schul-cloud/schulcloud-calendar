@@ -40,7 +40,7 @@
     "mocha": "^11.6.0",
     "nock": "^14.0.5",
     "rewire": "^8.0.0",
-    "supertest": "^4.0.2"
+    "supertest": "^7.1.1"
   },
   "resolutions": {
     "minimatch": "^3.0.5",
