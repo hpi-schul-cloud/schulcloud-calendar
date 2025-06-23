@@ -27,7 +27,7 @@
     "cross-env": "^7.0.3",
     "express": "^4.21.2",
     "moment": "^2.22.2",
-    "pg-promise": "^11.13.0",
+    "pg-promise": "^11.14.0",
     "serve-favicon": "^2.5.0",
     "uuid": "~3.0.1",
     "winston": "^3.2.0",
