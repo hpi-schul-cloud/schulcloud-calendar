@@ -28,7 +28,7 @@
     "express": "^4.21.2",
     "moment": "^2.22.2",
     "pg-promise": "^11.13.0",
-    "serve-favicon": "^2.5.0",
+    "serve-favicon": "^2.5.1",
     "uuid": "~3.0.1",
     "winston": "^3.2.0",
     "xmlhttprequest": "^1.8.0"
