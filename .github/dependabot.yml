@@ -11,4 +11,8 @@ updates:
     versioning-strategy: "increase"
     schedule:
       interval: "weekly"
+    groups:
+      npm:
+        patterns:
+          - "*"
       
