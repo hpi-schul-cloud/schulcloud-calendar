@@ -1,4 +1,4 @@
-const uuidV4 = require('uuid/v4');
+const { v4: uuidV4 } = require('uuid');
 const insertRawEvent = require('../../queries/events/insertRawEvent');
 const insertExdate = require('../../queries/events/exdates/insertExdate');
 const insertAlarm = require('../../queries/events/alarms/insertAlarm');
