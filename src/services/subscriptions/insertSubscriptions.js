@@ -1,4 +1,4 @@
-const uuidV4 = require('uuid/v4');
+const { v4: uuidV4 } = require('uuid');
 const insertSubscriptionInDb = require('../../queries/subscriptions/insertSubscription');
 const insertOriginalSubscription = require('../../queries/subscriptions/insertOriginalSubscription');
 const getScopeIdsForSeparateUsers = require('../getScopeIdsForSeparateUsers');
