@@ -21,23 +21,23 @@
     "test:unit": "mocha --exit --t 10000 './test/**/*.unit.test.js'"
   },
   "dependencies": {
-    "body-parser": "^2.2.0",
+    "body-parser": "^2.2.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "cross-env": "^10.1.0",
-    "express": "^5.1.0",
+    "express": "^5.2.0",
     "moment": "^2.30.1",
-    "pg-promise": "^12.2.0",
+    "pg-promise": "^12.3.0",
     "serve-favicon": "^2.5.1",
     "uuid": "~13.0.0",
     "winston": "^3.18.3",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
-    "@types/node": "^24.7.0",
-    "chai": "^6.2.0",
-    "eslint": "^9.37.0",
-    "mocha": "^11.7.4",
+    "@types/node": "^24.10.1",
+    "chai": "^6.2.1",
+    "eslint": "^9.39.1",
+    "mocha": "^11.7.5",
     "nock": "^14.0.10",
     "rewire": "^9.0.1",
     "supertest": "^7.1.4"
