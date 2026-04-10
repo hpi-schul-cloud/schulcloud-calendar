@@ -9,8 +9,8 @@
   ],
   "license": "AGPL-3.0",
   "engines": {
-    "node": "22",
-    "npm": ">=9"
+    "node": "24",
+    "npm": ">=11"
   },
   "scripts": {
     "start": "node src",
