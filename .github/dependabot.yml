@@ -15,4 +15,5 @@ updates:
       npm:
         patterns:
           - "*"
-      
+    cooldown:
+      default-days: 5 
